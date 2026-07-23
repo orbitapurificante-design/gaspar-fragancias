@@ -4,23 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>GASPAR — Fragrâncias do Oriente</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#211915">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GASPAR">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#140f0d;
-    --bg2:#1c1512;
-    --bg3:#271e19;
-    --gold:#c9963f;
-    --gold-soft:#a97f3a;
-    --oxblood:#7a2333;
-    --ivory:#f3ead9;
-    --ivory-dim:#b3a695;
-    --line:rgba(201,150,63,.2);
+    --bg:#211915;
+    --bg2:#2a201b;
+    --bg3:#362a23;
+    --gold:#d4a24a;
+    --gold-soft:#b88a42;
+    --oxblood:#8a2c3d;
+    --ivory:#f6eee0;
+    --ivory-dim:#bcac9a;
+    --line:rgba(212,162,74,.22);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ivory);font-family:'Jost',sans-serif;overflow-x:hidden}
+  body{background:linear-gradient(180deg,#241c17 0%, var(--bg) 340px, var(--bg) 100%)}
   ::selection{background:var(--gold);color:#140f0d}
   a{color:inherit}
 
@@ -58,11 +67,10 @@
     overflow:hidden;position:relative}
   .cardImg img{width:100%;height:100%;object-fit:cover}
   .cardImg .ph{font-size:34px;opacity:.35}
-  .tagDot{position:absolute;top:9px;left:9px;display:flex;align-items:center;gap:5px;background:rgba(20,15,13,.72);
-    border:1px solid var(--line);border-radius:20px;padding:3px 9px 3px 7px;font-size:9px;letter-spacing:1px;
-    text-transform:uppercase;color:var(--ivory-dim);backdrop-filter:blur(3px)}
-  .tagDot .d{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-  .cardBody{padding:10px 11px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .genRow{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--ivory-dim)}
+  .genRow .d{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .cardBody{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;flex:1}
   .cardNome{font-size:13.5px;font-weight:600;line-height:1.3;min-height:34px}
   .cardVol{font-size:10.5px;color:var(--ivory-dim);letter-spacing:.5px}
   .priceRow{display:flex;align-items:baseline;gap:7px;margin-top:auto}
@@ -89,6 +97,10 @@
   .fabBadge{position:absolute;top:-4px;right:-4px;background:var(--gold);color:#140f0d;font-size:11px;font-weight:800;
     min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;
     padding:0 4px;border:2px solid var(--bg)}
+
+  .installPill{display:none;position:fixed;bottom:26px;left:20px;align-items:center;gap:7px;background:var(--gold);
+    color:#211915;font-size:11.5px;font-weight:700;letter-spacing:.5px;padding:11px 16px;border-radius:30px;
+    cursor:pointer;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);font-family:'Jost',sans-serif}
 
   /* MODAL / SHEET */
   .modal{display:none;position:fixed;inset:0;z-index:200;align-items:flex-end;background:rgba(10,7,6,.6);backdrop-filter:blur(2px)}
@@ -159,6 +171,11 @@
 <div class="fab" onclick="abrirCarrinho()">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f3ead9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   <span class="fabBadge" id="fabBadge">0</span>
+</div>
+
+<div class="installPill" id="installPill" onclick="instalarApp()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211915" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
+  Instalar App
 </div>
 
 <!-- CARRINHO -->
@@ -259,11 +276,10 @@ function renderGrid(){
     return '<div class="card">' +
       '<div class="cardImg">' +
         (p.foto ? '<img src="'+p.foto+'">' : '<div class="ph">🌸</div>') +
-        '<div class="tagDot"><span class="d" style="background:'+gen.cor+'"></span>'+gen.txt+'</div>' +
       '</div>' +
       '<div class="cardBody">' +
         '<div class="cardNome">'+p.nome+'</div>' +
-        (p.volume ? '<div class="cardVol">'+p.volume+'</div>' : '') +
+        '<div class="genRow"><span class="d" style="background:'+gen.cor+'"></span>'+gen.txt+(p.volume ? ' · '+p.volume : '')+'</div>' +
         '<div class="priceRow">' +
           (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') +
           '<span class="priceNew">'+pn.toFixed(2)+'€</span>' +
@@ -371,6 +387,45 @@ window.addEventListener('load', function(){
 window.addEventListener('resize', function(){
   posicionarIndicador(document.querySelector('.tab.on'));
 });
+
+// ── INSTALAR COMO APP ──
+let deferredPrompt = null;
+
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+function isStandalone(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  if(!isStandalone()) document.getElementById('installPill').style.display = 'flex';
+});
+
+async function instalarApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installPill').style.display = 'none';
+  } else if(isIOS()){
+    toast('📲 Toca no botão Partilhar e depois em "Adicionar ao Ecrã Principal"');
+  } else {
+    toast('📲 Abre o menu do navegador e escolhe "Instalar app" ou "Adicionar ao ecrã principal"');
+  }
+}
+
+window.addEventListener('appinstalled', function(){
+  document.getElementById('installPill').style.display = 'none';
+});
+
+if(!isStandalone() && isIOS()){
+  document.getElementById('installPill').style.display = 'flex';
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>

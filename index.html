@@ -64,9 +64,26 @@
     display:flex;flex-direction:column;position:relative;transition:border-color .2s}
   .card:hover{border-color:var(--gold-soft)}
   .cardImg{width:100%;aspect-ratio:3/4;background:var(--bg3);display:flex;align-items:center;justify-content:center;
-    overflow:hidden;position:relative}
+    overflow:hidden;position:relative;cursor:pointer}
   .cardImg img{width:100%;height:100%;object-fit:cover}
   .cardImg .ph{font-size:34px;opacity:.35}
+
+  /* DETALHE FULLSCREEN */
+  .detailSheet{background:var(--bg);width:100%;max-width:600px;margin:0 auto;min-height:100vh;padding-bottom:100px}
+  .detailImgWrap{position:relative;width:100%}
+  .detailImg{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--bg3);display:block}
+  .detailBack{position:absolute;top:16px;left:16px;background:rgba(20,15,13,.65);border:1px solid var(--line);
+    color:var(--ivory);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;backdrop-filter:blur(4px);font-size:19px}
+  .detailBody{padding:20px 20px 10px}
+  .detailNome{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;line-height:1.25}
+  .detailPrice{display:flex;align-items:baseline;gap:9px;margin-top:12px}
+  .detailPrice .priceOld{font-size:15px}
+  .detailPrice .priceNew{font-size:21px}
+  .detailDescTit{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-top:20px}
+  .detailDesc{font-size:13.5px;line-height:1.7;color:var(--ivory-dim);margin-top:8px;white-space:pre-wrap}
+  .detailFooter{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--line);
+    padding:12px 16px;max-width:600px;margin:0 auto;display:flex;gap:10px;align-items:center;z-index:10}
   .genRow{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:1px;
     text-transform:uppercase;color:var(--ivory-dim)}
   .genRow .d{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -178,6 +195,30 @@
   Instalar App
 </div>
 
+<!-- DETALHE DO PERFUME -->
+<div class="modal" id="mDetalhe" style="align-items:stretch;padding:0">
+  <div class="detailSheet">
+    <div class="detailImgWrap" id="detImgWrap">
+      <button class="detailBack" onclick="fecharModal('mDetalhe')">←</button>
+    </div>
+    <div class="detailBody">
+      <div class="detailNome" id="detNome"></div>
+      <div class="genRow" id="detGen" style="margin-top:6px;font-size:11px"></div>
+      <div class="detailPrice priceRow" id="detPrice"></div>
+      <div id="detDescWrap">
+        <div class="detailDescTit">Descrição</div>
+        <div class="detailDesc" id="detDesc"></div>
+      </div>
+    </div>
+  </div>
+  <div class="detailFooter">
+    <button class="stepBtn" onclick="cartChange(detalheAtualId,-1); atualizarDetalheQty()">−</button>
+    <div class="qtyNum" id="detQty" style="min-width:24px;text-align:center">0</div>
+    <button class="stepBtn" onclick="cartChange(detalheAtualId,1); atualizarDetalheQty()">+</button>
+    <button class="btnGold" style="margin:0;flex:1" onclick="cartChange(detalheAtualId,1); atualizarDetalheQty()">Adicionar ao Pedido</button>
+  </div>
+</div>
+
 <!-- CARRINHO -->
 <div class="modal" id="mCart">
   <div class="sheet">
@@ -274,7 +315,7 @@ function renderGrid(){
     var gen = generoLabel(p.genero);
     var qty = CART[p.id] ? CART[p.id].qty : 0;
     return '<div class="card">' +
-      '<div class="cardImg">' +
+      '<div class="cardImg" onclick="abrirDetalhe('+p.id+')">' +
         (p.foto ? '<img src="'+p.foto+'">' : '<div class="ph">🌸</div>') +
       '</div>' +
       '<div class="cardBody">' +
@@ -337,6 +378,41 @@ function abrirCarrinho(){
 }
 
 function fecharModal(id){ document.getElementById(id).classList.remove('a'); }
+
+var detalheAtualId = null;
+
+function abrirDetalhe(id){
+  var p = PERFUMES.find(x => String(x.id) === String(id));
+  if(!p) return;
+  detalheAtualId = p.id;
+
+  var po = parseFloat(p.preco_orig) || 0;
+  var pn = parseFloat(p.preco_novo) || 0;
+  var temDesc = po > pn && po > 0;
+  var gen = generoLabel(p.genero);
+
+  document.getElementById('detImgWrap').innerHTML =
+    '<button class="detailBack" onclick="fecharModal(\'mDetalhe\')">←</button>' +
+    (p.foto ? '<img class="detailImg" src="'+p.foto+'">' : '<div class="detailImg" style="display:flex;align-items:center;justify-content:center;font-size:60px">🌸</div>');
+
+  document.getElementById('detNome').textContent = p.nome;
+  document.getElementById('detGen').innerHTML = '<span class="d" style="background:'+gen.cor+'"></span>'+gen.txt+(p.volume ? ' · '+p.volume : '');
+  document.getElementById('detPrice').innerHTML = (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') + '<span class="priceNew">'+pn.toFixed(2)+'€</span>';
+
+  var desc = (p.descricao || '').trim();
+  document.getElementById('detDescWrap').style.display = desc ? 'block' : 'none';
+  document.getElementById('detDesc').textContent = desc;
+
+  atualizarDetalheQty();
+  document.getElementById('mDetalhe').classList.add('a');
+}
+
+function atualizarDetalheQty(){
+  var key = String(detalheAtualId);
+  var qty = CART[key] ? CART[key].qty : 0;
+  var el = document.getElementById('detQty');
+  if(el) el.textContent = qty;
+}
 
 function limparCarrinho(){
   if(!confirm('Limpar todo o pedido?')) return;

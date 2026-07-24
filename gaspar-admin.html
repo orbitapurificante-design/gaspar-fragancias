@@ -175,6 +175,9 @@
       <label for="pAtivo">Visível na loja online</label>
     </div>
 
+    <label class="lbl">Descrição do Perfume</label>
+    <textarea class="inp" id="pDescricao" style="min-height:90px;resize:vertical" placeholder="Ex: Notas de topo de bergamota e açafrão, coração de rosa turca e oud, fundo de âmbar e sândalo. Ideal para uso noturno..."></textarea>
+
     <button class="btnGold" style="margin-top:18px" onclick="guardarPerfume()">GUARDAR</button>
     <button class="btnGhost btnDanger" id="btnApagar" style="display:none" onclick="apagarPerfume()">APAGAR PERFUME</button>
   </div>
@@ -279,6 +282,7 @@ function abrirNovo(){
   document.getElementById('pVolume').value = '';
   document.getElementById('pPrecoOrig').value = '';
   document.getElementById('pPrecoNovo').value = '';
+  document.getElementById('pDescricao').value = '';
   document.getElementById('pAtivo').checked = true;
   document.getElementById('fotoPreview').innerHTML = '<div class="fp">📷<br>Toca para carregar foto</div>';
   document.getElementById('btnApagar').style.display = 'none';
@@ -296,6 +300,7 @@ function editarPerfume(id){
   document.getElementById('pVolume').value = p.volume || '';
   document.getElementById('pPrecoOrig').value = p.preco_orig || '';
   document.getElementById('pPrecoNovo').value = p.preco_novo || '';
+  document.getElementById('pDescricao').value = p.descricao || '';
   document.getElementById('pAtivo').checked = p.ativo !== false;
   document.getElementById('fotoPreview').innerHTML = p.foto ? '<img src="'+p.foto+'">' : '<div class="fp">📷<br>Toca para carregar foto</div>';
   document.getElementById('btnApagar').style.display = 'block';
@@ -344,6 +349,7 @@ async function guardarPerfume(){
     preco_orig: parseFloat(document.getElementById('pPrecoOrig').value) || 0,
     preco_novo: parseFloat(document.getElementById('pPrecoNovo').value) || 0,
     ativo: document.getElementById('pAtivo').checked,
+    descricao: document.getElementById('pDescricao').value.trim(),
     foto: fotoTempUrl
   };
 

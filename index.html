@@ -36,15 +36,15 @@
   /* TOP BAR — fixa, compacta: marca + carrinho + separação por género */
   .topBar{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);
     padding:10px 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.25)}
-  .topBarRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px}
-  .miniLogo{width:30px;height:30px;border-radius:8px;flex-shrink:0;object-fit:cover}
+  .topBarRow{position:relative;display:flex;align-items:center;justify-content:center;padding-bottom:8px}
+  .miniLogo{width:38px;height:38px;border-radius:9px;flex-shrink:0;object-fit:cover}
   .miniBrand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;letter-spacing:1.5px;
     color:var(--ivory);display:flex;align-items:center;gap:9px;white-space:nowrap;overflow:hidden}
   .miniBrandTxt{display:flex;align-items:baseline;gap:7px}
   .miniBrandTxt{font-size:19px}
   .miniTag{font-family:'Jost',sans-serif;font-size:8px;letter-spacing:1.3px;text-transform:uppercase;
     color:var(--gold);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .cartBtn{position:relative;width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
+  .cartBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
     display:flex;align-items:center;justify-content:center;cursor:pointer}
   .taglineRow{text-align:center;font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;
     color:var(--gold);font-weight:500;padding-bottom:10px}
@@ -84,7 +84,7 @@
     background:var(--bg3);color:var(--ivory);font-size:18px;line-height:1;cursor:pointer;display:flex;
     align-items:center;justify-content:center;font-family:'Jost',sans-serif}
   .detHeaderBrand{display:flex;align-items:center;justify-content:center;gap:8px}
-  .detHeaderBrand img{width:24px;height:24px;border-radius:6px}
+  .detHeaderBrand img{width:30px;height:30px;border-radius:7px}
   .detHeaderBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;letter-spacing:1.5px;color:var(--ivory)}
   .detHeaderTag{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-top:4px}
 
@@ -164,6 +164,9 @@
   .totRow{display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px;margin-top:4px}
   .totLbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ivory-dim)}
   .totVal{font-size:21px;font-weight:700;color:var(--gold)}
+  .shippingNote{font-size:11.5px;line-height:1.5;padding:9px 12px;border-radius:10px;background:var(--bg3);
+    border:1px solid var(--line);color:var(--ivory-dim);margin-bottom:6px}
+  .shippingNote.ok{color:var(--gold);border-color:var(--gold-soft)}
   .lbl{display:block;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ivory-dim);margin:14px 0 6px}
   .inp,.txt{width:100%;padding:12px 13px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;
     color:var(--ivory);font-size:14px;outline:none;font-family:'Jost',sans-serif}
@@ -293,6 +296,7 @@
     </div>
     <div id="cartLista"></div>
     <div class="totRow"><div class="totLbl">Total Estimado</div><div class="totVal" id="cartTotal">0.00€</div></div>
+    <div class="shippingNote" id="shippingNote"></div>
     <label class="lbl">O seu nome *</label>
     <input type="text" class="inp" id="cName" placeholder="Ex: Maria Silva">
     <label class="lbl">Observações (opcional)</label>
@@ -316,6 +320,8 @@ const SK = 'sb_publishable_udpae0_ZbYBHHdm79FpC9g_-svSUg27'; // Chave publishabl
 const BUCKET = 'gaspar';                                  // <-- Nome do bucket de Storage
 const WHATSAPP_NUM = '351967925745';                      // <-- Número de WhatsApp da loja (altera quando mudares de número)
 const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
+const LIMIAR_ENVIO_GRATIS = 65;                           // <-- Valor mínimo (€) para portes grátis
+const CUSTO_ENVIO = 5;                                    // <-- Custo dos portes (€) abaixo do limiar
 
 function hd(){ return { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'Content-Type': 'application/json' }; }
 async function api(path){
@@ -475,6 +481,20 @@ function abrirCarrinho(){
     }).join('');
     document.getElementById('cartTotal').textContent = totalVal.toFixed(2) + '€';
   }
+
+  var noteEl = document.getElementById('shippingNote');
+  if(!items.length){
+    noteEl.className = 'shippingNote';
+    noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> para encomendas abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€. Grátis a partir desse valor.';
+  } else if(totalVal < LIMIAR_ENVIO_GRATIS){
+    var falta = (LIMIAR_ENVIO_GRATIS - totalVal).toFixed(2);
+    noteEl.className = 'shippingNote';
+    noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> (encomenda abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€). Faltam <b>'+falta+'€</b> para teres portes grátis!';
+  } else {
+    noteEl.className = 'shippingNote ok';
+    noteEl.innerHTML = '🎉 Parabéns! A tua encomenda tem <b>portes de transporte grátis</b>.';
+  }
+
   document.getElementById('mCart').classList.add('a');
 }
 
@@ -542,7 +562,11 @@ function navegarDetalhe(delta){
   function resetZoomVisual(){
     escalaAtual = 1;
     var img = getImg();
-    if(img){ img.style.transition = 'transform .25s ease-out'; img.style.transform = 'scale(1)'; }
+    if(img){
+      img.style.transition = 'transform .25s ease-out, transform-origin .25s ease-out';
+      img.style.transformOrigin = 'center center';
+      img.style.transform = 'scale(1)';
+    }
   }
   window._resetDetalheZoom = resetZoomVisual;
 
@@ -550,7 +574,18 @@ function navegarDetalhe(delta){
     if(e.touches.length === 2){
       aPinch = true; tocando = false;
       pinchStartDist = dist(e.touches);
-      var img = getImg(); if(img) img.style.transition = 'none';
+      var img = getImg();
+      if(img){
+        img.style.transition = 'none';
+        var rect = img.getBoundingClientRect();
+        var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        var origemX = rect.width ? ((midX - rect.left) / rect.width) * 100 : 50;
+        var origemY = rect.height ? ((midY - rect.top) / rect.height) * 100 : 50;
+        origemX = Math.min(100, Math.max(0, origemX));
+        origemY = Math.min(100, Math.max(0, origemY));
+        img.style.transformOrigin = origemX + '% ' + origemY + '%';
+      }
     } else if(e.touches.length === 1){
       if(aPinch) return;
       sx = e.touches[0].clientX; sy = e.touches[0].clientY; tocando = true;
@@ -620,7 +655,12 @@ function gerarTextoEncomenda(nome, notas){
     linhas.push('• ' + it.p.nome + (it.p.volume ? ' ('+it.p.volume+')' : '') + ' — ' + it.qty + 'un × ' + pn.toFixed(2) + '€ = ' + sub.toFixed(2) + '€');
   });
   linhas.push('');
-  linhas.push('💰 TOTAL: ' + total.toFixed(2) + '€');
+  linhas.push('💰 SUBTOTAL: ' + total.toFixed(2) + '€');
+  if(total < LIMIAR_ENVIO_GRATIS){
+    linhas.push('🚚 Portes de transporte: ' + CUSTO_ENVIO.toFixed(2) + '€ (encomenda abaixo de ' + LIMIAR_ENVIO_GRATIS.toFixed(2) + '€)');
+  } else {
+    linhas.push('🚚 Portes de transporte: Grátis');
+  }
   if(notas && notas.trim()) { linhas.push(''); linhas.push('📝 Observações: ' + notas.trim()); }
   return linhas.join('\n');
 }

@@ -61,17 +61,21 @@
   /* MENU DE MARCAS */
   .menuOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,7,6,.55)}
   .menuOverlay.a{display:block}
-  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:78%;max-width:300px;background:var(--bg2);
-    padding:26px 22px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
+  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:50%;min-width:220px;background:var(--bg2);
+    padding:22px 16px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
     transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
   .menuOverlay.a .menuDrawer{transform:translateX(0)}
-  .menuTit{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;text-align:center;
-    margin:6px 0 22px;letter-spacing:1px;color:var(--ivory)}
-  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:24px 16px;
-    text-align:center;margin-bottom:14px;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:22px;
-    font-weight:600;letter-spacing:3px;color:var(--ivory)}
-  .brandCard:active{border-color:var(--gold);color:var(--gold)}
-  .menuClear{text-align:center;font-size:11.5px;color:var(--ivory-dim);text-decoration:underline;
+  .menuDrawerBrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:8px 0 18px;
+    padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .menuDrawerBrand img{width:34px;height:34px;border-radius:8px}
+  .menuDrawerBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;letter-spacing:1.5px;color:var(--ivory)}
+  .menuTit{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;text-align:center;
+    margin:0 0 16px;letter-spacing:.5px;color:var(--gold);text-transform:uppercase;font-size:11px}
+  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px 10px;
+    text-align:center;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .brandCard img{max-width:100%;height:auto;display:block}
+  .brandCard:active{border-color:var(--gold)}
+  .menuClear{text-align:center;font-size:11px;color:var(--ivory-dim);text-decoration:underline;
     cursor:pointer;margin-top:10px}
 
   /* TABS */
@@ -313,9 +317,13 @@
 <div class="menuOverlay" id="menuOverlay" onclick="fecharMenuMarca(event)">
   <div class="menuDrawer" onclick="event.stopPropagation()">
     <button class="closeX" style="position:absolute;top:14px;right:14px" onclick="fecharMenuMarca()">×</button>
+    <div class="menuDrawerBrand">
+      <img src="icon-192.png" alt="GASPAR">
+      <span>GASPAR</span>
+    </div>
     <div class="menuTit">Escolha sua Marca</div>
-    <div class="brandCard" onclick="filtrarMarca('AYELET')">AYELET</div>
-    <div class="brandCard" onclick="filtrarMarca('RAYHAAN')">RAYHAAN</div>
+    <div class="brandCard" onclick="filtrarMarca('AYELET')"><img src="logo-ayelet.png" alt="AYELET"></div>
+    <div class="brandCard" onclick="filtrarMarca('RAYHAAN')"><img src="logo-rayhaan.png" alt="RAYHAAN"></div>
     <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
   </div>
 </div>

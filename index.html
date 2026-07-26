@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#211915">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-startup-image" href="logo_gaspar.jpeg">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,6 +31,11 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ivory);font-family:'Jost',sans-serif;overflow-x:hidden}
   body{background:var(--bg)}
+
+  #splashScreen{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;
+    justify-content:center;transition:opacity .5s ease}
+  #splashScreen.hide{opacity:0;pointer-events:none}
+  #splashScreen img{max-width:58%;max-height:58%;object-fit:contain}
   ::selection{background:var(--gold);color:#140f0d}
   a{color:inherit}
 
@@ -61,22 +67,23 @@
   /* MENU DE MARCAS */
   .menuOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,7,6,.55)}
   .menuOverlay.a{display:block}
-  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:50%;min-width:220px;background:var(--bg2);
-    padding:22px 16px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
+  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:38%;min-width:170px;background:var(--bg2);
+    padding:20px 12px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
     transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
   .menuOverlay.a .menuDrawer{transform:translateX(0)}
-  .menuDrawerBrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:8px 0 18px;
-    padding-bottom:16px;border-bottom:1px solid var(--line)}
-  .menuDrawerBrand img{width:34px;height:34px;border-radius:8px}
-  .menuDrawerBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;letter-spacing:1.5px;color:var(--ivory)}
+  .menuDrawerBrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:8px 0 16px;
+    padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .menuDrawerBrand img{width:30px;height:30px;border-radius:7px}
+  .menuDrawerBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;letter-spacing:1.2px;color:var(--ivory)}
   .menuTit{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;text-align:center;
-    margin:0 0 16px;letter-spacing:.5px;color:var(--gold);text-transform:uppercase;font-size:11px}
-  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px 10px;
-    text-align:center;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .brandCard img{max-width:100%;height:auto;display:block}
+    margin:0 0 12px;letter-spacing:.5px;color:var(--gold);text-transform:uppercase;font-size:10px}
+  .brandGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px 6px;
+    aspect-ratio:1/1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .brandCard img{max-width:100%;max-height:100%;object-fit:contain;display:block}
   .brandCard:active{border-color:var(--gold)}
-  .menuClear{text-align:center;font-size:11px;color:var(--ivory-dim);text-decoration:underline;
-    cursor:pointer;margin-top:10px}
+  .menuClear{text-align:center;font-size:10.5px;color:var(--ivory-dim);text-decoration:underline;
+    cursor:pointer;margin-top:12px}
 
   /* TABS */
   .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
@@ -212,6 +219,10 @@
 </head>
 <body>
 
+<div id="splashScreen">
+  <img src="logo_gaspar.jpeg" alt="GASPAR">
+</div>
+
 <div class="topBar">
   <div class="topBarRow">
     <button class="menuBtn" onclick="abrirMenuMarca()">
@@ -322,8 +333,14 @@
       <span>GASPAR</span>
     </div>
     <div class="menuTit">Escolha sua Marca</div>
-    <div class="brandCard" onclick="filtrarMarca('AYELET')"><img src="logo-ayelet.png" alt="AYELET"></div>
-    <div class="brandCard" onclick="filtrarMarca('RAYHAAN')"><img src="logo-rayhaan.png" alt="RAYHAAN"></div>
+    <div class="brandGrid">
+      <div class="brandCard" onclick="filtrarMarca('AYELET')"><img src="logo-ayelet.png" alt="AYELET"></div>
+      <div class="brandCard" onclick="filtrarMarca('RAYHAAN')"><img src="logo-rayhaan.png" alt="RAYHAAN"></div>
+      <div class="brandCard" onclick="filtrarMarca('RP')"><img src="logo-rp.png" alt="RP"></div>
+      <div class="brandCard" onclick="filtrarMarca('LATTAFA')"><img src="logo-lattafa.png" alt="LATTAFA"></div>
+      <div class="brandCard" onclick="filtrarMarca('RIFUS')"><img src="logo-rifus.png" alt="RIFUS"></div>
+      <div class="brandCard" onclick="filtrarMarca('BAAB')"><img src="logo-baab.png" alt="BAAB"></div>
+    </div>
     <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
   </div>
 </div>
@@ -754,6 +771,14 @@ document.getElementById('tabs').addEventListener('click', function(e){
 window.addEventListener('load', function(){
   posicionarIndicador(document.querySelector('.tab.on'));
   iniciar();
+
+  setTimeout(function(){
+    var splash = document.getElementById('splashScreen');
+    if(splash){
+      splash.classList.add('hide');
+      setTimeout(function(){ splash.remove(); }, 600);
+    }
+  }, 900);
 });
 window.addEventListener('resize', function(){
   posicionarIndicador(document.querySelector('.tab.on'));

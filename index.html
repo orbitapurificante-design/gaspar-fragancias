@@ -46,6 +46,9 @@
     color:var(--gold);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .cartBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
     display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .menuBtn{position:absolute;left:0;top:50%;transform:translateY(-50%);width:38px;height:38px;flex-shrink:0;
+    border-radius:50%;background:var(--bg3);border:1px solid var(--line);color:var(--ivory);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
   .taglineRow{text-align:center;font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;
     color:var(--gold);font-weight:500;padding-bottom:10px}
   .searchRow{padding-bottom:10px}
@@ -54,6 +57,22 @@
   .searchBox input{border:none;background:none;outline:none;flex:1;font-family:'Jost',sans-serif;
     font-size:13px;color:var(--ivory)}
   .searchBox input::placeholder{color:var(--ivory-dim)}
+
+  /* MENU DE MARCAS */
+  .menuOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,7,6,.55)}
+  .menuOverlay.a{display:block}
+  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:78%;max-width:300px;background:var(--bg2);
+    padding:26px 22px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+  .menuOverlay.a .menuDrawer{transform:translateX(0)}
+  .menuTit{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;text-align:center;
+    margin:6px 0 22px;letter-spacing:1px;color:var(--ivory)}
+  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:24px 16px;
+    text-align:center;margin-bottom:14px;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:22px;
+    font-weight:600;letter-spacing:3px;color:var(--ivory)}
+  .brandCard:active{border-color:var(--gold);color:var(--gold)}
+  .menuClear{text-align:center;font-size:11.5px;color:var(--ivory-dim);text-decoration:underline;
+    cursor:pointer;margin-top:10px}
 
   /* TABS */
   .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
@@ -95,25 +114,25 @@
     color:#f3ead9;font-size:11px;font-weight:600;letter-spacing:.5px;padding:4px 10px;border-radius:20px;
     backdrop-filter:blur(3px);z-index:2}
 
-  .detInfoBar{flex-shrink:0;padding:12px 20px;border-top:1px solid var(--line);background:var(--bg);text-align:center}
-  .detTitleNome{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;line-height:1.3}
-  .detailMetaRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+  .detInfoBar{flex-shrink:0;padding:8px 20px 10px;border-top:1px solid var(--line);background:var(--bg);text-align:center}
+  .detTitleNome{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;line-height:1.25}
+  .detailMetaRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px}
   .detVolume{font-size:11px;color:var(--ivory-dim);letter-spacing:.5px}
-  .priceRow .priceNew{font-size:24px}
-  .priceRow .priceOld{font-size:16px}
-  .detStepGroup{display:flex;gap:10px;align-items:stretch;justify-content:center;margin:12px auto 0}
-  .detStep{width:44px;height:40px;flex-shrink:0;border-radius:12px;border:1px solid var(--line);background:var(--bg3);
-    color:var(--ivory);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Jost',sans-serif}
+  .priceRow .priceNew{font-size:21px}
+  .priceRow .priceOld{font-size:14px}
+  .detStepGroup{display:flex;gap:8px;align-items:stretch;justify-content:center;margin:7px auto 0}
+  .detStep{width:38px;height:32px;flex-shrink:0;border-radius:10px;border:1px solid var(--line);background:var(--bg3);
+    color:var(--ivory);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Jost',sans-serif}
   .detStep:active{background:var(--gold);color:#fff}
-  .detQtyBox{width:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+  .detQtyBox{width:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
 
   .detailFooter{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--line);
-    padding:8px 6px;display:flex;gap:4px}
-  .detInfoBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    padding:9px 4px;border:none;background:none;color:var(--ivory-dim);cursor:pointer;font-family:'Jost',sans-serif;
-    font-size:9.5px;letter-spacing:.3px;text-align:center;border-radius:10px}
+    padding:5px 6px;display:flex;gap:4px}
+  .detInfoBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    padding:6px 4px;border:none;background:none;color:var(--ivory-dim);cursor:pointer;font-family:'Jost',sans-serif;
+    font-size:9px;letter-spacing:.3px;text-align:center;border-radius:10px}
   .detInfoBtn:active{background:var(--bg3);color:var(--gold)}
-  .detInfoBtn svg{width:20px;height:20px}
+  .detInfoBtn svg{width:18px;height:18px}
 
   .detailDesc{font-size:13.5px;line-height:1.7;color:var(--ivory-dim);white-space:pre-wrap}
 
@@ -191,6 +210,9 @@
 
 <div class="topBar">
   <div class="topBarRow">
+    <button class="menuBtn" onclick="abrirMenuMarca()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="miniBrand">
       <img src="icon-192.png" class="miniLogo" alt="GASPAR">
       <span class="miniBrandTxt">GASPAR</span>
@@ -287,6 +309,17 @@
   </div>
 </div>
 
+<!-- MENU DE MARCAS -->
+<div class="menuOverlay" id="menuOverlay" onclick="fecharMenuMarca(event)">
+  <div class="menuDrawer" onclick="event.stopPropagation()">
+    <button class="closeX" style="position:absolute;top:14px;right:14px" onclick="fecharMenuMarca()">×</button>
+    <div class="menuTit">Escolha sua Marca</div>
+    <div class="brandCard" onclick="filtrarMarca('AYELET')">AYELET</div>
+    <div class="brandCard" onclick="filtrarMarca('RAYHAAN')">RAYHAAN</div>
+    <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
+  </div>
+</div>
+
 <!-- CARRINHO -->
 <div class="modal" id="mCart">
   <div class="sheet">
@@ -339,6 +372,21 @@ function pesquisar(v){
   BUSCA = v || '';
   renderGrid();
 }
+
+// ── MENU DE MARCAS ──
+function abrirMenuMarca(){
+  document.getElementById('menuOverlay').classList.add('a');
+}
+function fecharMenuMarca(e){
+  if(e) e.stopPropagation();
+  document.getElementById('menuOverlay').classList.remove('a');
+}
+function filtrarMarca(nome){
+  document.getElementById('pesquisaInput').value = nome;
+  pesquisar(nome);
+  document.getElementById('menuOverlay').classList.remove('a');
+}
+
 let CART = {};
 
 // ── PROTEÇÃO CONTRA SAIR SEM QUERER (perde as quantidades do pedido) ──
@@ -571,7 +619,7 @@ function navegarDetalhe(delta){
   window._resetDetalheZoom = resetZoomVisual;
 
   wrap.addEventListener('touchstart', function(e){
-    if(e.touches.length === 2){
+    if(e.touches.length >= 2){
       aPinch = true; tocando = false;
       pinchStartDist = dist(e.touches);
       var img = getImg();
@@ -587,7 +635,7 @@ function navegarDetalhe(delta){
         img.style.transformOrigin = origemX + '% ' + origemY + '%';
       }
     } else if(e.touches.length === 1){
-      if(aPinch) return;
+      aPinch = false; // um novo toque com 1 dedo nunca é um pinch — garante que o swipe não fica bloqueado
       sx = e.touches[0].clientX; sy = e.touches[0].clientY; tocando = true;
 
       var agora = Date.now();
@@ -607,14 +655,27 @@ function navegarDetalhe(delta){
   }, {passive:true});
 
   wrap.addEventListener('touchend', function(e){
-    if(e.touches.length < 2 && aPinch){
-      var img = getImg();
-      if(img){
-        var m = /scale\(([\d.]+)\)/.exec(img.style.transform || '');
-        escalaAtual = m ? parseFloat(m[1]) : 1;
+    if(e.touches.length >= 1){
+      // ainda há dedo(s) no ecrã (ex: a sair de um pinch) — só finaliza a escala, não interpreta como swipe
+      if(aPinch){
+        var img1 = getImg();
+        if(img1){
+          var m1 = /scale\(([\d.]+)\)/.exec(img1.style.transform || '');
+          escalaAtual = m1 ? parseFloat(m1[1]) : 1;
+        }
+        pinchStartDist = 0;
       }
-      if(e.touches.length === 0){ aPinch = false; pinchStartDist = 0; }
       return;
+    }
+    // último dedo levantado
+    if(aPinch){
+      var img2 = getImg();
+      if(img2){
+        var m2 = /scale\(([\d.]+)\)/.exec(img2.style.transform || '');
+        escalaAtual = m2 ? parseFloat(m2[1]) : 1;
+      }
+      aPinch = false; pinchStartDist = 0;
+      return; // largar os dedos de um pinch não conta como swipe
     }
     if(!tocando) return;
     tocando = false;

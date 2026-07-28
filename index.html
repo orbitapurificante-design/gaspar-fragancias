@@ -378,6 +378,8 @@
     <div class="shippingNote" id="shippingNote"></div>
     <label class="lbl">O seu nome *</label>
     <input type="text" class="inp" id="cName" placeholder="Ex: Maria Silva">
+    <label class="lbl">Número de WhatsApp para envio *</label>
+    <input type="tel" class="inp" id="cartTel" placeholder="Ex: 351912345678">
     <label class="lbl">Observações (opcional)</label>
     <textarea class="txt" id="cNotes" placeholder="Ex: morada de entrega, preferências..."></textarea>
     <button class="btnGold" onclick="enviarWhatsApp()">
@@ -397,7 +399,7 @@
 const SB = 'https://qaseaiiemckxcwzahqew.supabase.co';   // URL do projeto Supabase GASPAR
 const SK = 'sb_publishable_udpae0_ZbYBHHdm79FpC9g_-svSUg27'; // Chave publishable do Supabase GASPAR
 const BUCKET = 'gaspar';                                  // <-- Nome do bucket de Storage
-const WHATSAPP_NUM = '351967925745';                      // <-- Número de WhatsApp da loja (altera quando mudares de número)
+const WHATSAPP_NUM = '351967925745';                      // (não usado neste momento — o cliente escreve o número no carrinho)
 const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
 const LIMIAR_ENVIO_GRATIS = 65;                           // <-- Valor mínimo (€) para portes grátis
 const CUSTO_ENVIO = 5;                                    // <-- Custo dos portes (€) abaixo do limiar
@@ -777,9 +779,11 @@ function enviarWhatsApp(){
   if(!items.length){ toast('⚠️ O pedido está vazio'); return; }
   var nome = document.getElementById('cName').value.trim();
   if(!nome){ toast('⚠️ Indique o seu nome'); return; }
+  var tel = document.getElementById('cartTel').value.replace(/\D/g,'');
+  if(!tel){ toast('⚠️ Indique o número de WhatsApp'); return; }
   var notas = document.getElementById('cNotes').value;
   var txt = gerarTextoEncomenda(nome, notas);
-  var url = 'https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(txt);
+  var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(txt);
   window.open(url, '_blank');
 }
 

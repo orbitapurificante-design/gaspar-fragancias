@@ -57,12 +57,20 @@
     display:flex;align-items:center;justify-content:center;cursor:pointer}
   .taglineRow{text-align:center;font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;
     color:var(--gold);font-weight:500;padding-bottom:10px}
-  .searchRow{padding-bottom:10px}
+  .searchRow{padding-bottom:10px;display:flex;gap:8px;max-width:520px;margin:0 auto}
   .searchBox{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--line);
-    border-radius:22px;padding:9px 15px;max-width:520px;margin:0 auto;color:var(--ivory-dim)}
-  .searchBox input{border:none;background:none;outline:none;flex:1;font-family:'Jost',sans-serif;
+    border-radius:22px;padding:9px 15px;flex:1;min-width:0;color:var(--ivory-dim)}
+  .searchBox input{border:none;background:none;outline:none;flex:1;min-width:0;font-family:'Jost',sans-serif;
     font-size:13px;color:var(--ivory)}
   .searchBox input::placeholder{color:var(--ivory-dim)}
+  .catSelectBox{flex-shrink:0;width:104px;background:var(--bg3);border:1px solid var(--line);border-radius:22px;
+    padding:0 10px 0 12px;display:flex;align-items:center}
+  .catSelectBox select{width:100%;border:none;background:none;outline:none;appearance:none;-webkit-appearance:none;
+    font-family:'Jost',sans-serif;font-size:11px;color:var(--ivory-dim);padding:9px 0;cursor:pointer}
+  .catSelectBox select:invalid,.catSelectBox select option[value=""]{color:var(--ivory-dim)}
+  .catSelectBox{position:relative}
+  .catSelectBox::after{content:'';position:absolute;right:9px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--ivory-dim);
+    border-bottom:1.5px solid var(--ivory-dim);transform:translateY(-65%) rotate(45deg);pointer-events:none}
 
   /* MENU DE MARCAS */
   .menuOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,7,6,.55)}
@@ -179,6 +187,14 @@
     color:#211915;font-size:11.5px;font-weight:700;letter-spacing:.5px;padding:11px 16px;border-radius:30px;
     cursor:pointer;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);font-family:'Jost',sans-serif}
 
+  .igPill{position:fixed;bottom:26px;right:20px;display:flex;align-items:center;justify-content:center;
+    width:48px;height:48px;border-radius:50%;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);
+    background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);
+    text-decoration:none}
+  .menuIgLink{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10.5px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--ivory-dim);text-decoration:none;margin-top:6px}
+  .footerIg{color:var(--gold);text-decoration:none}
+
   /* MODAL / SHEET */
   .modal{display:none;position:fixed;inset:0;z-index:200;align-items:flex-end;background:rgba(10,7,6,.6);backdrop-filter:blur(2px)}
   .modal.a{display:flex}
@@ -244,7 +260,21 @@
   <div class="searchRow">
     <div class="searchBox">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="pesquisaInput" placeholder="Pesquisar perfume..." oninput="pesquisar(this.value)">
+      <input type="text" id="pesquisaInput" placeholder="Pesquisar por nome..." oninput="pesquisar(this.value)">
+    </div>
+    <div class="catSelectBox">
+      <select id="categoriaSelect" onchange="selecionarCategoria(this.value)">
+        <option value="">Categoria</option>
+        <option value="EDP">EDP</option>
+        <option value="EDT">EDT</option>
+        <option value="DEO_SPRAY">Deo Spray</option>
+        <option value="DEO_ROLLON">Deo Roll-on</option>
+        <option value="CREMES">Cremes Corporais</option>
+        <option value="HIG_ORAL">Higiene Oral</option>
+        <option value="HIG_MASC">Higiene Masculina</option>
+        <option value="HIG_FEM">Higiene Feminina</option>
+        <option value="HIG_UNI">Higiene Unissexo</option>
+      </select>
     </div>
   </div>
   <div class="tabs" id="tabs">
@@ -264,12 +294,16 @@
   </div>
 </div>
 
-<footer>GASPAR — Fragrâncias do Oriente</footer>
+<footer>GASPAR — Fragrâncias do Oriente<br><a class="footerIg" id="footerIgLink" href="" target="_blank" rel="noopener">Segue-nos no Instagram</a></footer>
 
 <div class="installPill" id="installPill" onclick="instalarApp()">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211915" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
   Instalar App
 </div>
+
+<a class="igPill" id="igPill" href="" target="_blank" rel="noopener" aria-label="Instagram">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+</a>
 
 <!-- DETALHE DO PERFUME -->
 <div class="modal" id="mDetalhe" style="padding:0">
@@ -335,7 +369,11 @@
       <img src="icon-192_2.jpg" alt="GASPAR">
       <span>GASPAR</span>
     </div>
-    <div class="menuTit">Escolha sua Marca</div>
+    <a class="menuIgLink" id="menuIgLink" href="" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      Segue-nos no Instagram
+    </a>
+    <div class="menuTit" style="margin-top:14px">Escolha sua Marca</div>
     <div class="brandGrid">
       <div class="brandCard" onclick="filtrarMarca('AYELET')">
         <div class="brandCardImg"><img src="logo-ayelet.png" alt="AYELET"></div>
@@ -363,6 +401,26 @@
       </div>
     </div>
     <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
+
+    <div class="menuTit" style="margin-top:22px">Oportunidades · Marcas Internacionais</div>
+    <div class="brandGrid">
+      <div class="brandCard" onclick="filtrarMarca('NIVEA')">
+        <div class="brandCardImg"><img src="logo-nivea.png" alt="NIVEA"></div>
+        <div class="brandCardNome">NIVEA</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('DENIM')">
+        <div class="brandCardImg"><img src="logo-denim.png" alt="DENIM"></div>
+        <div class="brandCardNome">DENIM</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('AXE')">
+        <div class="brandCardImg"><img src="logo-axe.png" alt="AXE"></div>
+        <div class="brandCardNome">AXE</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('COLGATE')">
+        <div class="brandCardImg"><img src="logo-colgate.png" alt="COLGATE"></div>
+        <div class="brandCardNome">COLGATE</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -400,6 +458,7 @@ const SB = 'https://qaseaiiemckxcwzahqew.supabase.co';   // URL do projeto Supab
 const SK = 'sb_publishable_udpae0_ZbYBHHdm79FpC9g_-svSUg27'; // Chave publishable do Supabase GASPAR
 const BUCKET = 'gaspar';                                  // <-- Nome do bucket de Storage
 const WHATSAPP_NUM = '351967925745';                      // (não usado neste momento — o cliente escreve o número no carrinho)
+const INSTAGRAM_URL = 'https://instagram.com/SEU_UTILIZADOR';  // <-- TROCA AQUI pelo teu link/@ do Instagram
 const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
 const LIMIAR_ENVIO_GRATIS = 65;                           // <-- Valor mínimo (€) para portes grátis
 const CUSTO_ENVIO = 5;                                    // <-- Custo dos portes (€) abaixo do limiar
@@ -415,9 +474,27 @@ async function api(path){
 let PERFUMES = [];
 let FILTRO = 'todos';
 let BUSCA = '';
+let CATEGORIA = '';
+
+const CATEGORIA_LABEL = {
+  EDP: 'EDP (Eau de Parfum)',
+  EDT: 'EDT (Eau de Toilette)',
+  DEO_SPRAY: 'Desodorizante Spray',
+  DEO_ROLLON: 'Desodorizante Roll-on',
+  CREMES: 'Cremes Corporais',
+  HIG_ORAL: 'Higiene Oral',
+  HIG_MASC: 'Higiene Masculina',
+  HIG_FEM: 'Higiene Feminina',
+  HIG_UNI: 'Higiene Unissexo'
+};
 
 function pesquisar(v){
   BUSCA = v || '';
+  renderGrid();
+}
+
+function selecionarCategoria(v){
+  CATEGORIA = v || '';
   renderGrid();
 }
 
@@ -493,6 +570,9 @@ function generoLabel(g){
 
 function listaFiltradaAtual(){
   var lista = FILTRO === 'todos' ? PERFUMES : PERFUMES.filter(p => p.genero === FILTRO);
+  if(CATEGORIA){
+    lista = lista.filter(p => p.categoria === CATEGORIA);
+  }
   if(BUSCA.trim()){
     var termo = BUSCA.trim().toLowerCase();
     lista = lista.filter(p => (p.nome || '').toLowerCase().includes(termo));
@@ -525,6 +605,7 @@ function renderGrid(){
       '<div class="cardBody">' +
         '<div class="cardNome">'+p.nome+'</div>' +
         '<div class="genRow"><span class="d" style="background:'+gen.cor+'"></span>'+gen.txt+(p.volume ? ' · '+p.volume : '')+'</div>' +
+        (p.categoria && CATEGORIA_LABEL[p.categoria] ? '<div class="genRow" style="letter-spacing:.3px">'+CATEGORIA_LABEL[p.categoria]+'</div>' : '') +
         '<div class="priceRow">' +
           (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') +
           '<span class="priceNew">'+pn.toFixed(2)+'€</span>' +
@@ -796,6 +877,11 @@ document.getElementById('tabs').addEventListener('click', function(e){
 window.addEventListener('load', function(){
   posicionarIndicador(document.querySelector('.tab.on'));
   iniciar();
+
+  ['igPill','menuIgLink','footerIgLink'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.href = INSTAGRAM_URL;
+  });
 
   setTimeout(function(){
     var splash = document.getElementById('splashScreen');

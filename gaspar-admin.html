@@ -159,6 +159,20 @@
       </div>
     </div>
 
+    <label class="lbl">Categoria</label>
+    <select class="inp" id="pCategoria">
+      <option value="">— Sem categoria —</option>
+      <option value="EDP">EDP (Eau de Parfum)</option>
+      <option value="EDT">EDT (Eau de Toilette)</option>
+      <option value="DEO_SPRAY">Desodorizante Spray</option>
+      <option value="DEO_ROLLON">Desodorizante Roll-on</option>
+      <option value="CREMES">Cremes Corporais</option>
+      <option value="HIG_ORAL">Higiene Oral</option>
+      <option value="HIG_MASC">Higiene Masculina</option>
+      <option value="HIG_FEM">Higiene Feminina</option>
+      <option value="HIG_UNI">Higiene Unissexo</option>
+    </select>
+
     <div class="row2">
       <div>
         <label class="lbl">Preço Original (€)</label>
@@ -250,6 +264,12 @@ function generoLabel(g){
   return 'Unissexo';
 }
 
+var CATEGORIA_LABEL = {
+  EDP: 'EDP', EDT: 'EDT', DEO_SPRAY: 'Deo Spray', DEO_ROLLON: 'Deo Roll-on',
+  CREMES: 'Cremes Corp.', HIG_ORAL: 'Hig. Oral', HIG_MASC: 'Hig. Masc.',
+  HIG_FEM: 'Hig. Fem.', HIG_UNI: 'Hig. Unissexo'
+};
+
 function renderGrid(){
   var grid = document.getElementById('grid');
   var empty = document.getElementById('empty');
@@ -272,6 +292,7 @@ function renderGrid(){
       '<div class="cBody">' +
         '<div class="cNome">'+p.nome+'</div>' +
         '<div class="cMeta"><span class="genTag">'+generoLabel(p.genero)+'</span><span class="genTag">'+(p.volume||'')+'</span></div>' +
+        (p.categoria && CATEGORIA_LABEL[p.categoria] ? '<div class="genTag" style="margin-top:2px">'+CATEGORIA_LABEL[p.categoria]+'</div>' : '') +
         '<div class="cPrice">' + (temDesc ? '<span class="cPriceOld">'+po.toFixed(2)+'€</span>' : '') + pn.toFixed(2)+'€</div>' +
       '</div>' +
     '</div>';
@@ -286,6 +307,7 @@ function abrirNovo(){
   document.getElementById('pNome').value = '';
   document.getElementById('pGenero').value = 'M';
   document.getElementById('pVolume').value = '';
+  document.getElementById('pCategoria').value = '';
   document.getElementById('pPrecoOrig').value = '';
   document.getElementById('pPrecoNovo').value = '';
   document.getElementById('pDescricao').value = '';
@@ -306,6 +328,7 @@ function editarPerfume(id){
   document.getElementById('pNome').value = p.nome || '';
   document.getElementById('pGenero').value = p.genero || 'M';
   document.getElementById('pVolume').value = p.volume || '';
+  document.getElementById('pCategoria').value = p.categoria || '';
   document.getElementById('pPrecoOrig').value = p.preco_orig || '';
   document.getElementById('pPrecoNovo').value = p.preco_novo || '';
   document.getElementById('pDescricao').value = p.descricao || '';
@@ -356,6 +379,7 @@ async function guardarPerfume(){
     nome: nome,
     genero: document.getElementById('pGenero').value,
     volume: document.getElementById('pVolume').value.trim(),
+    categoria: document.getElementById('pCategoria').value,
     preco_orig: parseFloat(document.getElementById('pPrecoOrig').value) || 0,
     preco_novo: parseFloat(document.getElementById('pPrecoNovo').value) || 0,
     ativo: document.getElementById('pAtivo').checked,

@@ -3,7 +3,7 @@
   "name": "GASPAR ORBITA",
   "short_name": "GASPAR ORBITA",
   "start_url": "./INDEX_ORBITA.html",
-  "scope": "./",
+  "scope": "./INDEX_ORBITA.html",
   "display": "standalone",
   "background_color": "#211915",
   "theme_color": "#211915",

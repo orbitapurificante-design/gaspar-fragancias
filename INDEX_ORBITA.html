@@ -267,6 +267,14 @@
       <select id="categoriaSelect" onchange="selecionarCategoria(this.value)">
         <option value="">Categoria</option>
         <option value="EDP">EDP</option>
+        <option value="EDT">EDT</option>
+        <option value="DEO_SPRAY">Deo Spray</option>
+        <option value="DEO_ROLLON">Deo Roll-on</option>
+        <option value="CREMES">Cremes Corporais</option>
+        <option value="HIG_ORAL">Higiene Oral</option>
+        <option value="HIG_MASC">Higiene Masculina</option>
+        <option value="HIG_FEM">Higiene Feminina</option>
+        <option value="HIG_UNI">Higiene Unissexo</option>
       </select>
     </div>
   </div>
@@ -396,6 +404,26 @@
       </div>
     </div>
     <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
+
+    <div class="menuTit" style="margin-top:22px">Oportunidades · Marcas Internacionais</div>
+    <div class="brandGrid">
+      <div class="brandCard" onclick="filtrarMarca('NIVEA')">
+        <div class="brandCardImg"><img src="logo-nivea.png" alt="NIVEA"></div>
+        <div class="brandCardNome">NIVEA</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('DENIM')">
+        <div class="brandCardImg"><img src="logo-denim.png" alt="DENIM"></div>
+        <div class="brandCardNome">DENIM</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('AXE')">
+        <div class="brandCardImg"><img src="logo-axe.png" alt="AXE"></div>
+        <div class="brandCardNome">AXE</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('COLGATE')">
+        <div class="brandCardImg"><img src="logo-colgate.png" alt="COLGATE"></div>
+        <div class="brandCardNome">COLGATE</div>
+      </div>
+    </div>
   </div>
 </div>
 

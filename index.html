@@ -41,22 +41,22 @@
 
   /* TOP BAR — fixa, compacta: marca + carrinho + separação por género */
   .topBar{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);
-    padding:10px 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.25)}
-  .topBarRow{position:relative;display:flex;align-items:center;justify-content:center;padding-bottom:8px}
-  .miniLogo{width:38px;height:38px;border-radius:9px;flex-shrink:0;object-fit:cover}
-  .miniBrand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;letter-spacing:1.5px;
+    padding:8px 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+  .topBarRow{position:relative;display:flex;align-items:center;justify-content:center;padding-bottom:5px}
+  .miniLogo{width:30px;height:30px;border-radius:8px;flex-shrink:0;object-fit:cover}
+  .miniBrand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;letter-spacing:1.3px;
     color:var(--ivory);display:flex;align-items:center;gap:9px;white-space:nowrap;overflow:hidden}
   .miniBrandTxt{display:flex;align-items:baseline;gap:7px}
-  .miniBrandTxt{font-size:19px}
+  .miniBrandTxt{font-size:16px}
   .miniTag{font-family:'Jost',sans-serif;font-size:8px;letter-spacing:1.3px;text-transform:uppercase;
     color:var(--gold);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .cartBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
+  .cartBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
     display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .menuBtn{position:absolute;left:0;top:50%;transform:translateY(-50%);width:38px;height:38px;flex-shrink:0;
+  .menuBtn{position:absolute;left:0;top:50%;transform:translateY(-50%);width:34px;height:34px;flex-shrink:0;
     border-radius:50%;background:var(--bg3);border:1px solid var(--line);color:var(--ivory);
     display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .taglineRow{text-align:center;font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;
-    color:var(--gold);font-weight:500;padding-bottom:10px}
+  .taglineRow{text-align:center;font-size:8.5px;letter-spacing:2.2px;text-transform:uppercase;
+    color:var(--gold);font-weight:500;padding-bottom:7px}
   .searchRow{padding-bottom:10px;display:flex;gap:8px;max-width:520px;margin:0 auto}
   .searchBox{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--line);
     border-radius:22px;padding:9px 15px;flex:1;min-width:0;color:var(--ivory-dim)}
@@ -91,7 +91,7 @@
   .brandCardImg{width:100%;aspect-ratio:1/1;overflow:hidden;background:#fff}
   .brandCardImg img{width:100%;height:100%;object-fit:cover;display:block}
   .brandCardNome{text-align:center;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#000;
-    padding:5px 2px;background:var(--bg3)}
+    padding:3px 2px;background:var(--bg3);line-height:1.3}
   .brandCard:active{border-color:var(--gold)}
   .menuClear{text-align:center;font-size:10.5px;color:var(--ivory-dim);text-decoration:underline;
     cursor:pointer;margin-top:12px}
@@ -105,7 +105,7 @@
     transition:left .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1)}
 
   /* GRID */
-  .wrap{max-width:720px;margin:168px auto 0;padding:16px 14px 60px}
+  .wrap{max-width:720px;margin:154px auto 0;padding:16px 14px 60px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
   @media(min-width:560px){.grid{grid-template-columns:1fr 1fr 1fr}}
   .card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;
@@ -191,8 +191,9 @@
     width:48px;height:48px;border-radius:50%;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);
     background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);
     text-decoration:none}
-  .menuIgLink{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10.5px;letter-spacing:1px;
-    text-transform:uppercase;color:var(--ivory-dim);text-decoration:none;margin-top:6px}
+  .menuIgLink{display:flex;align-items:center;justify-content:center;gap:4px;font-size:8.8px;letter-spacing:0;
+    text-transform:uppercase;color:var(--ivory-dim);text-decoration:none;margin-top:6px;white-space:nowrap}
+  .menuIgLink svg{flex-shrink:0;width:12px;height:12px}
   .footerIg{color:var(--gold);text-decoration:none}
 
   /* MODAL / SHEET */
@@ -333,8 +334,8 @@
       </div>
     </div>
 
-    <div class="detailFooter">
-      <button class="detInfoBtn" onclick="mostrarInfoDetalhe('notas_olfativas','Notas Olfativas')">
+    <div class="detailFooter" id="detailFooter">
+      <button class="detInfoBtn" id="btnNotasOlfativas" onclick="mostrarInfoDetalhe('notas_olfativas','Notas Olfativas')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 10.5 5 15.5a7 7 0 0014 0C19 10.5 12 2 12 2z"/></svg>
         Notas Olfativas
       </button>
@@ -370,8 +371,8 @@
       <span>GASPAR</span>
     </div>
     <a class="menuIgLink" id="menuIgLink" href="" target="_blank" rel="noopener">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       Segue-nos no Instagram
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
     </a>
     <div class="menuTit" style="margin-top:14px">Escolha sua Marca</div>
     <div class="brandGrid">
@@ -704,6 +705,10 @@ function abrirDetalhe(id){
   document.getElementById('detPrice').innerHTML = (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') + '<span class="priceNew">'+pn.toFixed(2)+'€</span>';
 
   atualizarDetalheQty();
+
+  var btnNotas = document.getElementById('btnNotasOlfativas');
+  if(btnNotas) btnNotas.style.display = (p.categoria === 'EDP') ? 'flex' : 'none';
+
   document.getElementById('mDetalhe').classList.add('a');
 }
 

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>GASPAR ORBITA — Fragrâncias do Oriente</title>
+<link rel="manifest" href="manifest-orbita.json">
+<meta name="theme-color" content="#211915">
+<link rel="icon" href="icon-192-orbita.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon-orbita.png">
+<link rel="apple-touch-startup-image" href="logo_gaspar.jpeg">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GASPAR ORBITA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e7e5e2;
+    --bg2:#f4f2ef;
+    --bg3:#dcd8d3;
+    --gold:#a9782e;
+    --gold-soft:#8f6527;
+    --oxblood:#8a2c3d;
+    --ivory:#2b2420;
+    --ivory-dim:#6b6058;
+    --line:rgba(43,36,32,.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ivory);font-family:'Jost',sans-serif;overflow-x:hidden}
+  body{background:var(--bg)}
+
+  #splashScreen{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;
+    justify-content:center;transition:opacity .5s ease}
+  #splashScreen.hide{opacity:0;pointer-events:none}
+  #splashScreen img{max-width:58%;max-height:58%;object-fit:contain}
+  ::selection{background:var(--gold);color:#140f0d}
+  a{color:inherit}
+
+  /* TOP BAR — fixa, compacta: marca + carrinho + separação por género */
+  .topBar{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);
+    padding:8px 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+  .topBarRow{position:relative;display:flex;align-items:center;justify-content:center;padding-bottom:5px}
+  .miniLogo{width:30px;height:30px;border-radius:8px;flex-shrink:0;object-fit:cover}
+  .miniBrand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;letter-spacing:1.3px;
+    color:var(--ivory);display:flex;align-items:center;gap:9px;white-space:nowrap;overflow:hidden}
+  .miniBrandTxt{display:flex;align-items:baseline;gap:7px}
+  .miniBrandTxt{font-size:16px}
+  .miniTag{font-family:'Jost',sans-serif;font-size:8px;letter-spacing:1.3px;text-transform:uppercase;
+    color:var(--gold);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cartBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--oxblood);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .menuBtn{position:absolute;left:0;top:50%;transform:translateY(-50%);width:34px;height:34px;flex-shrink:0;
+    border-radius:50%;background:var(--bg3);border:1px solid var(--line);color:var(--ivory);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .taglineRow{text-align:center;font-size:8.5px;letter-spacing:2.2px;text-transform:uppercase;
+    color:var(--gold);font-weight:500;padding-bottom:7px}
+  .searchRow{padding-bottom:8px;display:flex;gap:8px;max-width:520px;margin:0 auto}
+  .searchBox{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--line);
+    border-radius:22px;padding:9px 15px;flex:1;min-width:0;color:var(--ivory-dim)}
+  .searchBox input{border:none;background:none;outline:none;flex:1;min-width:0;font-family:'Jost',sans-serif;
+    font-size:13px;color:var(--ivory)}
+  .searchBox input::placeholder{color:var(--ivory-dim)}
+  .catSelectBox{flex-shrink:0;width:104px;background:var(--bg3);border:1px solid var(--line);border-radius:22px;
+    padding:0 10px 0 12px;display:flex;align-items:center}
+  .catSelectBox select{width:100%;border:none;background:none;outline:none;appearance:none;-webkit-appearance:none;
+    font-family:'Jost',sans-serif;font-size:11px;color:var(--ivory-dim);padding:9px 0;cursor:pointer}
+  .catSelectBox select:invalid,.catSelectBox select option[value=""]{color:var(--ivory-dim)}
+  .catSelectBox{position:relative}
+  .catSelectBox::after{content:'';position:absolute;right:9px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--ivory-dim);
+    border-bottom:1.5px solid var(--ivory-dim);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+
+  /* MENU DE MARCAS */
+  .menuOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,7,6,.55)}
+  .menuOverlay.a{display:block}
+  .menuDrawer{position:fixed;top:0;left:0;bottom:0;width:38%;min-width:170px;background:var(--bg2);
+    padding:20px 12px;box-shadow:6px 0 30px rgba(0,0,0,.35);transform:translateX(-100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+  .menuOverlay.a .menuDrawer{transform:translateX(0)}
+  .menuDrawerBrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:8px 0 16px;
+    padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .menuDrawerBrand img{width:30px;height:30px;border-radius:7px}
+  .menuDrawerBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;letter-spacing:1.2px;color:var(--ivory)}
+  .menuTit{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;text-align:center;
+    margin:0 0 12px;letter-spacing:.5px;color:var(--gold);text-transform:uppercase;font-size:10px}
+  .brandGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .brandCard{background:var(--bg3);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    cursor:pointer;display:flex;flex-direction:column}
+  .brandCardImg{width:100%;aspect-ratio:1/1;overflow:hidden;background:#fff}
+  .brandCardImg img{width:100%;height:100%;object-fit:cover;display:block}
+  .brandCardNome{text-align:center;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#000;
+    padding:3px 2px;background:var(--bg3);line-height:1.3}
+  .brandCard:active{border-color:var(--gold)}
+  .menuClear{text-align:center;font-size:10.5px;color:var(--ivory-dim);text-decoration:underline;
+    cursor:pointer;margin-top:12px}
+
+  /* TABS */
+  .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
+  .tab{flex:1;text-align:center;padding:6px 6px 8px;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--ivory-dim);cursor:pointer;font-weight:600;transition:color .25s;user-select:none;white-space:nowrap}
+  .tab.on{color:var(--gold)}
+  .tabIndicator{position:absolute;bottom:0;height:2px;background:var(--gold);box-shadow:0 0 8px rgba(201,150,63,.6);
+    transition:left .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1)}
+
+  /* GRID */
+  .wrap{max-width:720px;margin:154px auto 0;padding:10px 12px 50px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}
+  @media(min-width:560px){.grid{grid-template-columns:1fr 1fr 1fr}}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    display:flex;flex-direction:column;position:relative;transition:border-color .2s}
+  .card:hover{border-color:var(--gold-soft)}
+  .cardImg{width:100%;aspect-ratio:1/1;background:var(--bg3);display:flex;align-items:center;justify-content:center;
+    overflow:hidden;position:relative;cursor:pointer}
+  .cardImg img{width:100%;height:100%;object-fit:cover}
+  .cardImg .ph{font-size:34px;opacity:.35}
+
+  /* DETALHE FULLSCREEN — cabeçalho de marca, foto grande (cresce), info fixa por baixo, barra com 3 botões de informação */
+  .detailWrap{width:100%;max-width:600px;margin:0 auto;height:100%;background:var(--bg);
+    display:flex;flex-direction:column;overflow:hidden}
+
+  .detHeader{flex-shrink:0;position:relative;padding:12px 20px 10px;text-align:center;border-bottom:1px solid var(--line)}
+  .detCloseX{position:absolute;top:10px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+    background:var(--bg3);color:var(--ivory);font-size:18px;line-height:1;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;font-family:'Jost',sans-serif}
+  .detHeaderBrand{display:flex;align-items:center;justify-content:center;gap:8px}
+  .detHeaderBrand img{width:30px;height:30px;border-radius:7px}
+  .detHeaderBrand span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;letter-spacing:1.5px;color:var(--ivory)}
+  .detHeaderTag{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-top:4px}
+
+  .detailImgWrap{position:relative;width:100%;flex:1;min-height:0;background:var(--bg3);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none}
+  .detailImg{width:100%;height:100%;object-fit:contain;background:var(--bg3);display:block;transform-origin:center center}
+  .detPageInd{position:absolute;bottom:10px;right:10px;background:rgba(20,15,13,.72);border:1px solid rgba(255,255,255,.15);
+    color:#f3ead9;font-size:11px;font-weight:600;letter-spacing:.5px;padding:4px 10px;border-radius:20px;
+    backdrop-filter:blur(3px);z-index:2}
+
+  .detInfoBar{flex-shrink:0;padding:8px 20px 10px;border-top:1px solid var(--line);background:var(--bg);text-align:center}
+  .detTitleNome{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;line-height:1.25}
+  .detailMetaRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px}
+  .detVolume{font-size:11px;color:var(--ivory-dim);letter-spacing:.5px}
+  .priceRow .priceNew{font-size:21px}
+  .priceRow .priceOld{font-size:14px}
+  .detStepGroup{display:flex;gap:8px;align-items:stretch;justify-content:center;margin:7px auto 0}
+  .detStep{width:38px;height:32px;flex-shrink:0;border-radius:10px;border:1px solid var(--line);background:var(--bg3);
+    color:var(--ivory);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Jost',sans-serif}
+  .detStep:active{background:var(--gold);color:#fff}
+  .detQtyBox{width:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+
+  .detailFooter{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--line);
+    padding:5px 6px;display:flex;gap:4px}
+  .detInfoBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    padding:6px 4px;border:none;background:none;color:var(--ivory-dim);cursor:pointer;font-family:'Jost',sans-serif;
+    font-size:9px;letter-spacing:.3px;text-align:center;border-radius:10px}
+  .detInfoBtn:active{background:var(--bg3);color:var(--gold)}
+  .detInfoBtn svg{width:18px;height:18px}
+
+  .detailDesc{font-size:13.5px;line-height:1.7;color:var(--ivory-dim);white-space:pre-wrap}
+
+  .genRow{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.6px;
+    text-transform:uppercase;color:var(--ivory-dim)}
+  .genRow .d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .cardBody{padding:8px 9px 9px;display:flex;flex-direction:column;gap:3px;flex:1}
+  .cardNome{font-size:12.5px;font-weight:600;line-height:1.25;min-height:auto;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cardVol{font-size:10.5px;color:var(--ivory-dim);letter-spacing:.5px}
+  .priceRow{display:flex;align-items:baseline;justify-content:center;gap:6px;margin-top:auto;padding-top:2px}
+  .priceOld{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--ivory-dim);
+    text-decoration:line-through;text-decoration-color:var(--oxblood)}
+  .priceNew{font-size:15px;font-weight:700;color:var(--gold)}
+  .addRow{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px}
+  .stepBtn{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--bg3);
+    color:var(--ivory);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-family:'Jost',sans-serif;line-height:1;flex-shrink:0}
+  .stepBtn:active{background:var(--gold);color:#140f0d}
+  .qtyNum{width:24px;text-align:center;font-size:13px;font-weight:600}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--ivory-dim)}
+  .empty .e1{font-size:34px;margin-bottom:10px;opacity:.6}
+
+  /* CART FAB */
+  .fabBadge{position:absolute;top:-4px;right:-4px;background:var(--gold);color:#140f0d;font-size:11px;font-weight:800;
+    min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;
+    padding:0 4px;border:2px solid var(--bg)}
+
+  .installPill{display:none;position:fixed;bottom:26px;left:20px;align-items:center;gap:7px;background:var(--gold);
+    color:#211915;font-size:11.5px;font-weight:700;letter-spacing:.5px;padding:11px 16px;border-radius:30px;
+    cursor:pointer;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);font-family:'Jost',sans-serif}
+
+  .footerIg{color:var(--gold);text-decoration:none}
+  .menuIgLink{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    text-decoration:none;margin-top:10px}
+  .igIcon{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;
+    flex-shrink:0;background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+  .menuIgLink span:last-child{font-size:10.5px;letter-spacing:.2px;text-transform:uppercase;
+    color:var(--ivory-dim);white-space:nowrap}
+
+  /* MODAL / SHEET */
+  .modal{display:none;position:fixed;inset:0;z-index:200;align-items:flex-end;background:rgba(10,7,6,.6);backdrop-filter:blur(2px)}
+  .modal.a{display:flex}
+  .sheet{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:600px;margin:0 auto;padding:20px;
+    max-height:88vh;overflow-y:auto;border-top:1px solid var(--line)}
+  .sheetTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .sheetTit{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+  .closeX{background:none;border:none;color:var(--ivory-dim);font-size:26px;cursor:pointer;line-height:1}
+  .cItem{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .cItem:last-child{border-bottom:none}
+  .cImg{width:46px;height:60px;border-radius:8px;object-fit:cover;background:var(--bg3);flex-shrink:0}
+  .cInfo{flex:1;min-width:0}
+  .cNome{font-size:13px;font-weight:600}
+  .cSub{font-size:11.5px;color:var(--ivory-dim);margin-top:2px}
+  .cVal{font-size:13.5px;font-weight:700;color:var(--gold);white-space:nowrap}
+  .totRow{display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px;margin-top:4px}
+  .totLbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ivory-dim)}
+  .totVal{font-size:21px;font-weight:700;color:var(--gold)}
+  .shippingNote{font-size:11.5px;line-height:1.5;padding:9px 12px;border-radius:10px;background:var(--bg3);
+    border:1px solid var(--line);color:var(--ivory-dim);margin-bottom:6px}
+  .shippingNote.ok{color:var(--gold);border-color:var(--gold-soft)}
+  .lbl{display:block;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ivory-dim);margin:14px 0 6px}
+  .inp,.txt{width:100%;padding:12px 13px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;
+    color:var(--ivory);font-size:14px;outline:none;font-family:'Jost',sans-serif}
+  .txt{resize:vertical;min-height:60px}
+  .inp::placeholder,.txt::placeholder{color:#6b6055}
+  .btnGold{width:100%;padding:15px 0;margin-top:16px;border:none;border-radius:12px;background:var(--gold);
+    color:#140f0d;font-weight:700;font-size:13px;letter-spacing:1.3px;text-transform:uppercase;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Jost',sans-serif}
+  .btnGhost{width:100%;padding:12px 0;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:none;
+    color:var(--ivory-dim);font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0a0706;
+    color:#f3ead9;padding:12px 20px;border-radius:12px;font-size:13px;z-index:999;opacity:0;
+    transition:all .3s;border:1px solid rgba(255,255,255,.12);pointer-events:none}
+  .toast.v{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer{text-align:center;padding:26px 20px 40px;font-size:11px;color:var(--ivory-dim);letter-spacing:1px}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+  <img src="../logo_gaspar.jpeg" alt="GASPAR">
+</div>
+
+<div class="topBar">
+  <div class="topBarRow">
+    <button class="menuBtn" onclick="abrirMenuMarca()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="miniBrand">
+      <img src="icon-192-orbita.png" class="miniLogo" alt="GASPAR">
+      <span class="miniBrandTxt">GASPAR</span>
+    </div>
+    <div class="cartBtn" onclick="abrirCarrinho()">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f6eee0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="fabBadge" id="fabBadge">0</span>
+    </div>
+  </div>
+  <div class="taglineRow">Fragrâncias do Oriente</div>
+  <div class="searchRow">
+    <div class="searchBox">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="pesquisaInput" placeholder="Pesquisar por nome..." oninput="pesquisar(this.value)">
+    </div>
+    <div class="catSelectBox">
+      <select id="categoriaSelect" onchange="selecionarCategoria(this.value)">
+        <option value="">Categoria</option>
+        <option value="EDP">EDP</option>
+        <option value="EDT">EDT</option>
+        <option value="DEO_SPRAY">Deo Spray</option>
+        <option value="DEO_ROLLON">Deo Roll-on</option>
+        <option value="CREMES">Cremes Corporais</option>
+        <option value="HIG_ORAL">Higiene Oral</option>
+        <option value="HIG_MASC">Higiene Masculina</option>
+        <option value="HIG_FEM">Higiene Feminina</option>
+        <option value="HIG_UNI">Higiene Unissexo</option>
+      </select>
+    </div>
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab on" data-g="todos">Todos</div>
+    <div class="tab" data-g="M">Masculino</div>
+    <div class="tab" data-g="F">Feminino</div>
+    <div class="tab" data-g="U">Unissexo</div>
+    <div class="tabIndicator" id="tabInd"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">
+    <div class="e1">🌿</div>
+    Não encontrámos fragrâncias com esses critérios.
+  </div>
+</div>
+
+<footer>GASPAR — Fragrâncias do Oriente<br><a class="footerIg" id="footerIgLink" href="" target="_blank" rel="noopener">
+  <span class="igIcon" style="width:16px;height:16px;border-radius:5px;display:inline-flex;vertical-align:middle;margin-right:4px">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="6"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+  </span>Segue-nos no Instagram
+</a></footer>
+
+<div class="installPill" id="installPill" onclick="instalarApp()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211915" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
+  Instalar App
+</div>
+
+<!-- DETALHE DO PERFUME -->
+<div class="modal" id="mDetalhe" style="padding:0">
+  <div class="detailWrap">
+    <div class="detHeader">
+      <button class="detCloseX" onclick="fecharModal('mDetalhe')">×</button>
+      <div class="detHeaderBrand">
+        <img src="icon-192-orbita.png" class="miniLogo" alt="GASPAR">
+        <span>GASPAR</span>
+      </div>
+      <div class="detHeaderTag">Fragrâncias do Oriente</div>
+    </div>
+
+    <div class="detailImgWrap" id="detImgWrap"></div>
+
+    <div class="detInfoBar">
+      <div class="detTitleNome" id="detTitleNome"></div>
+      <div class="detailMetaRow">
+        <div class="genRow" id="detGen" style="font-size:11px"></div>
+        <div class="detVolume" id="detVolume"></div>
+      </div>
+      <div class="priceRow" id="detPrice" style="margin-top:8px"></div>
+      <div class="detStepGroup">
+        <button class="detStep" onclick="cartChange(detalheAtualId,-1); atualizarDetalheQty()">−</button>
+        <div class="detQtyBox" id="detQty">0</div>
+        <button class="detStep" onclick="cartChange(detalheAtualId,1); atualizarDetalheQty()">+</button>
+      </div>
+    </div>
+
+    <div class="detailFooter" id="detailFooter">
+      <button class="detInfoBtn" id="btnNotasOlfativas" onclick="mostrarInfoDetalhe('notas_olfativas','Notas Olfativas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 10.5 5 15.5a7 7 0 0014 0C19 10.5 12 2 12 2z"/></svg>
+        Notas Olfativas
+      </button>
+      <button class="detInfoBtn" onclick="mostrarInfoDetalhe('descricao','Descrição do Produto')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        Descrição
+      </button>
+      <button class="detInfoBtn" onclick="mostrarInfoDetalhe('caracteristicas','Características')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41L11 3.83A2 2 0 009.59 3H4a1 1 0 00-1 1v5.59a2 2 0 00.59 1.41l9.58 9.58a2 2 0 002.82 0l4.6-4.6a2 2 0 000-2.82z"/><circle cx="7.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+        Características
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO DO DETALHE (Notas / Descrição / Características) -->
+<div class="modal" id="mInfoDetalhe">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit" id="infoDetTit">Notas Olfativas</div>
+      <button class="closeX" onclick="fecharModal('mInfoDetalhe')">×</button>
+    </div>
+    <div class="detailDesc" id="infoDetTxt" style="max-height:50vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- MENU DE MARCAS -->
+<div class="menuOverlay" id="menuOverlay" onclick="fecharMenuMarca(event)">
+  <div class="menuDrawer" onclick="event.stopPropagation()">
+    <button class="closeX" style="position:absolute;top:14px;right:14px" onclick="fecharMenuMarca()">×</button>
+    <div class="menuDrawerBrand">
+      <img src="icon-192-orbita.png" alt="GASPAR">
+      <span>GASPAR</span>
+    </div>
+    <a class="menuIgLink" id="menuIgLink" href="" target="_blank" rel="noopener">
+      <span class="igIcon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="6"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </span>
+      <span>Segue-nos no Instagram</span>
+    </a>
+    <div class="menuTit" style="margin-top:14px">Escolha sua Marca</div>
+    <div class="brandGrid">
+      <div class="brandCard" onclick="filtrarMarca('AYELET')">
+        <div class="brandCardImg"><img src="../logo-ayelet.png" alt="AYELET"></div>
+        <div class="brandCardNome">AYELET</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('RAYHAAN')">
+        <div class="brandCardImg"><img src="../logo-rayhaan.png" alt="RAYHAAN"></div>
+        <div class="brandCardNome">RAYHAAN</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('RP')">
+        <div class="brandCardImg"><img src="../logo-rp.png" alt="RP"></div>
+        <div class="brandCardNome">RP</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('LATTAFA')">
+        <div class="brandCardImg"><img src="../logo-lattafa.png" alt="LATTAFA"></div>
+        <div class="brandCardNome">LATTAFA</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('RIIFFS')">
+        <div class="brandCardImg"><img src="../logo-riiffs.png" alt="RIIFFS"></div>
+        <div class="brandCardNome">RIIFFS</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('BAAB')">
+        <div class="brandCardImg"><img src="../logo-baab.png" alt="BAAB"></div>
+        <div class="brandCardNome">BAAB</div>
+      </div>
+    </div>
+    <div class="menuClear" onclick="filtrarMarca('')">Ver todas as marcas</div>
+
+    <div class="menuTit" style="margin-top:22px">Oportunidades · Marcas Internacionais</div>
+    <div class="brandGrid">
+      <div class="brandCard" onclick="filtrarMarca('NIVEA')">
+        <div class="brandCardImg"><img src="../logo-nivea.png" alt="NIVEA"></div>
+        <div class="brandCardNome">NIVEA</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('DENIM')">
+        <div class="brandCardImg"><img src="../logo-denim.png" alt="DENIM"></div>
+        <div class="brandCardNome">DENIM</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('AXE')">
+        <div class="brandCardImg"><img src="../logo-axe.png" alt="AXE"></div>
+        <div class="brandCardNome">AXE</div>
+      </div>
+      <div class="brandCard" onclick="filtrarMarca('COLGATE')">
+        <div class="brandCardImg"><img src="../logo-colgate.png" alt="COLGATE"></div>
+        <div class="brandCardNome">COLGATE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CARRINHO -->
+<div class="modal" id="mCart">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">O seu Pedido</div>
+      <button class="closeX" onclick="fecharModal('mCart')">×</button>
+    </div>
+    <div id="cartLista"></div>
+    <div class="totRow"><div class="totLbl">Total Estimado</div><div class="totVal" id="cartTotal">0.00€</div></div>
+    <div class="shippingNote" id="shippingNote"></div>
+    <label class="lbl">O seu nome *</label>
+    <input type="text" class="inp" id="cName" placeholder="Ex: Maria Silva">
+    <label class="lbl">Número de WhatsApp para envio *</label>
+    <input type="tel" class="inp" id="cartTel" placeholder="Ex: 351912345678">
+    <label class="lbl">Observações (opcional)</label>
+    <textarea class="txt" id="cNotes" placeholder="Ex: morada de entrega, preferências..."></textarea>
+    <button class="btnGold" onclick="enviarWhatsApp()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#140f0d"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Enviar Pedido via WhatsApp
+    </button>
+    <button class="btnGhost" onclick="limparCarrinho()">Limpar pedido</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURAÇÃO — ALTERA AQUI QUANDO PRECISARES
+// ══════════════════════════════════════════
+const SB = 'https://qaseaiiemckxcwzahqew.supabase.co';   // URL do projeto Supabase GASPAR
+const SK = 'sb_publishable_udpae0_ZbYBHHdm79FpC9g_-svSUg27'; // Chave publishable do Supabase GASPAR
+const BUCKET = 'gaspar';                                  // <-- Nome do bucket de Storage
+const WHATSAPP_NUM = '351967925745';                      // (não usado neste momento — o cliente escreve o número no carrinho)
+const INSTAGRAM_URL = 'https://www.instagram.com/orbitapurificante/';
+const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
+const LIMIAR_ENVIO_GRATIS = 65;                           // <-- Valor mínimo (€) para portes grátis
+const CUSTO_ENVIO = 5;                                    // <-- Custo dos portes (€) abaixo do limiar
+
+function hd(){ return { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'Content-Type': 'application/json' }; }
+async function api(path){
+  try{
+    var r = await fetch(SB + '/rest/v1/' + path, { headers: hd() });
+    return r.ok ? await r.json() : [];
+  }catch(e){ return []; }
+}
+
+let PERFUMES = [];
+let FILTRO = 'todos';
+let BUSCA = '';
+let CATEGORIA = '';
+
+const CATEGORIA_LABEL = {
+  EDP: 'EDP (Eau de Parfum)',
+  EDT: 'EDT (Eau de Toilette)',
+  DEO_SPRAY: 'Desodorizante Spray',
+  DEO_ROLLON: 'Desodorizante Roll-on',
+  CREMES: 'Cremes Corporais',
+  HIG_ORAL: 'Higiene Oral',
+  HIG_MASC: 'Higiene Masculina',
+  HIG_FEM: 'Higiene Feminina',
+  HIG_UNI: 'Higiene Unissexo'
+};
+
+function pesquisar(v){
+  BUSCA = v || '';
+  renderGrid();
+}
+
+function selecionarCategoria(v){
+  CATEGORIA = v || '';
+  renderGrid();
+}
+
+// ── MENU DE MARCAS ──
+function abrirMenuMarca(){
+  document.getElementById('menuOverlay').classList.add('a');
+}
+function fecharMenuMarca(e){
+  if(e) e.stopPropagation();
+  document.getElementById('menuOverlay').classList.remove('a');
+}
+function filtrarMarca(nome){
+  document.getElementById('pesquisaInput').value = nome;
+  pesquisar(nome);
+  document.getElementById('menuOverlay').classList.remove('a');
+}
+
+let CART = {};
+
+// ── PROTEÇÃO CONTRA SAIR SEM QUERER (perde as quantidades do pedido) ──
+window.addEventListener('beforeunload', function(e){
+  if(Object.keys(CART).length > 0){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+history.pushState({ gasparGuard: true }, '', location.href);
+window.addEventListener('popstate', function(){
+  if(Object.keys(CART).length > 0){
+    var sair = confirm('Tens produtos no pedido. Se saíres agora, as quantidades vão ser todas apagadas.\n\nTens a certeza que queres sair?');
+    if(sair){
+      history.back();
+    } else {
+      history.pushState({ gasparGuard: true }, '', location.href);
+    }
+  } else {
+    history.back();
+  }
+});
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('v');
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(()=> t.classList.remove('v'), 2400);
+}
+
+async function iniciar(){
+  PERFUMES = await api('perfumes?ativo=eq.true&order=id.desc');
+  renderGrid();
+}
+
+function trocarTab(g, el){
+  FILTRO = g;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  posicionarIndicador(el);
+  renderGrid();
+}
+
+function posicionarIndicador(el){
+  var ind = document.getElementById('tabInd');
+  ind.style.left = el.offsetLeft + 'px';
+  ind.style.width = el.offsetWidth + 'px';
+}
+
+function generoLabel(g){
+  if(g === 'M') return {txt:'Masculino', cor:'#3b6fd6'};
+  if(g === 'F') return {txt:'Feminino', cor:'#e0568f'};
+  return {txt:'Unissexo', cor:'#a9782e'};
+}
+
+function listaFiltradaAtual(){
+  var lista = FILTRO === 'todos' ? PERFUMES : PERFUMES.filter(p => p.genero === FILTRO);
+  if(CATEGORIA){
+    lista = lista.filter(p => p.categoria === CATEGORIA);
+  }
+  if(BUSCA.trim()){
+    var termo = BUSCA.trim().toLowerCase();
+    lista = lista.filter(p => (p.nome || '').toLowerCase().includes(termo));
+  }
+  return lista;
+}
+
+function renderGrid(){
+  var lista = listaFiltradaAtual();
+  var grid = document.getElementById('grid');
+  var empty = document.getElementById('empty');
+
+  if(!lista.length){
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = lista.map(function(p){
+    var po = parseFloat(p.preco_orig) || 0;
+    var pn = parseFloat(p.preco_novo) || 0;
+    var temDesc = po > pn && po > 0;
+    var gen = generoLabel(p.genero);
+    var qty = CART[p.id] ? CART[p.id].qty : 0;
+    return '<div class="card">' +
+      '<div class="cardImg" onclick="abrirDetalhe('+p.id+')">' +
+        (p.foto ? '<img src="'+p.foto+'">' : '<div class="ph">🌸</div>') +
+      '</div>' +
+      '<div class="cardBody">' +
+        '<div class="cardNome">'+p.nome+'</div>' +
+        '<div class="genRow"><span class="d" style="background:'+gen.cor+'"></span>'+gen.txt+(p.volume ? ' · '+p.volume : '')+'</div>' +
+        (p.categoria && CATEGORIA_LABEL[p.categoria] ? '<div class="genRow" style="letter-spacing:.3px">'+CATEGORIA_LABEL[p.categoria]+'</div>' : '') +
+        '<div class="priceRow">' +
+          (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') +
+          '<span class="priceNew">'+pn.toFixed(2)+'€</span>' +
+        '</div>' +
+        '<div class="addRow">' +
+          '<button class="stepBtn" onclick="cartChange('+p.id+',-1)">−</button>' +
+          '<div class="qtyNum" id="qn_'+p.id+'">'+qty+'</div>' +
+          '<button class="stepBtn" onclick="cartChange('+p.id+',1)">+</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function cartChange(id, delta){
+  var p = PERFUMES.find(x => String(x.id) === String(id));
+  if(!p) return;
+  var key = String(id);
+  if(!CART[key]) CART[key] = { p: p, qty: 0 };
+  CART[key].qty = Math.max(0, CART[key].qty + delta);
+  if(CART[key].qty === 0) delete CART[key];
+
+  var el = document.getElementById('qn_' + id);
+  if(el) el.textContent = CART[key] ? CART[key].qty : 0;
+
+  var total = Object.values(CART).reduce((a,x) => a + x.qty, 0);
+  var badge = document.getElementById('fabBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+}
+
+function abrirCarrinho(){
+  var items = Object.values(CART);
+  var lista = document.getElementById('cartLista');
+  var totalVal = 0;
+
+  if(!items.length){
+    lista.innerHTML = '<p style="text-align:center;color:var(--ivory-dim);padding:20px 0">O seu pedido está vazio.</p>';
+    document.getElementById('cartTotal').textContent = '0.00€';
+  } else {
+    lista.innerHTML = items.map(function(it){
+      var pn = parseFloat(it.p.preco_novo) || 0;
+      var sub = pn * it.qty;
+      totalVal += sub;
+      return '<div class="cItem">' +
+        (it.p.foto ? '<img class="cImg" src="'+it.p.foto+'">' : '<div class="cImg"></div>') +
+        '<div class="cInfo"><div class="cNome">'+it.p.nome+'</div><div class="cSub">'+it.qty+' un × '+pn.toFixed(2)+'€</div></div>' +
+        '<div class="cVal">'+sub.toFixed(2)+'€</div>' +
+      '</div>';
+    }).join('');
+    document.getElementById('cartTotal').textContent = totalVal.toFixed(2) + '€';
+  }
+
+  var noteEl = document.getElementById('shippingNote');
+  if(!items.length){
+    noteEl.className = 'shippingNote';
+    noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> para encomendas abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€. Grátis a partir desse valor.';
+  } else if(totalVal < LIMIAR_ENVIO_GRATIS){
+    var falta = (LIMIAR_ENVIO_GRATIS - totalVal).toFixed(2);
+    noteEl.className = 'shippingNote';
+    noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> (encomenda abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€). Faltam <b>'+falta+'€</b> para teres portes grátis!';
+  } else {
+    noteEl.className = 'shippingNote ok';
+    noteEl.innerHTML = '🎉 Parabéns! A tua encomenda tem <b>portes de transporte grátis</b>.';
+  }
+
+  document.getElementById('mCart').classList.add('a');
+}
+
+function fecharModal(id){ document.getElementById(id).classList.remove('a'); }
+
+var detalheAtualId = null;
+
+function abrirDetalhe(id){
+  var p = PERFUMES.find(x => String(x.id) === String(id));
+  if(!p) return;
+  detalheAtualId = p.id;
+  if(window._resetDetalheZoom) window._resetDetalheZoom();
+
+  var po = parseFloat(p.preco_orig) || 0;
+  var pn = parseFloat(p.preco_novo) || 0;
+  var temDesc = po > pn && po > 0;
+  var gen = generoLabel(p.genero);
+
+  var lista = listaFiltradaAtual();
+  var idxAtual = lista.findIndex(function(x){ return String(x.id) === String(p.id); });
+  var pagTxt = (idxAtual + 1) + ' / ' + lista.length;
+
+  document.getElementById('detImgWrap').innerHTML =
+    (p.foto ? '<img class="detailImg" src="'+p.foto+'">' : '<div class="detailImg" style="display:flex;align-items:center;justify-content:center;font-size:60px">🌸</div>') +
+    '<div class="detPageInd" id="detPageInd">'+pagTxt+'</div>';
+
+  document.getElementById('detTitleNome').textContent = p.nome;
+  document.getElementById('detGen').innerHTML = '<span class="d" style="background:'+gen.cor+'"></span>'+gen.txt;
+  document.getElementById('detVolume').textContent = p.volume || '';
+  document.getElementById('detPrice').innerHTML = (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') + '<span class="priceNew">'+pn.toFixed(2)+'€</span>';
+
+  atualizarDetalheQty();
+
+  var btnNotas = document.getElementById('btnNotasOlfativas');
+  if(btnNotas) btnNotas.style.display = (p.categoria === 'EDP') ? 'flex' : 'none';
+
+  document.getElementById('mDetalhe').classList.add('a');
+}
+
+function mostrarInfoDetalhe(campo, titulo){
+  var p = PERFUMES.find(x => String(x.id) === String(detalheAtualId));
+  if(!p) return;
+  var texto = (p[campo] || '').trim();
+  document.getElementById('infoDetTit').textContent = titulo;
+  document.getElementById('infoDetTxt').textContent = texto || 'Ainda não há informação de "'+titulo+'" para este perfume.';
+  document.getElementById('mInfoDetalhe').classList.add('a');
+}
+
+function navegarDetalhe(delta){
+  var lista = listaFiltradaAtual();
+  var idx = lista.findIndex(function(p){ return String(p.id) === String(detalheAtualId); });
+  if(idx === -1) return;
+  var novoIdx = idx + delta;
+  if(novoIdx < 0 || novoIdx >= lista.length) return;
+  abrirDetalhe(lista[novoIdx].id);
+}
+
+// Gestos na foto do detalhe: 1 dedo desliza avança/recua produto; 2 dedos fazem zoom; duplo-toque repõe o zoom
+(function(){
+  var wrap = document.getElementById('detImgWrap');
+  if(!wrap) return;
+  var sx = 0, sy = 0, tocando = false;
+  var pinchStartDist = 0, escalaAtual = 1, aPinch = false;
+  var ultimoTap = 0;
+
+  function getImg(){ return wrap.querySelector('.detailImg'); }
+  function dist(t){ var dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY; return Math.sqrt(dx*dx + dy*dy); }
+
+  function resetZoomVisual(){
+    escalaAtual = 1;
+    var img = getImg();
+    if(img){
+      img.style.transition = 'transform .25s ease-out, transform-origin .25s ease-out';
+      img.style.transformOrigin = 'center center';
+      img.style.transform = 'scale(1)';
+    }
+  }
+  window._resetDetalheZoom = resetZoomVisual;
+
+  wrap.addEventListener('touchstart', function(e){
+    if(e.touches.length >= 2){
+      aPinch = true; tocando = false;
+      pinchStartDist = dist(e.touches);
+      var img = getImg();
+      if(img){
+        img.style.transition = 'none';
+        var rect = img.getBoundingClientRect();
+        var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        var origemX = rect.width ? ((midX - rect.left) / rect.width) * 100 : 50;
+        var origemY = rect.height ? ((midY - rect.top) / rect.height) * 100 : 50;
+        origemX = Math.min(100, Math.max(0, origemX));
+        origemY = Math.min(100, Math.max(0, origemY));
+        img.style.transformOrigin = origemX + '% ' + origemY + '%';
+      }
+    } else if(e.touches.length === 1){
+      aPinch = false; // um novo toque com 1 dedo nunca é um pinch — garante que o swipe não fica bloqueado
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; tocando = true;
+
+      var agora = Date.now();
+      if(agora - ultimoTap < 320){ resetZoomVisual(); tocando = false; }
+      ultimoTap = agora;
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchmove', function(e){
+    if(e.touches.length === 2 && pinchStartDist > 0){
+      var d = dist(e.touches);
+      var novaEscala = escalaAtual * (d / pinchStartDist);
+      novaEscala = Math.min(3, Math.max(1, novaEscala));
+      var img = getImg();
+      if(img) img.style.transform = 'scale(' + novaEscala + ')';
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchend', function(e){
+    if(e.touches.length >= 1){
+      // ainda há dedo(s) no ecrã (ex: a sair de um pinch) — só finaliza a escala, não interpreta como swipe
+      if(aPinch){
+        var img1 = getImg();
+        if(img1){
+          var m1 = /scale\(([\d.]+)\)/.exec(img1.style.transform || '');
+          escalaAtual = m1 ? parseFloat(m1[1]) : 1;
+        }
+        pinchStartDist = 0;
+      }
+      return;
+    }
+    // último dedo levantado
+    if(aPinch){
+      var img2 = getImg();
+      if(img2){
+        var m2 = /scale\(([\d.]+)\)/.exec(img2.style.transform || '');
+        escalaAtual = m2 ? parseFloat(m2[1]) : 1;
+      }
+      aPinch = false; pinchStartDist = 0;
+      return; // largar os dedos de um pinch não conta como swipe
+    }
+    if(!tocando) return;
+    tocando = false;
+    if(escalaAtual > 1.05) return; // com zoom ativo não navega ao arrastar
+    if(!e.changedTouches || !e.changedTouches.length) return;
+    var dx = e.changedTouches[0].clientX - sx;
+    var dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.3){
+      if(dx < 0) navegarDetalhe(1); else navegarDetalhe(-1);
+    }
+  }, {passive:true});
+})();
+
+function atualizarDetalheQty(){
+  var key = String(detalheAtualId);
+  var qty = CART[key] ? CART[key].qty : 0;
+  var el = document.getElementById('detQty');
+  if(el) el.textContent = qty;
+}
+
+function limparCarrinho(){
+  if(!confirm('Limpar todo o pedido?')) return;
+  CART = {};
+  document.querySelectorAll('[id^="qn_"]').forEach(el => el.textContent = '0');
+  document.getElementById('fabBadge').style.display = 'none';
+  fecharModal('mCart');
+}
+
+function gerarTextoEncomenda(nome, notas){
+  var items = Object.values(CART);
+  var data = new Date().toLocaleDateString('pt-PT');
+  var linhas = ['🌸 NOVO PEDIDO — ' + LOJA_NOME, '📅 ' + data, '👤 ' + nome, ''];
+  var total = 0;
+  items.forEach(function(it){
+    var pn = parseFloat(it.p.preco_novo) || 0;
+    var sub = pn * it.qty;
+    total += sub;
+    linhas.push('• ' + it.p.nome + (it.p.volume ? ' ('+it.p.volume+')' : '') + ' — ' + it.qty + 'un × ' + pn.toFixed(2) + '€ = ' + sub.toFixed(2) + '€');
+  });
+  linhas.push('');
+  linhas.push('💰 SUBTOTAL: ' + total.toFixed(2) + '€');
+  if(total < LIMIAR_ENVIO_GRATIS){
+    linhas.push('🚚 Portes de transporte: ' + CUSTO_ENVIO.toFixed(2) + '€ (encomenda abaixo de ' + LIMIAR_ENVIO_GRATIS.toFixed(2) + '€)');
+  } else {
+    linhas.push('🚚 Portes de transporte: Grátis');
+  }
+  if(notas && notas.trim()) { linhas.push(''); linhas.push('📝 Observações: ' + notas.trim()); }
+  return linhas.join('\n');
+}
+
+function enviarWhatsApp(){
+  var items = Object.values(CART);
+  if(!items.length){ toast('⚠️ O pedido está vazio'); return; }
+  var nome = document.getElementById('cName').value.trim();
+  if(!nome){ toast('⚠️ Indique o seu nome'); return; }
+  var tel = document.getElementById('cartTel').value.replace(/\D/g,'');
+  if(!tel){ toast('⚠️ Indique o número de WhatsApp'); return; }
+  var notas = document.getElementById('cNotes').value;
+  var txt = gerarTextoEncomenda(nome, notas);
+  var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(txt);
+  window.open(url, '_blank');
+}
+
+document.getElementById('tabs').addEventListener('click', function(e){
+  var t = e.target.closest('.tab');
+  if(!t) return;
+  trocarTab(t.dataset.g, t);
+});
+
+window.addEventListener('load', function(){
+  posicionarIndicador(document.querySelector('.tab.on'));
+  iniciar();
+
+  ['menuIgLink','footerIgLink'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.href = INSTAGRAM_URL;
+  });
+
+  setTimeout(function(){
+    var splash = document.getElementById('splashScreen');
+    if(splash){
+      splash.classList.add('hide');
+      setTimeout(function(){ splash.remove(); }, 600);
+    }
+  }, 900);
+});
+window.addEventListener('resize', function(){
+  posicionarIndicador(document.querySelector('.tab.on'));
+});
+
+// ── INSTALAR COMO APP (GASPAR ORBITA) ──
+let deferredPrompt = null;
+
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+function isStandalone(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  if(!isStandalone()) document.getElementById('installPill').style.display = 'flex';
+});
+
+async function instalarApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installPill').style.display = 'none';
+  } else if(isIOS()){
+    toast('📲 Toca no botão Partilhar e depois em "Adicionar ao Ecrã Principal"');
+  } else {
+    toast('📲 Abre o menu do navegador e escolhe "Instalar app" ou "Adicionar ao ecrã principal"');
+  }
+}
+
+window.addEventListener('appinstalled', function(){
+  document.getElementById('installPill').style.display = 'none';
+});
+
+if(!isStandalone() && isIOS()){
+  document.getElementById('installPill').style.display = 'flex';
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('../sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

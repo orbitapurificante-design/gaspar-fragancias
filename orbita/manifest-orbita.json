@@ -1,9 +1,9 @@
 {
-  "id": "/INDEX_ORBITA.html",
+  "id": "/orbita/INDEX_ORBITA.html",
   "name": "GASPAR ORBITA",
   "short_name": "GASPAR ORBITA",
   "start_url": "./INDEX_ORBITA.html",
-  "scope": "./INDEX_ORBITA.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#211915",
   "theme_color": "#211915",

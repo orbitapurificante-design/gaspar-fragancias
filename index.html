@@ -523,6 +523,16 @@ async function iniciar(){
   renderGrid();
 }
 
+// ── CONTADOR DE VISITAS (1 por visitante por dia) ──
+async function registarVisita(){
+  try{
+    var hoje = new Date().toISOString().slice(0,10);
+    if(localStorage.getItem('gaspar_ultima_visita') === hoje) return;
+    localStorage.setItem('gaspar_ultima_visita', hoje);
+    await fetch(SB + '/rest/v1/visitas', { method: 'POST', headers: hd(), body: JSON.stringify({}) });
+  }catch(e){ /* falha silenciosa — não deve afetar a navegação do cliente */ }
+}
+
 function trocarTab(g, el){
   FILTRO = g;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
@@ -856,6 +866,7 @@ document.getElementById('tabs').addEventListener('click', function(e){
 window.addEventListener('load', function(){
   posicionarIndicador(document.querySelector('.tab.on'));
   iniciar();
+  registarVisita();
 
   ['menuIgLink','footerIgLink'].forEach(function(id){
     var el = document.getElementById(id);

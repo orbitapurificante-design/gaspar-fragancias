@@ -67,6 +67,8 @@
     font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
   .offBadge{position:absolute;top:8px;right:8px;background:rgba(20,15,13,.85);border:1px solid var(--line);
     color:var(--ivory-dim);font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+  .stockBadge{position:absolute;top:8px;left:8px;background:var(--oxblood);color:#fff;
+    font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
 
   .empty{text-align:center;padding:60px 20px;color:var(--ivory-dim)}
 
@@ -192,6 +194,11 @@
       <label for="pAtivo">Visível na loja online</label>
     </div>
 
+    <div class="checkRow">
+      <input type="checkbox" id="pEsgotado">
+      <label for="pEsgotado">Esgotado (aparece na loja, mas não pode ser encomendado)</label>
+    </div>
+
     <label class="lbl">Descrição do Perfume</label>
     <textarea class="inp" id="pDescricao" style="min-height:90px;resize:vertical" placeholder="Ex: Notas de topo de bergamota e açafrão, coração de rosa turca e oud, fundo de âmbar e sândalo. Ideal para uso noturno..."></textarea>
 
@@ -307,6 +314,7 @@ function renderGrid(){
     var temDesc = po > pn && po > 0;
     return '<div class="card '+(p.ativo === false ? 'off' : '')+'" onclick="editarPerfume('+p.id+')">' +
       (p.ativo === false ? '<div class="offBadge">Oculto</div>' : '') +
+      (p.esgotado === true ? '<div class="stockBadge">Esgotado</div>' : '') +
       '<div class="cImg">' + (p.foto ? '<img src="'+p.foto+'">' : '<div class="ph">🌸</div>') + '</div>' +
       '<div class="cBody">' +
         '<div class="cNome">'+p.nome+'</div>' +
@@ -333,6 +341,7 @@ function abrirNovo(){
   document.getElementById('pNotasOlfativas').value = '';
   document.getElementById('pCaracteristicas').value = '';
   document.getElementById('pAtivo').checked = true;
+  document.getElementById('pEsgotado').checked = false;
   document.getElementById('fotoPreview').innerHTML = '<div class="fp">📷<br>Toca para carregar foto</div>';
   document.getElementById('btnApagar').style.display = 'none';
   document.getElementById('mPerfume').classList.add('a');
@@ -354,6 +363,7 @@ function editarPerfume(id){
   document.getElementById('pNotasOlfativas').value = p.notas_olfativas || '';
   document.getElementById('pCaracteristicas').value = p.caracteristicas || '';
   document.getElementById('pAtivo').checked = p.ativo !== false;
+  document.getElementById('pEsgotado').checked = p.esgotado === true;
   document.getElementById('fotoPreview').innerHTML = p.foto ? '<img src="'+p.foto+'">' : '<div class="fp">📷<br>Toca para carregar foto</div>';
   document.getElementById('btnApagar').style.display = 'block';
   document.getElementById('mPerfume').classList.add('a');
@@ -402,6 +412,7 @@ async function guardarPerfume(){
     preco_orig: parseFloat(document.getElementById('pPrecoOrig').value) || 0,
     preco_novo: parseFloat(document.getElementById('pPrecoNovo').value) || 0,
     ativo: document.getElementById('pAtivo').checked,
+    esgotado: document.getElementById('pEsgotado').checked,
     descricao: document.getElementById('pDescricao').value.trim(),
     notas_olfativas: document.getElementById('pNotasOlfativas').value.trim(),
     caracteristicas: document.getElementById('pCaracteristicas').value.trim(),

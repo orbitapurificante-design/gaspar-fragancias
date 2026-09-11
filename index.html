@@ -115,6 +115,11 @@
     overflow:hidden;position:relative;cursor:pointer}
   .cardImg img{width:100%;height:100%;object-fit:cover}
   .cardImg .ph{font-size:34px;opacity:.35}
+  .stockBadge{position:absolute;top:6px;left:6px;z-index:2;background:var(--oxblood);color:#fff;
+    font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+  .card.esgotado .cardImg img{opacity:.55}
+  .addRowEsgotado{text-align:center;padding:6px 0;color:var(--ivory-dim);font-size:10.5px;
+    letter-spacing:.8px;text-transform:uppercase}
 
   /* DETALHE FULLSCREEN — cabeçalho de marca, foto grande (cresce), info fixa por baixo, barra com 3 botões de informação */
   .detailWrap{width:100%;max-width:600px;margin:0 auto;height:100%;background:var(--bg);
@@ -319,11 +324,13 @@
         <div class="detVolume" id="detVolume"></div>
       </div>
       <div class="priceRow" id="detPrice" style="margin-top:8px"></div>
-      <div class="detStepGroup">
+      <div class="detStepGroup" id="detStepGroup">
         <button class="detStep" onclick="cartChange(detalheAtualId,-1); atualizarDetalheQty()">−</button>
         <div class="detQtyBox" id="detQty">0</div>
         <button class="detStep" onclick="cartChange(detalheAtualId,1); atualizarDetalheQty()">+</button>
       </div>
+      <div id="detEsgotadoMsg" style="display:none;margin:7px auto 0;text-align:center;color:var(--oxblood);
+        font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase">Esgotado</div>
     </div>
 
     <div class="detailFooter" id="detailFooter">
@@ -583,8 +590,10 @@ function renderGrid(){
     var temDesc = po > pn && po > 0;
     var gen = generoLabel(p.genero);
     var qty = CART[p.id] ? CART[p.id].qty : 0;
-    return '<div class="card">' +
+    var esgotado = p.esgotado === true;
+    return '<div class="card'+(esgotado ? ' esgotado' : '')+'">' +
       '<div class="cardImg" onclick="abrirDetalhe('+p.id+')">' +
+        (esgotado ? '<div class="stockBadge">Esgotado</div>' : '') +
         (p.foto ? '<img src="'+p.foto+'">' : '<div class="ph">🌸</div>') +
       '</div>' +
       '<div class="cardBody">' +
@@ -595,11 +604,13 @@ function renderGrid(){
           (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') +
           '<span class="priceNew">'+pn.toFixed(2)+'€</span>' +
         '</div>' +
-        '<div class="addRow">' +
-          '<button class="stepBtn" onclick="cartChange('+p.id+',-1)">−</button>' +
-          '<div class="qtyNum" id="qn_'+p.id+'">'+qty+'</div>' +
-          '<button class="stepBtn" onclick="cartChange('+p.id+',1)">+</button>' +
-        '</div>' +
+        (esgotado ?
+          '<div class="addRowEsgotado">Esgotado</div>' :
+          '<div class="addRow">' +
+            '<button class="stepBtn" onclick="cartChange('+p.id+',-1)">−</button>' +
+            '<div class="qtyNum" id="qn_'+p.id+'">'+qty+'</div>' +
+            '<button class="stepBtn" onclick="cartChange('+p.id+',1)">+</button>' +
+          '</div>') +
       '</div>' +
     '</div>';
   }).join('');
@@ -608,6 +619,7 @@ function renderGrid(){
 function cartChange(id, delta){
   var p = PERFUMES.find(x => String(x.id) === String(id));
   if(!p) return;
+  if(p.esgotado === true && delta > 0){ toast('⚠️ Este perfume está esgotado'); return; }
   var key = String(id);
   if(!CART[key]) CART[key] = { p: p, qty: 0 };
   CART[key].qty = Math.max(0, CART[key].qty + delta);
@@ -689,6 +701,10 @@ function abrirDetalhe(id){
   document.getElementById('detPrice').innerHTML = (temDesc ? '<span class="priceOld">'+po.toFixed(2)+'€</span>' : '') + '<span class="priceNew">'+pn.toFixed(2)+'€</span>';
 
   atualizarDetalheQty();
+
+  var esgotado = p.esgotado === true;
+  document.getElementById('detStepGroup').style.display = esgotado ? 'none' : 'flex';
+  document.getElementById('detEsgotadoMsg').style.display = esgotado ? 'block' : 'none';
 
   var btnNotas = document.getElementById('btnNotasOlfativas');
   if(btnNotas) btnNotas.style.display = (p.categoria === 'EDP') ? 'flex' : 'none';

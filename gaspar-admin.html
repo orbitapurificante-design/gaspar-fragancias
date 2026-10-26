@@ -90,6 +90,18 @@
   .checkRow input{width:18px;height:18px;accent-color:var(--gold)}
   .checkRow label{font-size:12.5px;color:var(--ivory-dim)}
 
+  .btnPainel{width:100%;padding:11px 0;margin-bottom:14px;border:1px solid var(--gold);border-radius:10px;background:none;
+    color:var(--gold-soft);font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
+  .bnList{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .bnItem{background:var(--bg3);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .bnItem .th{width:100%;aspect-ratio:16/9;background:#000;position:relative}
+  .bnItem .th img,.bnItem .th video{width:100%;height:100%;object-fit:cover;display:block}
+  .bnItem .tp{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.7);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px}
+  .bnItem .ac{display:flex;gap:5px;padding:6px}
+  .bnItem .ac button{flex:1;padding:6px 0;border:1px solid var(--line);border-radius:7px;background:var(--bg2);
+    color:var(--ivory);font-size:13px;cursor:pointer}
+  .bnItem .ac button.del{color:var(--r)}
+
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0a0706;
     color:#f3ead9;padding:12px 20px;border-radius:12px;font-size:13px;z-index:999;opacity:0;
     transition:all .3s;border:1px solid var(--line);pointer-events:none;max-width:88vw;text-align:center}
@@ -128,6 +140,7 @@
       </div>
       <button class="btnNovo" onclick="abrirNovo()">+ Novo Perfume</button>
     </div>
+    <button class="btnPainel" onclick="abrirPainel()">🎞 Painel rolante (fotos e vídeos)</button>
     <div class="grid" id="grid"></div>
     <div class="empty" id="empty" style="display:none">Ainda não adicionaste nenhum perfume.</div>
   </div>
@@ -210,6 +223,20 @@
 
     <button class="btnGold" style="margin-top:18px" onclick="guardarPerfume()">GUARDAR</button>
     <button class="btnGhost btnDanger" id="btnApagar" style="display:none" onclick="apagarPerfume()">APAGAR PERFUME</button>
+  </div>
+</div>
+
+<!-- MODAL PAINEL ROLANTE -->
+<div class="modal" id="mPainel">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Painel rolante</div>
+      <button class="closeX" onclick="fecharPainel()">×</button>
+    </div>
+    <div class="count">Aparece na loja por baixo do logótipo. Se não houver nada aqui, o painel não aparece. Vídeos devem ser curtos (máx. ~15s) e leves.</div>
+    <input type="file" id="bnFile" accept="image/*,video/*" multiple hidden onchange="carregarBanners(event)">
+    <button class="btnGold" style="margin-top:14px" onclick="document.getElementById('bnFile').click()">+ ADICIONAR FOTO / VÍDEO</button>
+    <div class="bnList" id="bnList"></div>
   </div>
 </div>
 
@@ -455,6 +482,122 @@ async function apagarPerfume(){
   }catch(err){
     toast('❌ Erro de ligação');
   }
+}
+
+// ── PAINEL ROLANTE ──
+var BN = [];
+
+async function abrirPainel(){
+  document.getElementById('mPainel').classList.add('a');
+  await carregarListaBanners();
+}
+function fecharPainel(){ document.getElementById('mPainel').classList.remove('a'); }
+
+async function carregarListaBanners(){
+  try{
+    var r = await fetch(SB + '/rest/v1/banners?order=ordem.asc,id.asc', { headers: hd() });
+    BN = r.ok ? await r.json() : [];
+    if(!r.ok) toast('⚠️ Tabela "banners" não encontrada no Supabase');
+  }catch(e){ BN = []; toast('⚠️ Erro ao ligar ao Supabase'); }
+  renderBanners();
+}
+
+function renderBanners(){
+  var el = document.getElementById('bnList');
+  if(!BN.length){
+    el.innerHTML = '<div class="count" style="grid-column:1/-1;text-align:center;padding:18px 0">Sem itens — o painel não aparece na loja.</div>';
+    return;
+  }
+  el.innerHTML = BN.map(function(b, i){
+    return '<div class="bnItem"><div class="th">' +
+      (b.tipo === 'video' ? '<video src="'+b.url+'" muted playsinline preload="metadata"></video>' : '<img src="'+b.url+'">') +
+      '<span class="tp">'+(b.tipo === 'video' ? '▶ Vídeo' : 'Foto')+(b.ativo === false ? ' · oculto' : '')+'</span></div>' +
+      '<div class="ac">' +
+        '<button onclick="moverBanner('+i+',-1)">←</button>' +
+        '<button onclick="moverBanner('+i+',1)">→</button>' +
+        '<button onclick="alternarBanner('+b.id+','+(b.ativo === false)+')">'+(b.ativo === false ? '👁' : '🚫')+'</button>' +
+        '<button class="del" onclick="apagarBanner('+b.id+')">🗑</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+async function carregarBanners(e){
+  var files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if(!files.length) return;
+  var ok = 0;
+  for(var k = 0; k < files.length; k++){
+    var f = files[k];
+    var isVideo = (f.type || '').indexOf('video') === 0;
+    var ext = (f.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg')).toLowerCase().replace(/[^a-z0-9]/g, '');
+    var path = 'banners/b_' + Date.now() + '_' + k + '.' + ext;
+    toast('A carregar ' + (k+1) + '/' + files.length + '...');
+    try{
+      var up = await fetch(SB + '/storage/v1/object/' + BUCKET + '/' + path, {
+        method: 'POST',
+        headers: { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'x-upsert': 'true' },
+        body: f
+      });
+      if(!up.ok){ console.error(await up.text()); toast('❌ Erro ao carregar ' + f.name); continue; }
+      var url = SB + '/storage/v1/object/public/' + BUCKET + '/' + path;
+      var ordem = BN.length ? Math.max.apply(null, BN.map(function(b){ return b.ordem || 0; })) + 1 : 0;
+      var ins = await fetch(SB + '/rest/v1/banners', {
+        method: 'POST', headers: hd(),
+        body: JSON.stringify({ tipo: isVideo ? 'video' : 'foto', url: url, ordem: ordem, ativo: true })
+      });
+      if(ins.ok){ ok++; BN.push({ tipo: isVideo ? 'video' : 'foto', url: url, ordem: ordem, ativo: true }); }
+      else { console.error(await ins.text()); toast('❌ Erro ao guardar (tabela "banners" criada?)'); }
+    }catch(err){ toast('❌ Erro de ligação'); }
+  }
+  if(ok) toast('✅ ' + ok + ' item(s) adicionado(s)');
+  await carregarListaBanners();
+}
+
+async function moverBanner(i, d){
+  var j = i + d;
+  if(j < 0 || j >= BN.length) return;
+  var a = BN[i], b = BN[j];
+  // garante ordens distintas e troca
+  var oa = i, ob = j;
+  try{
+    await Promise.all([
+      fetch(SB + '/rest/v1/banners?id=eq.' + a.id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ordem: ob }) }),
+      fetch(SB + '/rest/v1/banners?id=eq.' + b.id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ordem: oa }) })
+    ]);
+    // normaliza as restantes para a posição atual
+    await Promise.all(BN.map(function(x, idx){
+      if(x.id === a.id || x.id === b.id) return null;
+      return fetch(SB + '/rest/v1/banners?id=eq.' + x.id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ordem: idx }) });
+    }).filter(Boolean));
+  }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarListaBanners();
+}
+
+async function alternarBanner(id, ativar){
+  try{
+    await fetch(SB + '/rest/v1/banners?id=eq.' + id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ativo: ativar }) });
+  }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarListaBanners();
+}
+
+async function apagarBanner(id){
+  if(!confirm('Apagar este item do painel?')) return;
+  var b = BN.find(function(x){ return x.id === id; });
+  try{
+    var res = await fetch(SB + '/rest/v1/banners?id=eq.' + id, { method: 'DELETE', headers: hd() });
+    if(res.ok){
+      toast('🗑️ Removido');
+      // tenta também apagar o ficheiro do Storage (não falha se não for permitido)
+      if(b && b.url){
+        var marca = '/object/public/' + BUCKET + '/';
+        var pos = b.url.indexOf(marca);
+        if(pos > -1){
+          fetch(SB + '/storage/v1/object/' + BUCKET + '/' + b.url.slice(pos + marca.length), { method: 'DELETE', headers: hd() }).catch(function(){});
+        }
+      }
+    } else toast('❌ Erro ao apagar');
+  }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarListaBanners();
 }
 
 // ── INÍCIO ──

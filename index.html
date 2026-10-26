@@ -96,6 +96,33 @@
   .menuClear{text-align:center;font-size:10.5px;color:var(--ivory-dim);text-decoration:underline;
     cursor:pointer;margin-top:12px}
 
+  /* PAINEL ROLANTE (destaques) */
+  .bnWrap{max-width:520px;margin:0 auto;height:var(--bnCur,0px);opacity:var(--bnOp,1);overflow:hidden;
+    will-change:height,opacity}
+  .bnBox{position:relative;height:var(--bnFull-inner,112px);margin-bottom:8px;border-radius:14px;overflow:hidden;
+    background:var(--bg3);border:1px solid var(--line);cursor:pointer}
+  .bnTrack{display:flex;height:100%;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+  .bnSlide{flex:0 0 100%;height:100%;position:relative;background:#000}
+  .bnSlide img,.bnSlide video{width:100%;height:100%;object-fit:cover;display:block}
+  .bnDots{position:absolute;bottom:6px;left:0;right:0;display:flex;justify-content:center;gap:5px;pointer-events:none}
+  .bnDots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5)}
+  .bnDots i.on{background:#fff}
+  .bnPlay{position:absolute;top:6px;right:8px;background:rgba(20,15,13,.65);color:#fff;font-size:9px;
+    padding:2px 7px;border-radius:12px;letter-spacing:.5px}
+
+  /* VISUALIZADOR FULLSCREEN DO PAINEL */
+  .bnViewer{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.96);flex-direction:column;
+    align-items:center;justify-content:center;touch-action:pan-y}
+  .bnViewer.a{display:flex}
+  .bnViewer img,.bnViewer video{max-width:100%;max-height:100%;object-fit:contain;display:block}
+  .bnVStage{flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+  .bnVClose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.3);
+    background:rgba(0,0,0,.5);color:#fff;font-size:22px;cursor:pointer;z-index:2}
+  .bnVCount{position:absolute;top:20px;left:16px;color:#fff;font-size:12px;letter-spacing:.5px;z-index:2}
+  .bnVNav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.45);color:#fff;font-size:20px;cursor:pointer;z-index:2}
+  .bnVNav.l{left:10px}.bnVNav.r{right:10px}
+
   /* TABS */
   .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
   .tab{flex:1;text-align:center;padding:6px 6px 8px;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;
@@ -105,7 +132,7 @@
     transition:left .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1)}
 
   /* GRID */
-  .wrap{max-width:720px;margin:154px auto 0;padding:10px 12px 50px}
+  .wrap{max-width:720px;margin:calc(154px + var(--bnFull,0px)) auto 0;padding:10px 12px 50px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}
   @media(min-width:560px){.grid{grid-template-columns:1fr 1fr 1fr}}
   .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden;
@@ -263,6 +290,12 @@
     </div>
   </div>
   <div class="taglineRow">Fragrâncias do Oriente</div>
+  <div class="bnWrap" id="bnWrap" style="display:none">
+    <div class="bnBox" id="bnBox" onclick="abrirBannerViewer(bnIdx)">
+      <div class="bnTrack" id="bnTrack"></div>
+      <div class="bnDots" id="bnDots"></div>
+    </div>
+  </div>
   <div class="searchRow">
     <div class="searchBox">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -301,6 +334,15 @@
 <div class="installPill" id="installPill" onclick="instalarApp()">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211915" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
   Instalar App
+</div>
+
+<!-- VISUALIZADOR DO PAINEL -->
+<div class="bnViewer" id="bnViewer">
+  <button class="bnVClose" onclick="fecharBannerViewer()">×</button>
+  <div class="bnVCount" id="bnVCount"></div>
+  <button class="bnVNav l" onclick="navegarBanner(-1)">‹</button>
+  <button class="bnVNav r" onclick="navegarBanner(1)">›</button>
+  <div class="bnVStage" id="bnVStage"></div>
 </div>
 
 <!-- DETALHE DO PERFUME -->
@@ -528,7 +570,109 @@ function toast(msg){
 async function iniciar(){
   PERFUMES = await api('perfumes?ativo=eq.true&order=id.desc');
   renderGrid();
+  iniciarBanners();
 }
+
+// ── PAINEL ROLANTE (fotos / vídeos curtos geridos no admin) ──
+var BANNERS = [], bnIdx = 0, bnTimer = null, bnFullH = 0, bnVOpen = false, bnVIdx = 0;
+var BN_INNER = 112, BN_MARGIN = 8;
+
+async function iniciarBanners(){
+  BANNERS = await api('banners?ativo=eq.true&order=ordem.asc,id.asc');
+  var wrap = document.getElementById('bnWrap');
+  if(!BANNERS.length){
+    wrap.style.display = 'none';
+    document.documentElement.style.setProperty('--bnFull', '0px');
+    return;
+  }
+  bnFullH = BN_INNER + BN_MARGIN;
+  document.getElementById('bnTrack').innerHTML = BANNERS.map(function(b){
+    return '<div class="bnSlide">' + (b.tipo === 'video'
+      ? '<video src="'+b.url+'" muted playsinline preload="metadata"></video><span class="bnPlay">▶ VÍDEO</span>'
+      : '<img src="'+b.url+'" alt="">') + '</div>';
+  }).join('');
+  document.getElementById('bnDots').innerHTML = BANNERS.length > 1
+    ? BANNERS.map(function(_, i){ return '<i class="'+(i===0?'on':'')+'"></i>'; }).join('') : '';
+  wrap.style.display = 'block';
+  document.documentElement.style.setProperty('--bnFull', bnFullH + 'px');
+  bnIdx = 0;
+  aoScrollBanner();
+  agendarBanner();
+}
+
+function mostrarBanner(i){
+  bnIdx = (i + BANNERS.length) % BANNERS.length;
+  document.getElementById('bnTrack').style.transform = 'translateX(' + (-bnIdx * 100) + '%)';
+  document.querySelectorAll('#bnDots i').forEach(function(d, k){ d.classList.toggle('on', k === bnIdx); });
+}
+
+function agendarBanner(){
+  clearTimeout(bnTimer);
+  if(BANNERS.length < 2 || bnVOpen) return;
+  var slide = document.querySelectorAll('#bnTrack .bnSlide')[bnIdx];
+  var vid = slide ? slide.querySelector('video') : null;
+  if(vid){
+    vid.currentTime = 0;
+    vid.play().catch(function(){});
+    // vídeo curto: avança quando acaba (máx. 12s)
+    var feito = false;
+    var avancar = function(){ if(feito) return; feito = true; vid.pause(); mostrarBanner(bnIdx + 1); agendarBanner(); };
+    vid.onended = avancar;
+    bnTimer = setTimeout(avancar, 12000);
+  } else {
+    bnTimer = setTimeout(function(){ mostrarBanner(bnIdx + 1); agendarBanner(); }, 3000);
+  }
+}
+
+// o painel encolhe e desvanece à medida que se faz scroll para baixo
+function aoScrollBanner(){
+  if(!BANNERS.length) return;
+  var y = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  var h = Math.max(0, bnFullH - y);
+  var root = document.documentElement.style;
+  root.setProperty('--bnCur', h + 'px');
+  root.setProperty('--bnOp', (h / bnFullH).toFixed(2));
+  document.getElementById('bnWrap').style.pointerEvents = h < bnFullH * 0.5 ? 'none' : 'auto';
+}
+window.addEventListener('scroll', aoScrollBanner, {passive:true});
+
+function renderBannerViewer(){
+  var b = BANNERS[bnVIdx];
+  if(!b) return;
+  document.getElementById('bnVStage').innerHTML = b.tipo === 'video'
+    ? '<video src="'+b.url+'" controls autoplay playsinline></video>'
+    : '<img src="'+b.url+'" alt="">';
+  document.getElementById('bnVCount').textContent = (bnVIdx + 1) + ' / ' + BANNERS.length;
+  var multi = BANNERS.length > 1 ? 'block' : 'none';
+  document.querySelectorAll('.bnVNav').forEach(function(n){ n.style.display = multi; });
+}
+function abrirBannerViewer(i){
+  if(!BANNERS.length) return;
+  bnVOpen = true; clearTimeout(bnTimer);
+  bnVIdx = i || 0;
+  renderBannerViewer();
+  document.getElementById('bnViewer').classList.add('a');
+}
+function fecharBannerViewer(){
+  bnVOpen = false;
+  document.getElementById('bnViewer').classList.remove('a');
+  document.getElementById('bnVStage').innerHTML = '';
+  mostrarBanner(bnVIdx);
+  agendarBanner();
+}
+function navegarBanner(d){
+  bnVIdx = (bnVIdx + d + BANNERS.length) % BANNERS.length;
+  renderBannerViewer();
+}
+(function(){
+  var v = document.getElementById('bnViewer'), sx = 0, sy = 0;
+  v.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+  v.addEventListener('touchend', function(e){
+    if(!e.changedTouches.length || BANNERS.length < 2) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) navegarBanner(dx < 0 ? 1 : -1);
+  }, {passive:true});
+})();
 
 // ── CONTADOR DE VISITAS (1 por visitante por dia) ──
 async function registarVisita(){

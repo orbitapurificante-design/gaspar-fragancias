@@ -110,7 +110,7 @@
   .bnPlay{position:absolute;top:6px;right:8px;background:rgba(20,15,13,.65);color:#fff;font-size:9px;
     padding:2px 7px;border-radius:12px;letter-spacing:.5px}
 
-  @media(min-width:700px){
+  @media(min-width:540px){
     .bnWrap{max-width:none;margin:0 -16px}
     .bnBox{border-radius:0;border-left:0;border-right:0;margin-bottom:6px}
   }
@@ -585,7 +585,7 @@ var BN_INNER = 112, BN_MARGIN = 8;
 
 function calcAlturaBanner(){
   var larg = window.innerWidth;
-  if(larg >= 700){
+  if(larg >= 540){
     BN_INNER = Math.round(Math.min(larg * 0.6, window.innerHeight * 0.45)); // proporção 10:6, limitada à altura do ecrã
     BN_MARGIN = 6;
   } else {

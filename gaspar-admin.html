@@ -510,7 +510,7 @@ function renderBanners(){
   }
   el.innerHTML = BN.map(function(b, i){
     return '<div class="bnItem"><div class="th">' +
-      (b.tipo === 'video' ? '<video src="'+b.url+'" muted playsinline preload="metadata"></video>' : '<img src="'+b.url+'">') +
+      (b.tipo === 'video' ? '<video src="'+b.url+'#t=0.1" muted playsinline preload="auto"></video>' : '<img src="'+b.url+'">') +
       '<span class="tp">'+(b.tipo === 'video' ? '▶ Vídeo' : 'Foto')+(b.ativo === false ? ' · oculto' : '')+'</span></div>' +
       '<div class="ac">' +
         '<button onclick="moverBanner('+i+',-1)">←</button>' +
@@ -519,6 +519,20 @@ function renderBanners(){
         '<button class="del" onclick="apagarBanner('+b.id+')">🗑</button>' +
       '</div></div>';
   }).join('');
+}
+
+// deteta vídeos HEVC/H.265 (comuns em telemóveis) que muitos PCs/tablets não reproduzem
+async function temHEVC(f){
+  try{
+    var n = 3 * 1024 * 1024, dec = new TextDecoder('latin1');
+    var partes = [f.slice(0, n)];
+    if(f.size > n) partes.push(f.slice(Math.max(n, f.size - n)));
+    for(var i = 0; i < partes.length; i++){
+      var t = dec.decode(new Uint8Array(await partes[i].arrayBuffer()));
+      if(t.indexOf('hvc1') > -1 || t.indexOf('hev1') > -1) return true;
+    }
+  }catch(e){}
+  return false;
 }
 
 async function carregarBanners(e){
@@ -531,11 +545,14 @@ async function carregarBanners(e){
     var isVideo = (f.type || '').indexOf('video') === 0;
     var ext = (f.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg')).toLowerCase().replace(/[^a-z0-9]/g, '');
     var path = 'banners/b_' + Date.now() + '_' + k + '.' + ext;
+    if(isVideo && await temHEVC(f)){
+      if(!confirm('"' + f.name + '" parece estar em HEVC (H.265). Pode não reproduzir em PC e tablet (fica preto).\n\nRecomendado: converter para MP4 H.264 antes de carregar.\n\nCarregar mesmo assim?')) continue;
+    }
     toast('A carregar ' + (k+1) + '/' + files.length + '...');
     try{
       var up = await fetch(SB + '/storage/v1/object/' + BUCKET + '/' + path, {
         method: 'POST',
-        headers: { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'x-upsert': 'true' },
+        headers: { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'x-upsert': 'true', 'Content-Type': f.type || (isVideo ? 'video/mp4' : 'image/jpeg') },
         body: f
       });
       if(!up.ok){ console.error(await up.text()); toast('❌ Erro ao carregar ' + f.name); continue; }

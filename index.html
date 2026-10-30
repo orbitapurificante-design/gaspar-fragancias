@@ -129,6 +129,41 @@
     border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.45);color:#fff;font-size:20px;cursor:pointer;z-index:2}
   .bnVNav.l{left:10px}.bnVNav.r{right:10px}
 
+  /* CONTA / REGISTO */
+  .acctBtn{position:absolute;right:42px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;
+    background:var(--bg3);border:1px solid var(--line);color:var(--ivory);display:flex;align-items:center;
+    justify-content:center;cursor:pointer;font-weight:700;font-size:14px;font-family:'Jost',sans-serif}
+  .acctBtn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+  .authTabs{display:flex;margin-bottom:16px;border-bottom:1px solid var(--line)}
+  .authTab{flex:1;text-align:center;padding:10px 0;font-size:12px;letter-spacing:1.3px;text-transform:uppercase;
+    font-weight:600;color:var(--ivory-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .authTab.on{color:var(--gold);border-bottom-color:var(--gold)}
+  .fld{position:relative;margin-bottom:12px}
+  .fld .inp{border-radius:12px;background:var(--bg2);border:1px solid rgba(43,36,32,.4);padding:13px 42px 13px 14px}
+  .fld .inp:focus{border-color:var(--gold)}
+  .fld select.inp{appearance:none;-webkit-appearance:none;cursor:pointer}
+  .fld.sel::after{content:'';position:absolute;right:16px;top:50%;width:7px;height:7px;border-right:1.6px solid var(--ivory-dim);
+    border-bottom:1.6px solid var(--ivory-dim);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+  .eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:none;background:none;
+    color:var(--ivory-dim);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .strength{font-size:10.5px;color:var(--ivory-dim);margin:-6px 0 12px 2px}
+  .strength .pill{display:inline-block;margin-left:4px;padding:2px 9px;border-radius:12px;background:var(--bg3);font-weight:600}
+  .strength .pill.f1{background:#e9c4bf;color:#7a2418}
+  .strength .pill.f2{background:#f1deb0;color:#6b5210}
+  .strength .pill.f3{background:#c9e3d2;color:#1f5a38}
+  .chk{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ivory-dim);line-height:1.5;margin:10px 0}
+  .chk input{width:18px;height:18px;margin-top:1px;accent-color:var(--gold);flex-shrink:0}
+  .chk a{color:var(--gold);text-decoration:underline;cursor:pointer}
+  .authMsg{font-size:12.5px;line-height:1.5;padding:10px 12px;border-radius:10px;background:var(--bg3);
+    border:1px solid var(--gold-soft);color:var(--ivory);margin-bottom:12px}
+  .linkSm{display:block;text-align:center;font-size:12px;color:var(--ivory-dim);text-decoration:underline;cursor:pointer;margin-top:14px}
+  .termosTxt{font-size:12.5px;line-height:1.65;color:var(--ivory-dim);max-height:62vh;overflow-y:auto;padding-right:4px}
+  .termosTxt h4{font-size:13px;color:var(--ivory);margin:16px 0 4px;letter-spacing:.2px}
+  .termosTxt p{margin:4px 0}
+  .termosTxt ul{padding-left:18px;margin:4px 0}
+  .termosTxt li{margin:3px 0}
+  .termosTxt a{color:var(--gold)}
+
   /* TABS */
   .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
   .tab{flex:1;text-align:center;padding:4px 6px 6px;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;
@@ -290,6 +325,7 @@
       <img src="icon-192_2.jpg" class="miniLogo" alt="GASPAR">
       <span class="miniBrandTxt">GASPAR</span>
     </div>
+    <div class="acctBtn" id="acctBtn" onclick="abrirConta()" title="Entrar / Registar"></div>
     <div class="cartBtn" onclick="abrirCarrinho()">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f6eee0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="fabBadge" id="fabBadge">0</span>
@@ -464,6 +500,7 @@
     <div id="cartLista"></div>
     <div class="totRow"><div class="totLbl">Total Estimado</div><div class="totVal" id="cartTotal">0.00€</div></div>
     <div class="shippingNote" id="shippingNote"></div>
+    <div class="shippingNote" id="pagNote"></div>
     <label class="lbl">O seu nome *</label>
     <input type="text" class="inp" id="cName" placeholder="Ex: Maria Silva">
     <label class="lbl">O seu telemóvel / WhatsApp *</label>
@@ -475,6 +512,29 @@
       Enviar Pedido via WhatsApp
     </button>
     <button class="btnGhost" onclick="limparCarrinho()">Limpar pedido</button>
+  </div>
+</div>
+
+<!-- CONTA DO CLIENTE -->
+<div class="modal" id="mConta">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit" id="contaTit">A minha conta</div>
+      <button class="closeX" onclick="fecharModal('mConta')">×</button>
+    </div>
+    <div id="contaBody"></div>
+  </div>
+</div>
+
+<!-- TERMOS E CONDIÇÕES -->
+<div class="modal" id="mTermos">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Termos e Condições</div>
+      <button class="closeX" onclick="fecharModal('mTermos')">×</button>
+    </div>
+    <div class="termosTxt" id="termosTxt"></div>
+    <button class="btnGhost" onclick="fecharModal('mTermos')">Fechar</button>
   </div>
 </div>
 
@@ -490,8 +550,11 @@ const BUCKET = 'gaspar';                                  // <-- Nome do bucket 
 const WHATSAPP_NUM = '351910714037';                      // <-- Número da loja que recebe os pedidos (+351 910714037)
 const INSTAGRAM_URL = 'https://www.instagram.com/orbitapurificante/';
 const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
-const LIMIAR_ENVIO_GRATIS = 65;                           // <-- Valor mínimo (€) para portes grátis
-const CUSTO_ENVIO = 5;                                    // <-- Custo dos portes (€) abaixo do limiar
+const LIMIAR_ENVIO_GRATIS = 30;                           // <-- Valor mínimo (€) para portes grátis
+const EMAIL_SUPORTE = '';                                 // <-- O teu email de contacto/suporte (aparece nos Termos). Ex: 'geral@orbitapurificante.pt'
+const PRAZO_PAGAMENTO_DIAS = 3;                           // <-- Dias que a encomenda fica reservada à espera do pagamento
+const TERMOS_VERSAO = '2026-10-30';                       // <-- Muda esta data sempre que alterares os Termos
+const CUSTO_ENVIO = 3.5;                                    // <-- Custo dos portes (€) abaixo do limiar
 
 function hd(){ return { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'Content-Type': 'application/json' }; }
 async function api(path){
@@ -852,6 +915,11 @@ function abrirCarrinho(){
     noteEl.innerHTML = '🎉 Parabéns! A tua encomenda tem <b>portes de transporte grátis</b>.';
   }
 
+  if(PERFIL){
+    var cn = document.getElementById('cName'), ct = document.getElementById('cartTel');
+    if(cn && !cn.value) cn.value = ((PERFIL.nome || '') + ' ' + (PERFIL.sobrenome || '')).trim();
+    if(ct && !ct.value && PERFIL.telemovel) ct.value = String(PERFIL.telemovel).replace(/\D/g,'');
+  }
   document.getElementById('mCart').classList.add('a');
 }
 
@@ -1016,6 +1084,7 @@ function atualizarDetalheQty(){
 function limparCarrinho(){
   if(!confirm('Limpar todo o pedido?')) return;
   CART = {};
+  PEDIDO_NUM = null;
   document.querySelectorAll('[id^="qn_"]').forEach(el => el.textContent = '0');
   document.getElementById('fabBadge').style.display = 'none';
   fecharModal('mCart');
@@ -1024,7 +1093,7 @@ function limparCarrinho(){
 function gerarTextoEncomenda(nome, notas, tel){
   var items = Object.values(CART);
   var data = new Date().toLocaleDateString('pt-PT');
-  var linhas = ['🌸 NOVO PEDIDO — ' + LOJA_NOME, '📅 ' + data, '👤 ' + nome, '📞 ' + tel, ''];
+  var linhas = ['🌸 NOVO PEDIDO — ' + LOJA_NOME, '📅 ' + data, '🔖 Nº do pedido: ' + numeroPedido(), '👤 ' + nome + (PERFIL && PERFIL.numero_cliente ? ' (cliente ' + PERFIL.numero_cliente + ')' : ''), '📞 ' + tel, ''];
   var total = 0;
   items.forEach(function(it){
     var pn = parseFloat(it.p.preco_novo) || 0;
@@ -1039,6 +1108,7 @@ function gerarTextoEncomenda(nome, notas, tel){
   } else {
     linhas.push('🚚 Portes de transporte: Grátis');
   }
+  linhas.push('💳 Pagamento: transferência bancária (aguardo IBAN)');
   if(notas && notas.trim()) { linhas.push(''); linhas.push('📝 Observações: ' + notas.trim()); }
   return linhas.join('\n');
 }
@@ -1054,6 +1124,7 @@ function enviarWhatsApp(){
   var txt = gerarTextoEncomenda(nome, notas, tel);
   var url = 'https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(txt);
   window.open(url, '_blank');
+  toast('✅ Pedido ' + numeroPedido() + ' pronto a enviar no WhatsApp');
 }
 
 document.getElementById('tabs').addEventListener('click', function(e){
@@ -1066,6 +1137,7 @@ window.addEventListener('load', function(){
   posicionarIndicador(document.querySelector('.tab.on'));
   iniciar();
   registarVisita();
+  iniciarConta();
 
   ['menuIgLink','footerIgLink'].forEach(function(id){
     var el = document.getElementById(id);
@@ -1089,6 +1161,393 @@ window.addEventListener('load', function(){
   ajustarTopo();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ajustarTopo(); posicionarIndicador(document.querySelector('.tab.on')); });
 });
+
+// ══════════════════════════════════════════
+// CONTA DE CLIENTE (Supabase Auth + tabela "clientes")
+// ══════════════════════════════════════════
+// links de confirmação de email / recuperar palavra-passe chegam com #access_token=... no endereço
+(function(){
+  var h = location.hash;
+  if(!h || h.indexOf('access_token') === -1) return;
+  var p = new URLSearchParams(h.replace(/^#/, ''));
+  if(!p.get('access_token')) return;
+  window._hashSessao = { access_token: p.get('access_token'), refresh_token: p.get('refresh_token'),
+                         expires_in: parseInt(p.get('expires_in') || '3600', 10), tipo: p.get('type') };
+  history.replaceState(history.state, '', location.pathname + location.search);
+})();
+
+var SESSAO = null, PERFIL = null, CONTA_MODO = 'entrar';
+var ICON_USER = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>';
+var ICON_EYE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+function $(id){ return document.getElementById(id); }
+
+function guardarSessao(d){
+  SESSAO = { access: d.access_token, refresh: d.refresh_token || (SESSAO && SESSAO.refresh),
+             exp: Date.now() + (d.expires_in || 3600) * 1000, user: d.user || (SESSAO && SESSAO.user) };
+  try{ localStorage.setItem('gaspar_sessao', JSON.stringify(SESSAO)); }catch(e){}
+}
+function limparSessao(){
+  SESSAO = null; PERFIL = null;
+  try{ localStorage.removeItem('gaspar_sessao'); }catch(e){}
+}
+
+async function authPost(path, body, token){
+  var h = { 'apikey': SK, 'Content-Type': 'application/json' };
+  if(token) h['Authorization'] = 'Bearer ' + token;
+  var r = await fetch(SB + path, { method: 'POST', headers: h, body: JSON.stringify(body || {}) });
+  var d = {}; try{ d = await r.json(); }catch(e){}
+  return { ok: r.ok, d: d };
+}
+
+// devolve um token válido (renova-o se estiver quase a expirar)
+async function tokenValido(){
+  if(!SESSAO) return null;
+  if(Date.now() > SESSAO.exp - 60000){
+    try{
+      var r = await authPost('/auth/v1/token?grant_type=refresh_token', { refresh_token: SESSAO.refresh });
+      if(!r.ok || !r.d.access_token){ limparSessao(); atualizarBotaoConta(); return null; }
+      guardarSessao(r.d);
+    }catch(e){ return null; }
+  }
+  return SESSAO.access;
+}
+
+function erroAuth(d){
+  var c = (d && (d.error_code || d.code)) || '';
+  var m = String((d && (d.msg || d.message || d.error_description)) || '').toLowerCase();
+  if(c === 'invalid_credentials' || m.indexOf('invalid login') > -1) return 'Email ou palavra-passe incorretos';
+  if(c === 'email_not_confirmed' || m.indexOf('not confirmed') > -1) return 'Confirme primeiro o seu email (veja também o spam)';
+  if(c === 'user_already_exists' || m.indexOf('already') > -1) return 'Já existe uma conta com este email';
+  if(c === 'weak_password') return 'Palavra-passe demasiado fraca';
+  if(c.indexOf('rate_limit') > -1 || m.indexOf('rate limit') > -1) return 'Demasiadas tentativas. Tente novamente daqui a pouco';
+  return 'Não foi possível concluir. Tente novamente';
+}
+
+function forcaSenha(p){
+  if(!p) return 0;
+  var s = 0;
+  if(p.length >= 8) s++;
+  if(/[a-z]/.test(p) && /[A-Z]/.test(p)) s++;
+  if(/\d/.test(p)) s++;
+  if(/[^A-Za-z0-9]/.test(p)) s++;
+  if(p.length >= 12) s++;
+  return s;
+}
+function atualizarForca(){
+  var f = forcaSenha($('rSenha').value), pill = $('forcaPill');
+  if(!pill) return;
+  var txt = 'Sem palavra-passe', cls = '';
+  if(f >= 1 && f <= 2){ txt = 'Fraca'; cls = 'f1'; }
+  else if(f === 3){ txt = 'Média'; cls = 'f2'; }
+  else if(f >= 4){ txt = 'Forte'; cls = 'f3'; }
+  pill.textContent = txt; pill.className = 'pill ' + cls;
+}
+function verSenha(id){
+  var el = $(id); if(el) el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+function idadeDe(iso){
+  var p = iso.split('-'), hoje = new Date();
+  var idade = hoje.getFullYear() - parseInt(p[0], 10);
+  var m = hoje.getMonth() + 1 - parseInt(p[1], 10);
+  if(m < 0 || (m === 0 && hoje.getDate() < parseInt(p[2], 10))) idade--;
+  return idade;
+}
+function dataMax18(){
+  var d = new Date(); d.setFullYear(d.getFullYear() - 18);
+  return d.toISOString().slice(0, 10);
+}
+
+function campo(id, ph, tipo, extra){
+  return '<div class="fld"><input type="' + (tipo || 'text') + '" class="inp" id="' + id + '" placeholder="' + ph + '" ' + (extra || '') + '></div>';
+}
+function campoSenha(id, ph, ac, extra){
+  return '<div class="fld"><input type="password" class="inp" id="' + id + '" placeholder="' + ph + '" autocomplete="' + ac + '" ' + (extra || '') + '>' +
+    '<button type="button" class="eye" onclick="verSenha(\'' + id + '\')" aria-label="Mostrar palavra-passe">' + ICON_EYE + '</button></div>';
+}
+
+function renderConta(modo, aviso){
+  CONTA_MODO = modo || (SESSAO ? 'perfil' : 'entrar');
+  var m = CONTA_MODO, el = $('contaBody'), h = '';
+  $('contaTit').textContent = 'A minha conta';
+
+  if(m === 'entrar' || m === 'registar'){
+    h += '<div class="authTabs">' +
+      '<div class="authTab' + (m === 'entrar' ? ' on' : '') + '" onclick="renderConta(\'entrar\')">Entrar</div>' +
+      '<div class="authTab' + (m === 'registar' ? ' on' : '') + '" onclick="renderConta(\'registar\')">Registar</div></div>';
+  }
+  if(aviso) h += '<div class="authMsg">' + aviso + '</div>';
+
+  if(m === 'entrar'){
+    h += campo('lEmail', 'Endereço de e-mail *', 'email', 'autocomplete="email"');
+    h += campoSenha('lSenha', 'Palavra-Passe *', 'current-password', 'onkeydown="if(event.key===\'Enter\')entrar()"');
+    h += '<button class="btnGold" id="btnEntrar" onclick="entrar()">Entrar</button>';
+    h += '<a class="linkSm" onclick="renderConta(\'recuperar\')">Esqueci-me da palavra-passe</a>';
+  }
+  else if(m === 'registar'){
+    h += campo('rNome', 'Nome *', 'text', 'autocomplete="given-name"');
+    h += campo('rSobrenome', 'Sobrenome *', 'text', 'autocomplete="family-name"');
+    h += campo('rNasc', 'Data de Nascimento *', 'text', 'max="' + dataMax18() + '" autocomplete="bday" onfocus="this.type=\'date\'" onblur="if(!this.value)this.type=\'text\'"');
+    h += '<div class="fld sel"><select class="inp" id="rGenero"><option value="">Género *</option><option value="F">Feminino</option><option value="M">Masculino</option><option value="O">Outro</option><option value="N">Prefiro não dizer</option></select></div>';
+    h += campo('rEmail', 'Endereço de e-mail *', 'email', 'autocomplete="email"');
+    h += campo('rTel', 'Telemóvel (opcional)', 'tel', 'autocomplete="tel"');
+    h += campoSenha('rSenha', 'Palavra-Passe * (mín. 8 caracteres)', 'new-password', 'oninput="atualizarForca()"');
+    h += '<div class="strength">Nível de Segurança da palavra-passe: <span class="pill" id="forcaPill">Sem palavra-passe</span></div>';
+    h += campoSenha('rSenha2', 'Confirmar Palavra-passe *', 'new-password');
+    h += '<label class="chk"><input type="checkbox" id="rMarketing"><span>Quero receber por e-mail promoções exclusivas, novidades e recomendações personalizadas.</span></label>';
+    h += '<label class="chk"><input type="checkbox" id="rTermos"><span>Li e aceito os <a onclick="event.preventDefault();abrirTermos()">Termos e Condições</a> e a política de privacidade, e declaro ter 18 anos ou mais. *</span></label>';
+    h += '<button class="btnGold" id="btnRegistar" onclick="registar()">Criar conta</button>';
+  }
+  else if(m === 'recuperar'){
+    $('contaTit').textContent = 'Recuperar palavra-passe';
+    h += '<p style="font-size:13px;color:var(--ivory-dim);margin-top:0">Indique o seu email e enviamos-lhe um link para criar uma nova palavra-passe.</p>';
+    h += campo('cEmail', 'Endereço de e-mail *', 'email', 'autocomplete="email"');
+    h += '<button class="btnGold" onclick="recuperarSenha()">Enviar link</button>';
+    h += '<a class="linkSm" onclick="renderConta(\'entrar\')">Voltar</a>';
+  }
+  else if(m === 'novasenha'){
+    $('contaTit').textContent = 'Nova palavra-passe';
+    h += campoSenha('nSenha', 'Nova palavra-passe * (mín. 8 caracteres)', 'new-password');
+    h += campoSenha('nSenha2', 'Confirmar palavra-passe *', 'new-password');
+    h += '<button class="btnGold" onclick="guardarNovaSenha()">Guardar palavra-passe</button>';
+  }
+  else if(m === 'perfil'){
+    var u = (SESSAO && SESSAO.user) || {};
+    h += '<p style="margin:0 0 14px;font-size:13px;color:var(--ivory-dim)">Sessão iniciada como <b style="color:var(--ivory)">' + esc(u.email) + '</b>' + (PERFIL && PERFIL.numero_cliente ? '<br>Nº de cliente: <b style="color:var(--gold)">' + esc(PERFIL.numero_cliente) + '</b>' : '') + '</p>';
+    h += campo('pfNome', 'Nome', 'text') + campo('pfSobrenome', 'Sobrenome', 'text') + campo('pfTel', 'Telemóvel', 'tel');
+    h += '<button class="btnGold" onclick="guardarPerfil()">Guardar alterações</button>';
+    h += '<button class="btnGhost" onclick="sairConta()">Terminar sessão</button>';
+    h += '<a class="linkSm" onclick="eliminarConta()">Eliminar a minha conta e os meus dados</a>';
+  }
+  el.innerHTML = h;
+
+  if(m === 'perfil' && PERFIL){
+    $('pfNome').value = PERFIL.nome || ''; $('pfSobrenome').value = PERFIL.sobrenome || ''; $('pfTel').value = PERFIL.telemovel || '';
+  }
+}
+
+function abrirConta(){ renderConta(); $('mConta').classList.add('a'); }
+
+function atualizarBotaoConta(){
+  var b = $('acctBtn'); if(!b) return;
+  if(SESSAO && SESSAO.user){
+    var n = (PERFIL && PERFIL.nome) || SESSAO.user.email || '?';
+    b.className = 'acctBtn on'; b.textContent = n.charAt(0).toUpperCase();
+  } else {
+    b.className = 'acctBtn'; b.innerHTML = ICON_USER;
+  }
+}
+
+async function carregarPerfil(){
+  var t = await tokenValido(); if(!t || !SESSAO || !SESSAO.user) return;
+  PERFIL = null;
+  try{
+    var r = await fetch(SB + '/rest/v1/clientes?id=eq.' + SESSAO.user.id + '&select=*', { headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t } });
+    var a = r.ok ? await r.json() : [];
+    PERFIL = a[0] || null;
+  }catch(e){}
+  if(!PERFIL){
+    var m = SESSAO.user.user_metadata || {};
+    PERFIL = { nome: m.nome, sobrenome: m.sobrenome, telemovel: m.telemovel, email: SESSAO.user.email };
+  }
+}
+
+async function registar(){
+  var g = function(i){ return $(i).value.trim(); };
+  var nome = g('rNome'), sobrenome = g('rSobrenome'), nasc = g('rNasc'), genero = g('rGenero');
+  var email = g('rEmail').toLowerCase(), tel = g('rTel').replace(/[^\d+]/g, '');
+  var s1 = $('rSenha').value, s2 = $('rSenha2').value;
+  if(!nome || !sobrenome) return toast('⚠️ Indique o nome e o sobrenome');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(nasc)) return toast('⚠️ Indique a data de nascimento');
+  if(idadeDe(nasc) < 18) return toast('⚠️ É necessário ter 18 anos ou mais para criar conta');
+  if(!genero) return toast('⚠️ Indique o género');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('⚠️ Email inválido');
+  if(s1.length < 8) return toast('⚠️ A palavra-passe deve ter pelo menos 8 caracteres');
+  if(forcaSenha(s1) < 2) return toast('⚠️ Palavra-passe demasiado fraca (misture letras e números)');
+  if(s1 !== s2) return toast('⚠️ As palavras-passe não coincidem');
+  if(!$('rTermos').checked) return toast('⚠️ Tem de aceitar os Termos e Condições para criar conta');
+
+  var btn = $('btnRegistar'); btn.disabled = true;
+  try{
+    var r = await authPost('/auth/v1/signup', { email: email, password: s1, data: {
+      nome: nome, sobrenome: sobrenome, data_nascimento: nasc, genero: genero, telemovel: tel,
+      marketing: $('rMarketing').checked, aceitou_termos: true, versao_termos: TERMOS_VERSAO } });
+    if(!r.ok){ toast('❌ ' + erroAuth(r.d)); btn.disabled = false; return; }
+    if(r.d.identities && r.d.identities.length === 0){ toast('❌ Já existe uma conta com este email'); btn.disabled = false; return; }
+    if(r.d.access_token){
+      guardarSessao(r.d); await carregarPerfil(); atualizarBotaoConta();
+      toast('✅ Conta criada com sucesso'); renderConta('perfil');
+    } else {
+      renderConta('entrar', '✅ Conta criada! Enviámos um email de confirmação para <b>' + esc(email) + '</b>. Clique no link para ativar a conta e depois entre aqui.');
+    }
+  }catch(e){ toast('❌ Erro de ligação'); btn.disabled = false; }
+}
+
+async function entrar(){
+  var email = $('lEmail').value.trim().toLowerCase(), senha = $('lSenha').value;
+  if(!email || !senha) return toast('⚠️ Indique o email e a palavra-passe');
+  var btn = $('btnEntrar'); btn.disabled = true;
+  try{
+    var r = await authPost('/auth/v1/token?grant_type=password', { email: email, password: senha });
+    if(!r.ok){ toast('❌ ' + erroAuth(r.d)); btn.disabled = false; return; }
+    guardarSessao(r.d); await carregarPerfil(); atualizarBotaoConta();
+    toast('✅ Bem-vindo' + (PERFIL && PERFIL.nome ? ', ' + PERFIL.nome : '')); renderConta('perfil');
+  }catch(e){ toast('❌ Erro de ligação'); btn.disabled = false; }
+}
+
+async function recuperarSenha(){
+  var email = $('cEmail').value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('⚠️ Email inválido');
+  try{ await authPost('/auth/v1/recover', { email: email }); }catch(e){}
+  renderConta('entrar', 'Se existir uma conta com esse email, enviámos-lhe um link para criar uma nova palavra-passe.');
+}
+
+async function guardarNovaSenha(){
+  var s1 = $('nSenha').value, s2 = $('nSenha2').value;
+  if(s1.length < 8) return toast('⚠️ A palavra-passe deve ter pelo menos 8 caracteres');
+  if(forcaSenha(s1) < 2) return toast('⚠️ Palavra-passe demasiado fraca');
+  if(s1 !== s2) return toast('⚠️ As palavras-passe não coincidem');
+  var t = await tokenValido(); if(!t) return toast('❌ O link expirou. Peça um novo.');
+  try{
+    var r = await fetch(SB + '/auth/v1/user', { method: 'PUT', headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: s1 }) });
+    if(r.ok){ toast('✅ Palavra-passe alterada'); renderConta('perfil'); }
+    else { var d = {}; try{ d = await r.json(); }catch(e){} toast('❌ ' + erroAuth(d)); }
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+
+async function guardarPerfil(){
+  var t = await tokenValido(); if(!t || !SESSAO) return toast('❌ Sessão expirada. Entre novamente.');
+  var dados = { nome: $('pfNome').value.trim(), sobrenome: $('pfSobrenome').value.trim(), telemovel: $('pfTel').value.replace(/[^\d+]/g, '') };
+  try{
+    var r = await fetch(SB + '/rest/v1/clientes?id=eq.' + SESSAO.user.id, { method: 'PATCH',
+      headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+    if(r.ok){ PERFIL = Object.assign({}, PERFIL, dados); atualizarBotaoConta(); toast('✅ Dados guardados'); }
+    else toast('❌ Erro ao guardar');
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+
+async function sairConta(){
+  var t = SESSAO && SESSAO.access;
+  if(t){ try{ await authPost('/auth/v1/logout', {}, t); }catch(e){} }
+  limparSessao(); atualizarBotaoConta(); fecharModal('mConta'); toast('Sessão terminada');
+}
+
+async function eliminarConta(){
+  if(!confirm('Eliminar a sua conta e todos os seus dados pessoais? Esta ação não pode ser desfeita.')) return;
+  var t = await tokenValido(); if(!t) return toast('❌ Sessão expirada. Entre novamente.');
+  try{
+    var r = await fetch(SB + '/rest/v1/rpc/eliminar_minha_conta', { method: 'POST',
+      headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+    if(r.ok){ limparSessao(); atualizarBotaoConta(); fecharModal('mConta'); toast('Conta eliminada'); }
+    else toast('❌ Não foi possível eliminar. Contacte-nos.');
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+
+// ── CÓDIGOS ALEATÓRIOS (não sequenciais) ──
+// sem letras/números ambíguos (0/O, 1/I); 32 símbolos -> sem enviesamento ao usar % 32
+function codigoAleatorio(prefixo, n){
+  var A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b = new Uint8Array(n), r = '';
+  (window.crypto || window.msCrypto).getRandomValues(b);
+  for(var i = 0; i < n; i++) r += A[b[i] % 32];
+  return prefixo + r;
+}
+var PEDIDO_NUM = null;
+function numeroPedido(){
+  if(!PEDIDO_NUM) PEDIDO_NUM = codigoAleatorio('GP-', 8);
+  return PEDIDO_NUM;
+}
+
+// ── TERMOS E CONDIÇÕES ──
+function termosHTML(){
+  var contacto = (EMAIL_SUPORTE ? 'email <b>' + esc(EMAIL_SUPORTE) + '</b> ou ' : '') + 'telemóvel/WhatsApp <b>+351 910 714 037</b>';
+  var L = function(a){ return '<ul>' + a.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'; };
+  var T = '<p><i>Versão de ' + TERMOS_VERSAO.split('-').reverse().join('/') + '</i></p>';
+
+  T += '<h4>1. Identificação do Titular</h4><p>O site e a loja online são geridos pela <b>ORBITA PURIFICANTE UNIPESSOAL, LDA</b>, com sede na Rua República N.º 72, 4505-284 Fiães, titular do NIF 516623648, doravante designada por "Empresa". Contactos: ' + contacto + '.</p>';
+
+  T += '<h4>2. Objeto e Âmbito</h4><p>Os presentes Termos e Condições regulam o registo de utilizadores e a compra de produtos de perfumaria e higiene pessoal na loja online da Empresa. Ao criar uma conta ou ao enviar um pedido, o cliente declara ter lido e aceitar integralmente estas condições.</p>';
+
+  T += '<h4>3. Registo de Cliente (Criação de Conta)</h4>' + L([
+    '<b>Exatidão dos Dados:</b> o cliente compromete-se a fornecer dados pessoais corretos e atualizados, necessários ao correto processamento e envio das encomendas.',
+    '<b>Segurança da Conta:</b> as credenciais de acesso são confidenciais e de uso exclusivo do cliente, sendo este o único responsável pela segurança da sua palavra-passe.',
+    '<b>Idade Mínima:</b> ao registar-se, o cliente garante ter idade igual ou superior a 18 anos.',
+    '<b>Conta pessoal:</b> cada pessoa pode ter uma única conta, pessoal e intransmissível. A Empresa pode suspender ou cancelar contas com dados falsos ou com utilização abusiva ou fraudulenta.'
+  ]);
+
+  T += '<h4>4. Pedidos e Preços</h4>' + L([
+    'Os preços são apresentados em euros (€), com IVA incluído à taxa legal em vigor.',
+    'Portes de transporte: <b>' + CUSTO_ENVIO.toFixed(2) + '€</b> para encomendas inferiores a ' + LIMIAR_ENVIO_GRATIS.toFixed(2) + '€; <b>grátis</b> a partir desse valor.',
+    'Os pedidos estão sujeitos à disponibilidade de stock. Os produtos assinalados como "Esgotado" não podem ser encomendados.',
+    'O pedido enviado pelo cliente (através do WhatsApp) constitui uma intenção de compra. O contrato considera-se celebrado quando a Empresa confirmar o pedido e a disponibilidade dos produtos.',
+    'Em caso de erro manifesto de preço ou de indisponibilidade de produto, a Empresa pode cancelar o pedido, reembolsando integralmente os valores já pagos.'
+  ]);
+
+  T += '<h4>5. Meios de Pagamento</h4>' + L([
+    '<b>Transferência Bancária:</b> temporariamente, o único método de pagamento aceite é a transferência bancária.',
+    '<b>Validação do Pedido:</b> após receber o pedido, a Empresa envia ao cliente os dados bancários (IBAN) e o valor total a pagar. A encomenda só é processada e enviada após a confirmação da receção do pagamento na conta bancária da Empresa. O cliente deve enviar o comprovativo de transferência por ' + contacto + ', indicando o número do pedido.',
+    '<b>Prazo de Pagamento:</b> a encomenda fica reservada durante <b>' + PRAZO_PAGAMENTO_DIAS + ' dias</b>. Se o pagamento ou o comprovativo não for recebido dentro deste prazo, o pedido é cancelado e o stock libertado.'
+  ]);
+
+  T += '<h4>6. Entrega</h4><p>Os produtos são enviados para a morada indicada pelo cliente. O cliente deve verificar o estado da embalagem no momento da receção e comunicar qualquer dano à Empresa o mais rapidamente possível.</p>';
+
+  T += '<h4>7. Proteção de Dados Pessoais e Privacidade</h4>' + L([
+    '<b>Responsável pelo tratamento:</b> a Empresa, identificada no ponto 1, em conformidade com o RGPD (Regulamento Geral sobre a Proteção de Dados) e a legislação portuguesa.',
+    '<b>Dados recolhidos:</b> nome, sobrenome, data de nascimento (para verificar a maioridade), género, email, telemóvel e dados de entrega.',
+    '<b>Finalidades e fundamento:</b> gestão da conta, processamento de encomendas, faturação e cumprimento de obrigações legais (execução do contrato e obrigação legal); envio de comunicações promocionais apenas se o cliente o tiver autorizado (consentimento), que pode retirar a qualquer momento sem afetar a conta.',
+    '<b>Conservação:</b> os dados são conservados enquanto a conta existir e, depois, apenas pelos prazos exigidos por lei (por exemplo, obrigações fiscais).',
+    '<b>Partilha:</b> a Empresa não vende dados pessoais. Os dados podem ser tratados por prestadores de serviços necessários à operação da loja (alojamento e transportadoras), obrigados a confidencialidade.',
+    '<b>Direitos do Cliente:</b> o cliente pode aceder, retificar, limitar, opor-se, pedir a portabilidade ou a eliminação dos seus dados diretamente na sua área de cliente ou através dos contactos da Empresa, e tem o direito de apresentar reclamação à Comissão Nacional de Proteção de Dados (www.cnpd.pt).'
+  ]);
+
+  T += '<h4>8. Direito de Livre Resolução e Exceções (Devoluções)</h4>' + L([
+    '<b>Prazo Legal:</b> em conformidade com o Decreto-Lei n.º 24/2014, o consumidor dispõe de 14 dias seguidos (a contar da receção do bem) para rescindir o contrato sem necessidade de indicar o motivo, comunicando a sua decisão à Empresa de forma inequívoca através dos contactos acima.',
+    '<b>Exceção Importante (Higiene e Perfumaria):</b> por motivos de proteção da saúde ou de higiene, não se aceitam devoluções de produtos de perfumaria ou higiene pessoal que tenham sido deslacrados, abertos ou utilizados após a entrega, nos termos do artigo 17.º do referido Decreto-Lei. Para serem devolvidos, os produtos devem estar totalmente intactos e na embalagem original selada.',
+    '<b>Custos e reembolso:</b> os custos diretos de devolução são suportados pelo consumidor. O reembolso é feito no prazo máximo de 14 dias após a Empresa ser informada da decisão, podendo aguardar a receção dos bens devolvidos.'
+  ]);
+
+  T += '<h4>9. Garantia Legal</h4><p>Aos produtos aplica-se a garantia legal de conformidade prevista no Decreto-Lei n.º 84/2021. Em caso de produto defeituoso ou não conforme, o cliente deve contactar a Empresa.</p>';
+
+  T += '<h4>10. Resolução Alternativa de Litígios (RAL)</h4><p>Em caso de litígio de consumo, o cliente pode recorrer a uma Entidade de Resolução Alternativa de Litígios de Consumo competente (lista em <a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">www.consumidor.gov.pt</a>). Para reclamações formais, a Empresa disponibiliza o acesso ao Livro de Reclamações Eletrónico através do portal oficial <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">www.livroreclamacoes.pt</a>.</p>';
+
+  T += '<h4>11. Alterações aos Termos</h4><p>A Empresa pode alterar estes Termos e Condições. A versão em vigor é a publicada no site e aplica-se aos pedidos feitos após a alteração. A versão aceite por cada cliente no registo fica registada.</p>';
+
+  T += '<h4>12. Lei Aplicável</h4><p>Os presentes Termos e Condições regem-se pela lei portuguesa, sem prejuízo dos direitos imperativos do consumidor.</p>';
+  return T;
+}
+function abrirTermos(){
+  $('termosTxt').innerHTML = termosHTML();
+  $('termosTxt').scrollTop = 0;
+  $('mTermos').classList.add('a');
+}
+
+async function iniciarConta(){
+  try{ var raw = localStorage.getItem('gaspar_sessao'); if(raw) SESSAO = JSON.parse(raw); }catch(e){}
+  var hs = window._hashSessao;
+  if(hs){
+    try{
+      var r = await fetch(SB + '/auth/v1/user', { headers: { 'apikey': SK, 'Authorization': 'Bearer ' + hs.access_token } });
+      var u = r.ok ? await r.json() : null;
+      if(u) guardarSessao({ access_token: hs.access_token, refresh_token: hs.refresh_token, expires_in: hs.expires_in, user: u });
+    }catch(e){}
+  }
+  if(SESSAO) await carregarPerfil();
+  atualizarBotaoConta();
+
+  var pn = $('pagNote');
+  if(pn) pn.innerHTML = '💳 Pagamento por <b>transferência bancária</b>. Depois de recebermos o pedido enviamos o IBAN. A encomenda fica reservada <b>' + PRAZO_PAGAMENTO_DIAS +
+    ' dias</b> e só é enviada após confirmarmos o pagamento; sem pagamento nesse prazo, é cancelada. Ao enviar o pedido aceita os <a style="color:var(--gold);text-decoration:underline" href="#" onclick="abrirTermos();return false">Termos e Condições</a>.';
+
+  if(hs && SESSAO){
+    if(hs.tipo === 'recovery'){ renderConta('novasenha'); $('mConta').classList.add('a'); }
+    else toast('✅ Email confirmado. Já pode usar a sua conta.');
+  }
+}
 
 // ── INSTALAR COMO APP ──
 let deferredPrompt = null;

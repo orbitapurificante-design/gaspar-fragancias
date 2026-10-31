@@ -177,7 +177,7 @@
     .bnSlide::before{content:'';position:absolute;inset:-24px;background:var(--img) center/cover no-repeat;
       filter:blur(24px) brightness(.88);transform:scale(1.1)}
     .bnSlide img,.bnSlide video{position:relative;object-fit:contain}
-    .bnBox.fill .bnSlide img,.bnBox.fill .bnSlide video{object-fit:cover}
+    .bnSlide.fill img,.bnSlide.fill video{object-fit:cover}
   }
 
   @media(min-width:1000px){
@@ -694,35 +694,46 @@ function calcAlturaBanner(){
     var h = BN_ASP ? Math.round(larg / BN_ASP) : Math.round(larg * 0.6);
     BN_INNER = Math.max(140, Math.min(h, maxH));
     BN_MARGIN = 6;
-    // se faltar pouco para a foto caber inteira (corte até ~20%), enche a largura toda; senão mostra inteira com fundo desfocado
-    document.getElementById('bnBox').classList.toggle('fill', !!BN_ASP && h <= BN_INNER * 1.25);
   } else {
     BN_INNER = 112; BN_MARGIN = 8;
-    document.getElementById('bnBox').classList.remove('fill');
   }
   bnFullH = BN_INNER + BN_MARGIN;
   document.getElementById('bnBox').style.height = BN_INNER + 'px';
   document.documentElement.style.setProperty('--bnFull', bnFullH + 'px');
+  aplicarFill();
+}
+
+var BN_ASPS = [];
+// cada foto: se ampliada até encher a largura ficar até ~3x, enche (corta um pouco em cima/baixo);
+// se for muito estreita (vertical/quadrada), fica inteira com laterais desfocadas
+function aplicarFill(){
+  var larg = document.documentElement.clientWidth || window.innerWidth;
+  document.querySelectorAll('#bnTrack .bnSlide').forEach(function(sl, i){
+    var a = BN_ASPS[i];
+    sl.classList.toggle('fill', larg >= 540 && !!a && (BN_INNER * a) / larg >= 0.35);
+  });
 }
 
 function medirPrimeiroBanner(){
-  var b = BANNERS[0]; if(!b) return;
-  var pronto = function(w, h){
-    if(!w || !h) return;
-    BN_ASP = w / h;
-    calcAlturaBanner(); aoScrollBanner(); ajustarTopo();
-  };
-  if(b.tipo === 'video'){
-    var v = document.querySelector('#bnTrack video');
-    if(v){
+  BANNERS.forEach(function(b, i){
+    var pronto = function(w, h){
+      if(!w || !h) return;
+      BN_ASPS[i] = w / h;
+      if(i === 0) BN_ASP = w / h;   // a altura do painel segue a primeira foto
+      calcAlturaBanner(); aoScrollBanner(); ajustarTopo();
+    };
+    if(b.tipo === 'video'){
+      var v = document.querySelectorAll('#bnTrack .bnSlide')[i];
+      v = v && v.querySelector('video');
+      if(!v) return;
       if(v.videoWidth) pronto(v.videoWidth, v.videoHeight);
       else v.addEventListener('loadedmetadata', function(){ pronto(v.videoWidth, v.videoHeight); }, { once: true });
+    } else {
+      var im = new Image();
+      im.onload = function(){ pronto(im.naturalWidth, im.naturalHeight); };
+      im.src = b.url;
     }
-  } else {
-    var im = new Image();
-    im.onload = function(){ pronto(im.naturalWidth, im.naturalHeight); };
-    im.src = b.url;
-  }
+  });
 }
 
 // margem do conteúdo = altura da barra fixa sem o painel

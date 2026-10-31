@@ -710,7 +710,7 @@ function aplicarFill(){
   var larg = document.documentElement.clientWidth || window.innerWidth;
   document.querySelectorAll('#bnTrack .bnSlide').forEach(function(sl, i){
     var a = BN_ASPS[i];
-    sl.classList.toggle('fill', larg >= 540 && !!a && (BN_INNER * a) / larg >= 0.35);
+    sl.classList.toggle('fill', larg >= 540 && !!a && (BN_INNER * a) / larg >= 0.4);
   });
 }
 
@@ -1265,6 +1265,11 @@ function esc(s){
 }
 function $(id){ return document.getElementById(id); }
 
+// endereço da loja para onde os links dos emails (confirmar / recuperar) devem voltar
+function urlLoja(){
+  return /^https?:$/.test(location.protocol) ? '?redirect_to=' + encodeURIComponent(location.origin + location.pathname) : '';
+}
+
 function guardarSessao(d){
   SESSAO = { access: d.access_token, refresh: d.refresh_token || (SESSAO && SESSAO.refresh),
              exp: Date.now() + (d.expires_in || 3600) * 1000, user: d.user || (SESSAO && SESSAO.user) };
@@ -1453,7 +1458,7 @@ async function registar(){
 
   var btn = $('btnRegistar'); btn.disabled = true;
   try{
-    var r = await authPost('/auth/v1/signup', { email: email, password: s1, data: {
+    var r = await authPost('/auth/v1/signup' + urlLoja(), { email: email, password: s1, data: {
       nome: nome, sobrenome: sobrenome, data_nascimento: nasc, genero: genero, telemovel: tel,
       marketing: $('rMarketing').checked, aceitou_termos: true, versao_termos: TERMOS_VERSAO } });
     if(!r.ok){ toast('❌ ' + erroAuth(r.d)); btn.disabled = false; return; }
@@ -1482,7 +1487,7 @@ async function entrar(){
 async function recuperarSenha(){
   var email = $('cEmail').value.trim().toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('⚠️ Email inválido');
-  try{ await authPost('/auth/v1/recover', { email: email }); }catch(e){}
+  try{ await authPost('/auth/v1/recover' + urlLoja(), { email: email }); }catch(e){}
   renderConta('entrar', 'Se existir uma conta com esse email, enviámos-lhe um link para criar uma nova palavra-passe.');
 }
 

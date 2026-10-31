@@ -129,6 +129,54 @@
     border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.45);color:#fff;font-size:20px;cursor:pointer;z-index:2}
   .bnVNav.l{left:10px}.bnVNav.r{right:10px}
 
+  /* VANTAGENS + PROMOÇÕES */
+  .benef{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:4px 0 8px}
+  .bItem{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:9px 6px 8px;text-align:center}
+  .bItem svg{width:20px;height:20px;color:var(--gold);margin-bottom:3px}
+  .bItem b{display:block;font-size:11.5px;color:var(--ivory);line-height:1.25}
+  .bItem small{display:block;font-size:9.5px;color:var(--ivory-dim);line-height:1.35;margin-top:2px}
+  .promo{position:relative;display:flex;align-items:stretch;background:var(--bg2);border:1px solid var(--line);
+    border-radius:14px;overflow:hidden;cursor:pointer;margin:0 0 6px;min-height:118px}
+  .promoImg{flex:0 0 38%;background:var(--bg3) center/cover no-repeat}
+  .promoImg.deco{background:linear-gradient(135deg,#8f6527,#d9b36a);display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;letter-spacing:1px}
+  .promoTxt{flex:1;min-width:0;padding:12px 14px 20px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+  .promoTit{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;line-height:1.2;color:var(--ivory)}
+  .promoSub{font-size:12px;color:var(--ivory-dim);line-height:1.45}
+  .promoCta{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .promoIn{display:flex;width:100%;transition:opacity .35s}
+  .promoIn.out{opacity:0}
+  .promoDots{position:absolute;bottom:7px;right:12px;display:flex;gap:5px}
+  .promoDots i{width:6px;height:6px;border-radius:50%;background:rgba(43,36,32,.25)}
+  .promoDots i.on{background:var(--gold)}
+  @media(min-width:700px){ .promo{min-height:140px} .promoTit{font-size:22px} .promoSub{font-size:13px} .bItem b{font-size:12.5px} .bItem small{font-size:10.5px} }
+
+  /* PROGRAMA / PERFIL */
+  .prog{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+  .progRow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ivory-dim);padding:3px 0}
+  .progRow b{color:var(--ivory);font-size:14px}
+  .progRow b.gold{color:var(--gold);font-size:17px}
+  .progRow b.cod{font-family:'Jost',monospace;letter-spacing:2px;color:var(--gold)}
+  .progBar{height:7px;border-radius:5px;background:rgba(43,36,32,.12);margin:8px 0 5px;overflow:hidden}
+  .progBar i{display:block;height:100%;background:var(--gold);border-radius:5px;transition:width .4s}
+  .progSub{font-size:11px;color:var(--ivory-dim);line-height:1.5}
+  .progBtns{display:flex;gap:8px;margin-top:10px}
+  .btnSm{flex:1;padding:9px 0;border:1px solid var(--gold);border-radius:10px;background:none;color:var(--gold-soft);
+    font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
+  .pedRow{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:8px 0;border-bottom:1px solid var(--line);gap:8px}
+  .pedRow:last-child{border-bottom:none}
+  .pedEst{font-size:10px;letter-spacing:.6px;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:var(--bg3);color:var(--ivory-dim);white-space:nowrap}
+  .pedEst.pago,.pedEst.enviado{background:#c9e3d2;color:#1f5a38}
+  .pedEst.cancelado{background:#e9c4bf;color:#7a2418}
+  .passo{display:flex;gap:11px;margin:0 0 14px}
+  .passo .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .passo b{display:block;font-size:14px;color:var(--ivory);margin-bottom:2px}
+  .passo span{font-size:12.5px;line-height:1.55;color:var(--ivory-dim)}
+  .resumo{font-size:13px;margin:6px 0 0}
+  .resumo div{display:flex;justify-content:space-between;padding:3px 0;color:var(--ivory-dim)}
+  .resumo .dc{color:#1f7a4a;font-weight:600}
+  .resumo .tt{color:var(--ivory)}
+
   /* CONTA / REGISTO */
   .acctBtn{position:absolute;right:42px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;
     background:var(--bg3);border:1px solid var(--line);color:var(--ivory);display:flex;align-items:center;
@@ -398,6 +446,24 @@
 </div>
 
 <div class="wrap">
+  <div class="benef" id="benef">
+    <div class="bItem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="11" rx="1.5"/><path d="M15 10h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+      <b>Envio grátis</b><small id="benefEnvio">a partir de 30€</small>
+    </div>
+    <div class="bItem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+      <b>Entrega rápida</b><small>Enviamos logo após o pagamento</small>
+    </div>
+    <div class="bItem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+      <b>Pagamento seguro</b><small>Só paga depois de receber a fatura</small>
+    </div>
+  </div>
+  <div class="promo" id="promo" style="display:none" onclick="abrirPrograma()">
+    <div class="promoIn" id="promoIn"></div>
+    <div class="promoDots" id="promoDots"></div>
+  </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" style="display:none">
     <div class="e1">🌿</div>
@@ -536,7 +602,10 @@
       <button class="closeX" onclick="fecharModal('mCart')">×</button>
     </div>
     <div id="cartLista"></div>
-    <div class="totRow"><div class="totLbl">Total Estimado</div><div class="totVal" id="cartTotal">0.00€</div></div>
+    <div class="resumo" id="cartResumo"></div>
+    <label class="chk" id="creditRow" style="display:none"><input type="checkbox" id="usarCredito" onchange="abrirCarrinho()"><span id="creditLbl"></span></label>
+    <div class="totRow"><div class="totLbl">Total a pagar</div><div class="totVal" id="cartTotal">0.00€</div></div>
+    <div class="authMsg" id="cartLoginHint" style="display:none"></div>
     <div class="shippingNote" id="shippingNote"></div>
     <div class="shippingNote" id="pagNote"></div>
     <label class="lbl">O seu nome *</label>
@@ -545,7 +614,7 @@
     <input type="tel" class="inp" id="cartTel" placeholder="Ex: 351912345678">
     <label class="lbl">Observações (opcional)</label>
     <textarea class="txt" id="cNotes" placeholder="Ex: morada de entrega, preferências..."></textarea>
-    <button class="btnGold" onclick="enviarWhatsApp()">
+    <button class="btnGold" id="btnEnviar" onclick="enviarWhatsApp()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="#140f0d"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Enviar Pedido via WhatsApp
     </button>
@@ -576,6 +645,28 @@
   </div>
 </div>
 
+<!-- PROGRAMA: DESCONTOS E AMIGOS -->
+<div class="modal" id="mPrograma">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Descontos e amigos</div>
+      <button class="closeX" onclick="fecharModal('mPrograma')">×</button>
+    </div>
+    <div id="programaBody"></div>
+  </div>
+</div>
+
+<!-- PEDIDO REGISTADO -->
+<div class="modal" id="mPedidoOk">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Pedido registado</div>
+      <button class="closeX" onclick="fecharModal('mPedidoOk')">×</button>
+    </div>
+    <div id="pedidoOkBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -591,8 +682,11 @@ const LOJA_NOME = 'GASPAR — Fragrâncias do Oriente';
 const LIMIAR_ENVIO_GRATIS = 30;                           // <-- Valor mínimo (€) para portes grátis
 const EMAIL_SUPORTE = '';                                 // <-- O teu email de contacto/suporte (aparece nos Termos). Ex: 'geral@orbitapurificante.pt'
 const PRAZO_PAGAMENTO_DIAS = 3;                           // <-- Dias que a encomenda fica reservada à espera do pagamento
-const TERMOS_VERSAO = '2026-10-30';                       // <-- Muda esta data sempre que alterares os Termos
-const CUSTO_ENVIO = 3.5;                                    // <-- Custo dos portes (€) abaixo do limiar
+const TERMOS_VERSAO = '2026-10-31';                       // <-- Muda esta data sempre que alterares os Termos
+const CUSTO_ENVIO = 3.5;
+const DESCONTO_PRIMEIRA_PCT = 10;                         // <-- 10% na 1.ª compra (tem de ser igual ao SQL: config_loja)
+const CREDITO_INDICACAO_PCT = 5;                          // <-- 5% de crédito para quem partilhou o código
+const INDICACOES_MINIMAS = 20;                            // <-- contas confirmadas necessárias para começar a ganhar                                    // <-- Custo dos portes (€) abaixo do limiar
 
 function hd(){ return { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'Content-Type': 'application/json' }; }
 async function api(path){
@@ -958,34 +1052,69 @@ function cartChange(id, delta){
   badge.style.display = total > 0 ? 'flex' : 'none';
 }
 
+// valores do pedido (pré-visualização; o valor final é sempre calculado no servidor)
+function calcPedidoLocal(){
+  var items = Object.values(CART), sub = 0;
+  items.forEach(function(it){ sub += (parseFloat(it.p.preco_novo) || 0) * it.qty; });
+  sub = Math.round(sub * 100) / 100;
+  var logado = !!(SESSAO && SESSAO.user && PERFIL);
+  var desc = (logado && !PERFIL.usou_desconto_inicial) ? Math.round(sub * DESCONTO_PRIMEIRA_PCT) / 100 : 0;
+  var credDisp = logado ? (Number(PERFIL.credito) || 0) : 0;
+  var usar = !!($('usarCredito') && $('usarCredito').checked) && credDisp > 0;
+  var cred = usar ? Math.min(credDisp, Math.max(sub - desc, 0)) : 0;
+  cred = Math.round(cred * 100) / 100;
+  var portes = (sub > 0 && sub < LIMIAR_ENVIO_GRATIS) ? CUSTO_ENVIO : 0;
+  return { items: items, sub: sub, desc: desc, cred: cred, credDisp: credDisp, portes: portes,
+           total: Math.round((sub - desc - cred + portes) * 100) / 100, logado: logado };
+}
+
 function abrirCarrinho(){
-  var items = Object.values(CART);
+  var c = calcPedidoLocal(), items = c.items;
   var lista = document.getElementById('cartLista');
-  var totalVal = 0;
 
   if(!items.length){
     lista.innerHTML = '<p style="text-align:center;color:var(--ivory-dim);padding:20px 0">O seu pedido está vazio.</p>';
-    document.getElementById('cartTotal').textContent = '0.00€';
+    $('cartResumo').innerHTML = '';
   } else {
     lista.innerHTML = items.map(function(it){
       var pn = parseFloat(it.p.preco_novo) || 0;
       var sub = pn * it.qty;
-      totalVal += sub;
       return '<div class="cItem">' +
         (it.p.foto ? '<img class="cImg" src="'+it.p.foto+'">' : '<div class="cImg"></div>') +
-        '<div class="cInfo"><div class="cNome">'+it.p.nome+'</div><div class="cSub">'+it.qty+' un × '+pn.toFixed(2)+'€</div></div>' +
+        '<div class="cInfo"><div class="cNome">'+esc(it.p.nome)+'</div><div class="cSub">'+it.qty+' un × '+pn.toFixed(2)+'€</div></div>' +
         '<div class="cVal">'+sub.toFixed(2)+'€</div>' +
       '</div>';
     }).join('');
-    document.getElementById('cartTotal').textContent = totalVal.toFixed(2) + '€';
+    var r = '<div><span>Produtos</span><span>' + c.sub.toFixed(2) + '€</span></div>';
+    if(c.desc > 0) r += '<div class="dc"><span>🎁 Desconto 1.ª compra (' + DESCONTO_PRIMEIRA_PCT + '%)</span><span>−' + c.desc.toFixed(2) + '€</span></div>';
+    if(c.cred > 0) r += '<div class="dc"><span>⭐ Crédito de amigos</span><span>−' + c.cred.toFixed(2) + '€</span></div>';
+    r += '<div><span>Portes</span><span>' + (c.portes > 0 ? c.portes.toFixed(2) + '€' : 'Grátis') + '</span></div>';
+    $('cartResumo').innerHTML = r;
   }
+  $('cartTotal').textContent = (items.length ? c.total : 0).toFixed(2) + '€';
+
+  // crédito disponível
+  var cr = $('creditRow');
+  if(c.logado && c.credDisp > 0 && items.length){
+    cr.style.display = 'flex';
+    $('creditLbl').innerHTML = 'Usar o meu crédito de amigos (disponível: <b>' + c.credDisp.toFixed(2) + '€</b>)';
+  } else { cr.style.display = 'none'; if($('usarCredito')) $('usarCredito').checked = false; }
+
+  // convite a criar conta
+  var hint = $('cartLoginHint');
+  if(!c.logado && items.length){
+    hint.style.display = 'block';
+    hint.innerHTML = '🎁 Com conta tem <b>' + DESCONTO_PRIMEIRA_PCT + '% de desconto na 1.ª compra</b>. ' +
+      '<a style="color:var(--gold);text-decoration:underline;cursor:pointer" onclick="fecharModal(\'mCart\');abrirConta();renderConta(\'registar\')">Criar conta</a> ou ' +
+      '<a style="color:var(--gold);text-decoration:underline;cursor:pointer" onclick="fecharModal(\'mCart\');abrirConta();renderConta(\'entrar\')">Entrar</a>';
+  } else hint.style.display = 'none';
 
   var noteEl = document.getElementById('shippingNote');
   if(!items.length){
     noteEl.className = 'shippingNote';
     noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> para encomendas abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€. Grátis a partir desse valor.';
-  } else if(totalVal < LIMIAR_ENVIO_GRATIS){
-    var falta = (LIMIAR_ENVIO_GRATIS - totalVal).toFixed(2);
+  } else if(c.sub < LIMIAR_ENVIO_GRATIS){
+    var falta = (LIMIAR_ENVIO_GRATIS - c.sub).toFixed(2);
     noteEl.className = 'shippingNote';
     noteEl.innerHTML = '🚚 Portes de transporte: <b>'+CUSTO_ENVIO.toFixed(2)+'€</b> (encomenda abaixo de '+LIMIAR_ENVIO_GRATIS.toFixed(2)+'€). Faltam <b>'+falta+'€</b> para teres portes grátis!';
   } else {
@@ -1168,41 +1297,88 @@ function limparCarrinho(){
   fecharModal('mCart');
 }
 
-function gerarTextoEncomenda(nome, notas, tel){
-  var items = Object.values(CART);
+// d = resposta do servidor (valores finais) ou, sem servidor, o cálculo local
+function gerarTextoEncomenda(nome, notas, tel, d){
   var data = new Date().toLocaleDateString('pt-PT');
-  var linhas = ['🌸 NOVO PEDIDO — ' + LOJA_NOME, '📅 ' + data, '🔖 Nº do pedido: ' + numeroPedido(), '👤 ' + nome + (PERFIL && PERFIL.numero_cliente ? ' (cliente ' + PERFIL.numero_cliente + ')' : ''), '📞 ' + tel, ''];
-  var total = 0;
-  items.forEach(function(it){
-    var pn = parseFloat(it.p.preco_novo) || 0;
-    var sub = pn * it.qty;
-    total += sub;
-    linhas.push('• ' + it.p.nome + (it.p.volume ? ' ('+it.p.volume+')' : '') + ' — ' + it.qty + 'un × ' + pn.toFixed(2) + '€ = ' + sub.toFixed(2) + '€');
+  var linhas = ['🌸 NOVO PEDIDO — ' + LOJA_NOME, '📅 ' + data, '🔖 Nº do pedido: ' + d.numero,
+    '👤 ' + nome + (PERFIL && PERFIL.numero_cliente ? ' (cliente ' + PERFIL.numero_cliente + ')' : ''), '📞 ' + tel, ''];
+  d.itens.forEach(function(it){
+    var pn = Number(it.preco) || 0, q = it.qty;
+    linhas.push('• ' + it.nome + (it.volume ? ' ('+it.volume+')' : '') + ' — ' + q + 'un × ' + pn.toFixed(2) + '€ = ' + (pn * q).toFixed(2) + '€');
   });
   linhas.push('');
-  linhas.push('💰 SUBTOTAL: ' + total.toFixed(2) + '€');
-  if(total < LIMIAR_ENVIO_GRATIS){
-    linhas.push('🚚 Portes de transporte: ' + CUSTO_ENVIO.toFixed(2) + '€ (encomenda abaixo de ' + LIMIAR_ENVIO_GRATIS.toFixed(2) + '€)');
-  } else {
-    linhas.push('🚚 Portes de transporte: Grátis');
-  }
+  linhas.push('💰 SUBTOTAL: ' + Number(d.subtotal).toFixed(2) + '€');
+  if(Number(d.desconto_primeira) > 0) linhas.push('🎁 Desconto 1.ª compra (' + DESCONTO_PRIMEIRA_PCT + '%): −' + Number(d.desconto_primeira).toFixed(2) + '€');
+  if(Number(d.credito_usado) > 0) linhas.push('⭐ Crédito de amigos: −' + Number(d.credito_usado).toFixed(2) + '€');
+  linhas.push('🚚 Portes de transporte: ' + (Number(d.portes) > 0 ? Number(d.portes).toFixed(2) + '€ (encomenda abaixo de ' + LIMIAR_ENVIO_GRATIS.toFixed(2) + '€)' : 'Grátis'));
+  linhas.push('✅ TOTAL A PAGAR: ' + Number(d.total).toFixed(2) + '€');
   linhas.push('💳 Pagamento: transferência bancária (aguardo IBAN)');
   if(notas && notas.trim()) { linhas.push(''); linhas.push('📝 Observações: ' + notas.trim()); }
   return linhas.join('\n');
 }
 
-function enviarWhatsApp(){
-  var items = Object.values(CART);
-  if(!items.length){ toast('⚠️ O pedido está vazio'); return; }
+async function enviarWhatsApp(){
+  var c = calcPedidoLocal();
+  if(!c.items.length){ toast('⚠️ O pedido está vazio'); return; }
   var nome = document.getElementById('cName').value.trim();
   if(!nome){ toast('⚠️ Indique o seu nome'); return; }
   var tel = document.getElementById('cartTel').value.replace(/\D/g,'');
   if(!tel){ toast('⚠️ Indique o seu telemóvel'); return; }
   var notas = document.getElementById('cNotes').value;
-  var txt = gerarTextoEncomenda(nome, notas, tel);
+  var btn = $('btnEnviar'); btn.disabled = true;
+
+  // abre já a janela do WhatsApp (os navegadores só deixam abrir enquanto o toque do cliente é recente)
+  var janela = null;
+  try{ janela = window.open('', '_blank'); }catch(e){}
+
+  var dados = null, guardado = true;
+  try{
+    var tk = await tokenValido();
+    var r = await fetch(SB + '/rest/v1/rpc/criar_pedido', { method: 'POST',
+      headers: { 'apikey': SK, 'Authorization': 'Bearer ' + (tk || SK), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_nome: nome, p_telemovel: tel, p_notas: notas,
+        p_itens: c.items.map(function(it){ return { id: it.p.id, qty: it.qty }; }),
+        p_usar_credito: !!$('usarCredito').checked }) });
+    if(r.ok){ dados = await r.json(); }
+    else if(r.status === 404){
+      // SQL ainda não instalado: mantém o funcionamento antigo (pedido só por WhatsApp, sem guardar)
+      guardado = false;
+      dados = { numero: numeroPedido(), subtotal: c.sub, desconto_primeira: 0, credito_usado: 0, portes: c.portes + 0,
+        total: Math.round((c.sub + c.portes) * 100) / 100,
+        itens: c.items.map(function(it){ return { nome: it.p.nome, volume: it.p.volume, preco: it.p.preco_novo, qty: it.qty }; }) };
+    } else {
+      var er = {}; try{ er = await r.json(); }catch(e){}
+      if(janela) janela.close();
+      toast('❌ ' + (er.message || 'Não foi possível enviar o pedido'));
+      btn.disabled = false; return;
+    }
+  }catch(e){
+    if(janela) janela.close();
+    toast('❌ Erro de ligação. Tente novamente.');
+    btn.disabled = false; return;
+  }
+
+  var txt = gerarTextoEncomenda(nome, notas, tel, dados);
   var url = 'https://wa.me/' + WHATSAPP_NUM + '?text=' + encodeURIComponent(txt);
-  window.open(url, '_blank');
-  toast('✅ Pedido ' + numeroPedido() + ' pronto a enviar no WhatsApp');
+  if(janela){ try{ janela.location.href = url; }catch(e){ janela = null; } }
+
+  // pedido concluído: limpa o carrinho e mostra o resumo (com botão de WhatsApp, caso o navegador tenha bloqueado)
+  CART = {}; PEDIDO_NUM = null;
+  document.querySelectorAll('[id^="qn_"]').forEach(function(el){ el.textContent = '0'; });
+  $('fabBadge').style.display = 'none';
+  $('usarCredito').checked = false;
+  fecharModal('mCart');
+  $('pedidoOkBody').innerHTML =
+    '<p style="margin:0 0 6px;font-size:13px;color:var(--ivory-dim)">Número do pedido</p>' +
+    '<p style="margin:0 0 14px;font-size:24px;font-weight:700;letter-spacing:2px;color:var(--gold)">' + esc(dados.numero) + '</p>' +
+    '<p style="font-size:13px;line-height:1.6;color:var(--ivory-dim)">Total a pagar: <b style="color:var(--ivory)">' + Number(dados.total).toFixed(2) + '€</b>.<br>' +
+    'Envie a mensagem no WhatsApp para recebermos o pedido. Depois enviamos a fatura e o IBAN, e o pedido segue assim que o pagamento for confirmado.</p>' +
+    (guardado ? '' : '<div class="authMsg">⚠️ Pedido enviado só por WhatsApp (não ficou registado na conta).</div>') +
+    '<a class="btnGold" style="text-decoration:none" target="_blank" rel="noopener" href="' + url + '">Enviar no WhatsApp</a>' +
+    '<button class="btnGhost" onclick="fecharModal(\'mPedidoOk\')">Fechar</button>';
+  $('mPedidoOk').classList.add('a');
+  btn.disabled = false;
+  if(SESSAO){ await carregarPerfil(); }
 }
 
 document.getElementById('tabs').addEventListener('click', function(e){
@@ -1216,6 +1392,9 @@ window.addEventListener('load', function(){
   iniciar();
   registarVisita();
   iniciarConta();
+  iniciarPromocoes();
+  var be = $('benefEnvio'); if(be) be.textContent = 'a partir de ' + LIMIAR_ENVIO_GRATIS + '€';
+  if(window._refNovo) setTimeout(function(){ toast('🎁 Código de amigo ' + window._refNovo + ' guardado. Use-o ao criar conta'); }, 1200);
 
   ['menuIgLink','footerIgLink'].forEach(function(id){
     var el = document.getElementById(id);
@@ -1254,7 +1433,7 @@ window.addEventListener('load', function(){
   history.replaceState(history.state, '', location.pathname + location.search);
 })();
 
-var SESSAO = null, PERFIL = null, CONTA_MODO = 'entrar';
+var SESSAO = null, PERFIL = null, PROG = null, CONTA_MODO = 'entrar';
 var ICON_USER = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>';
 var ICON_EYE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 
@@ -1276,7 +1455,7 @@ function guardarSessao(d){
   try{ localStorage.setItem('gaspar_sessao', JSON.stringify(SESSAO)); }catch(e){}
 }
 function limparSessao(){
-  SESSAO = null; PERFIL = null;
+  SESSAO = null; PERFIL = null; PROG = null;
   try{ localStorage.removeItem('gaspar_sessao'); }catch(e){}
 }
 
@@ -1380,6 +1559,7 @@ function renderConta(modo, aviso){
     h += '<div class="fld sel"><select class="inp" id="rGenero"><option value="">Género *</option><option value="F">Feminino</option><option value="M">Masculino</option><option value="O">Outro</option><option value="N">Prefiro não dizer</option></select></div>';
     h += campo('rEmail', 'Endereço de e-mail *', 'email', 'autocomplete="email"');
     h += campo('rTel', 'Telemóvel (opcional)', 'tel', 'autocomplete="tel"');
+    h += campo('rRef', 'Código de amigo (opcional)', 'text', 'autocomplete="off" maxlength="12" style="text-transform:uppercase"');
     h += campoSenha('rSenha', 'Palavra-Passe * (mín. 8 caracteres)', 'new-password', 'oninput="atualizarForca()"');
     h += '<div class="strength">Nível de Segurança da palavra-passe: <span class="pill" id="forcaPill">Sem palavra-passe</span></div>';
     h += campoSenha('rSenha2', 'Confirmar Palavra-passe *', 'new-password');
@@ -1403,13 +1583,19 @@ function renderConta(modo, aviso){
   else if(m === 'perfil'){
     var u = (SESSAO && SESSAO.user) || {};
     h += '<p style="margin:0 0 14px;font-size:13px;color:var(--ivory-dim)">Sessão iniciada como <b style="color:var(--ivory)">' + esc(u.email) + '</b>' + (PERFIL && PERFIL.numero_cliente ? '<br>Nº de cliente: <b style="color:var(--gold)">' + esc(PERFIL.numero_cliente) + '</b>' : '') + '</p>';
+    h += progHTML();
     h += campo('pfNome', 'Nome', 'text') + campo('pfSobrenome', 'Sobrenome', 'text') + campo('pfTel', 'Telemóvel', 'tel');
     h += '<button class="btnGold" onclick="guardarPerfil()">Guardar alterações</button>';
     h += '<button class="btnGhost" onclick="sairConta()">Terminar sessão</button>';
+    h += '<div id="meusPedidos" style="margin-top:18px"></div>';
     h += '<a class="linkSm" onclick="eliminarConta()">Eliminar a minha conta e os meus dados</a>';
   }
   el.innerHTML = h;
 
+  if(m === 'registar'){
+    try{ var rr = localStorage.getItem('gaspar_ref'); if(rr && $('rRef')) $('rRef').value = rr; }catch(e){}
+  }
+  if(m === 'perfil'){ carregarMeusPedidos(); }
   if(m === 'perfil' && PERFIL){
     $('pfNome').value = PERFIL.nome || ''; $('pfSobrenome').value = PERFIL.sobrenome || ''; $('pfTel').value = PERFIL.telemovel || '';
   }
@@ -1439,12 +1625,19 @@ async function carregarPerfil(){
     var m = SESSAO.user.user_metadata || {};
     PERFIL = { nome: m.nome, sobrenome: m.sobrenome, telemovel: m.telemovel, email: SESSAO.user.email };
   }
+  PROG = null;
+  try{
+    var r2 = await fetch(SB + '/rest/v1/rpc/meu_programa', { method: 'POST',
+      headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+    if(r2.ok) PROG = await r2.json();
+  }catch(e){}
 }
 
 async function registar(){
   var g = function(i){ return $(i).value.trim(); };
   var nome = g('rNome'), sobrenome = g('rSobrenome'), nasc = g('rNasc'), genero = g('rGenero');
   var email = g('rEmail').toLowerCase(), tel = g('rTel').replace(/[^\d+]/g, '');
+  var ref = g('rRef').toUpperCase().replace(/\s/g, '');
   var s1 = $('rSenha').value, s2 = $('rSenha2').value;
   if(!nome || !sobrenome) return toast('⚠️ Indique o nome e o sobrenome');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(nasc)) return toast('⚠️ Indique a data de nascimento');
@@ -1458,11 +1651,17 @@ async function registar(){
 
   var btn = $('btnRegistar'); btn.disabled = true;
   try{
+    if(ref){
+      if(!/^[A-Z0-9]{4,12}$/.test(ref)){ toast('⚠️ Código de amigo inválido'); btn.disabled = false; return; }
+      var rv = await authPost('/rest/v1/rpc/codigo_valido', { p_cod: ref });
+      if(rv.ok && rv.d === false){ toast('⚠️ Esse código de amigo não existe. Confirme-o ou deixe o campo vazio.'); btn.disabled = false; return; }
+    }
     var r = await authPost('/auth/v1/signup' + urlLoja(), { email: email, password: s1, data: {
       nome: nome, sobrenome: sobrenome, data_nascimento: nasc, genero: genero, telemovel: tel,
-      marketing: $('rMarketing').checked, aceitou_termos: true, versao_termos: TERMOS_VERSAO } });
+      marketing: $('rMarketing').checked, aceitou_termos: true, versao_termos: TERMOS_VERSAO, codigo_indicacao: ref } });
     if(!r.ok){ toast('❌ ' + erroAuth(r.d)); btn.disabled = false; return; }
     if(r.d.identities && r.d.identities.length === 0){ toast('❌ Já existe uma conta com este email'); btn.disabled = false; return; }
+    try{ localStorage.removeItem('gaspar_ref'); }catch(e){}
     if(r.d.access_token){
       guardarSessao(r.d); await carregarPerfil(); atualizarBotaoConta();
       toast('✅ Conta criada com sucesso'); renderConta('perfil');
@@ -1546,6 +1745,133 @@ function numeroPedido(){
   return PEDIDO_NUM;
 }
 
+// ── PROGRAMA: DESCONTOS E AMIGOS ──
+function dadosPrograma(){
+  var pr = PROG || {}, pf = PERFIL || {};
+  return {
+    codigo: pr.codigo || pf.codigo_partilha || '',
+    credito: Number(pr.credito != null ? pr.credito : pf.credito) || 0,
+    indicados: Number(pr.indicados) || 0,
+    minimo: Number(pr.minimo) || INDICACOES_MINIMAS,
+    usouDesc: (pr.usou_desconto_inicial != null ? pr.usou_desconto_inicial : pf.usou_desconto_inicial) === true
+  };
+}
+function linkPartilha(cod){
+  var base = /^https?:$/.test(location.protocol) ? location.origin + location.pathname : '';
+  return base + '?ref=' + encodeURIComponent(cod);
+}
+function progHTML(){
+  var d = dadosPrograma(), h = '';
+  if(!d.usouDesc) h += '<div class="authMsg">🎁 Tem <b>' + DESCONTO_PRIMEIRA_PCT + '% de desconto na 1.ª compra</b>, aplicado automaticamente no pedido.</div>';
+  if(!d.codigo) return h;
+  var pct = Math.min(100, Math.round(d.indicados / d.minimo * 100));
+  var sub = d.indicados >= d.minimo
+    ? '✅ Já tem ' + d.minimo + ' amigos! Ganha <b>' + CREDITO_INDICACAO_PCT + '%</b> em crédito de cada compra paga por eles.'
+    : d.indicados + ' de ' + d.minimo + ' amigos registados. Ao chegar a ' + d.minimo + ', ganha <b>' + CREDITO_INDICACAO_PCT + '%</b> em crédito das compras deles.';
+  h += '<div class="prog">' +
+    '<div class="progRow"><span>Crédito disponível</span><b class="gold">' + d.credito.toFixed(2) + '€</b></div>' +
+    '<div class="progRow"><span>O meu código de amigo</span><b class="cod">' + esc(d.codigo) + '</b></div>' +
+    '<div class="progBar"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="progSub">' + sub + '</div>' +
+    '<div class="progBtns"><button class="btnSm" onclick="partilharCodigo()">Partilhar</button>' +
+    '<button class="btnSm" onclick="copiarCodigo()">Copiar código</button>' +
+    '<button class="btnSm" onclick="abrirPrograma()">Como funciona</button></div></div>';
+  return h;
+}
+function copiarTexto(t, ok){
+  var feito = function(){ toast(ok || '✅ Copiado'); };
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(feito, function(){ toast(t); }); }
+  else { var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); feito(); }catch(e){ toast(t); } ta.remove(); }
+}
+function copiarCodigo(){ var d = dadosPrograma(); if(d.codigo) copiarTexto(d.codigo, '✅ Código copiado'); }
+function partilharCodigo(){
+  var d = dadosPrograma(); if(!d.codigo) return;
+  var txt = 'Usa o meu código ' + d.codigo + ' na GASPAR — Fragrâncias do Oriente e ganha ' + DESCONTO_PRIMEIRA_PCT + '% de desconto na primeira compra!';
+  var url = linkPartilha(d.codigo);
+  if(navigator.share){ navigator.share({ title: 'GASPAR', text: txt, url: url }).catch(function(){}); }
+  else copiarTexto(txt + ' ' + url, '✅ Mensagem copiada. Cole-a numa conversa');
+}
+async function carregarMeusPedidos(){
+  var el = $('meusPedidos'); if(!el || !SESSAO) return;
+  var t = await tokenValido(); if(!t) return;
+  try{
+    var r = await fetch(SB + '/rest/v1/pedidos?select=numero,criado_em,total,estado&order=criado_em.desc&limit=10',
+      { headers: { 'apikey': SK, 'Authorization': 'Bearer ' + t } });
+    var a = r.ok ? await r.json() : [];
+    if(!a.length){ el.innerHTML = ''; return; }
+    var L = { novo: 'Recebido', pago: 'Pago', enviado: 'Enviado', cancelado: 'Cancelado' };
+    el.innerHTML = '<div class="lbl" style="margin-top:0">Os meus pedidos</div>' + a.map(function(p){
+      return '<div class="pedRow"><span><b>' + esc(p.numero) + '</b><br><span style="color:var(--ivory-dim);font-size:11px">' +
+        new Date(p.criado_em).toLocaleDateString('pt-PT') + ' · ' + Number(p.total).toFixed(2) + '€</span></span>' +
+        '<span class="pedEst ' + esc(p.estado) + '">' + (L[p.estado] || esc(p.estado)) + '</span></div>';
+    }).join('');
+  }catch(e){}
+}
+
+function abrirPrograma(){
+  var d = dadosPrograma(), logado = !!(SESSAO && SESSAO.user);
+  var h =
+    '<div class="passo"><div class="n">1</div><div><b>' + DESCONTO_PRIMEIRA_PCT + '% na primeira compra</b><span>Crie a sua conta grátis e o desconto é aplicado automaticamente no seu primeiro pedido. Uma vez por conta.</span></div></div>' +
+    '<div class="passo"><div class="n">2</div><div><b>Partilhe e ganhe ' + CREDITO_INDICACAO_PCT + '%</b><span>Cada conta tem um código de amigo. Quem se registar com o seu código fica associado a si.</span></div></div>' +
+    '<div class="passo"><div class="n">3</div><div><b>A partir de ' + INDICACOES_MINIMAS + ' amigos</b><span>Quando tiver ' + INDICACOES_MINIMAS + ' contas confirmadas com o seu código, recebe ' + CREDITO_INDICACAO_PCT + '% do valor de cada compra paga por elas, em crédito para usar em produtos da loja.</span></div></div>' +
+    '<p style="font-size:11px;line-height:1.6;color:var(--ivory-dim);margin:0 0 14px">O crédito só pode ser usado na loja, não é convertível em dinheiro nem transmissível, e é atribuído depois de o pagamento da compra ser confirmado. Ver <a style="color:var(--gold);text-decoration:underline;cursor:pointer" onclick="abrirTermos()">Termos e Condições</a>.</p>';
+  if(logado){
+    h += progHTML();
+  } else {
+    h += '<button class="btnGold" onclick="fecharModal(\'mPrograma\');abrirConta();renderConta(\'registar\')">Criar conta e ganhar ' + DESCONTO_PRIMEIRA_PCT + '%</button>' +
+         '<button class="btnGhost" onclick="fecharModal(\'mPrograma\');abrirConta();renderConta(\'entrar\')">Já tenho conta</button>';
+  }
+  $('programaBody').innerHTML = h;
+  $('mPrograma').classList.add('a');
+}
+
+// ── PROMOÇÕES NO ECRÃ INICIAL (geridas no admin; sem nenhuma, mostra as duas por defeito) ──
+var PROMOS = [], promoIdx = 0, promoTimer = null;
+function promosPorDefeito(){
+  return [
+    { selo: '−' + DESCONTO_PRIMEIRA_PCT + '%', titulo: DESCONTO_PRIMEIRA_PCT + '% de desconto na tua primeira compra', texto: 'Cria a tua conta grátis e o desconto é aplicado automaticamente.' },
+    { selo: CREDITO_INDICACAO_PCT + '%', titulo: 'Partilha a GASPAR e ganha ' + CREDITO_INDICACAO_PCT + '%', texto: 'Convida amigos com o teu código. Com ' + INDICACOES_MINIMAS + ' amigos registados, ganhas ' + CREDITO_INDICACAO_PCT + '% em crédito das compras deles.' }
+  ];
+}
+function pintarPromo(i){
+  var pr = PROMOS[i]; if(!pr) return;
+  var img = pr.imagem
+    ? '<div class="promoImg" style="background-image:url(\'' + String(pr.imagem).replace(/'/g, '%27') + '\')"></div>'
+    : '<div class="promoImg deco">' + esc(pr.selo || '🎁') + '</div>';
+  $('promoIn').innerHTML = img + '<div class="promoTxt"><div class="promoTit">' + esc(pr.titulo) + '</div>' +
+    (pr.texto ? '<div class="promoSub">' + esc(pr.texto) + '</div>' : '') + '<span class="promoCta">Saber mais ›</span></div>';
+  $('promoDots').innerHTML = PROMOS.length > 1 ? PROMOS.map(function(_, k){ return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') : '';
+}
+function rodarPromo(){
+  clearInterval(promoTimer);
+  if(PROMOS.length < 2) return;
+  promoTimer = setInterval(function(){
+    var el = $('promoIn'); el.classList.add('out');
+    setTimeout(function(){ promoIdx = (promoIdx + 1) % PROMOS.length; pintarPromo(promoIdx); el.classList.remove('out'); }, 350);
+  }, 6000);
+}
+async function iniciarPromocoes(){
+  var a = await api('promocoes?ativo=eq.true&order=ordem.asc,id.asc');
+  PROMOS = (a && a.length) ? a : promosPorDefeito();
+  promoIdx = 0; pintarPromo(0);
+  $('promo').style.display = 'flex';
+  rodarPromo();
+}
+
+// ── CÓDIGO DE AMIGO NO LINK (?ref=CODIGO) ──
+(function(){
+  try{
+    var u = new URL(location.href), r = (u.searchParams.get('ref') || '').toUpperCase();
+    if(/^[A-Z0-9]{4,12}$/.test(r)){
+      localStorage.setItem('gaspar_ref', r);
+      u.searchParams.delete('ref');
+      history.replaceState(history.state, '', u.pathname + (u.search || '') + u.hash);
+      window._refNovo = r;
+    }
+  }catch(e){}
+})();
+
 // ── TERMOS E CONDIÇÕES ──
 function termosHTML(){
   var contacto = (EMAIL_SUPORTE ? 'email <b>' + esc(EMAIL_SUPORTE) + '</b> ou ' : '') + 'telemóvel/WhatsApp <b>+351 910 714 037</b>';
@@ -1577,30 +1903,40 @@ function termosHTML(){
     '<b>Prazo de Pagamento:</b> a encomenda fica reservada durante <b>' + PRAZO_PAGAMENTO_DIAS + ' dias</b>. Se o pagamento ou o comprovativo não for recebido dentro deste prazo, o pedido é cancelado e o stock libertado.'
   ]);
 
-  T += '<h4>6. Entrega</h4><p>Os produtos são enviados para a morada indicada pelo cliente. O cliente deve verificar o estado da embalagem no momento da receção e comunicar qualquer dano à Empresa o mais rapidamente possível.</p>';
+  T += '<h4>6. Descontos, Código de Amigo e Crédito</h4>' + L([
+    '<b>Desconto de boas-vindas:</b> cada conta tem direito a ' + DESCONTO_PRIMEIRA_PCT + '% de desconto sobre o valor dos produtos da sua primeira compra, aplicado automaticamente, uma só vez por conta.',
+    '<b>Código de amigo:</b> cada conta tem um código pessoal. Uma nova conta que se registe indicando esse código e confirme o seu email fica associada ao titular do código.',
+    '<b>Crédito:</b> quando o titular do código tiver ' + INDICACOES_MINIMAS + ' ou mais contas confirmadas associadas, recebe ' + CREDITO_INDICACAO_PCT + '% do valor dos produtos (já com descontos) de cada compra dessas contas, a partir do momento em que o pagamento dessa compra seja confirmado. As compras pagas antes de atingir esse número não geram crédito.',
+    '<b>Utilização do crédito:</b> o crédito só pode ser usado para pagar produtos da loja, não é convertível em dinheiro nem transmissível, e não pode ultrapassar o valor dos produtos do pedido.',
+    '<b>Cancelamentos:</b> se um pedido for cancelado, os descontos e créditos usados nele são repostos e os créditos que tenha gerado são anulados.',
+    '<b>Utilização abusiva:</b> a criação de contas falsas, a indicação do próprio código ou qualquer utilização fraudulenta anula os descontos e créditos obtidos e pode levar à suspensão da conta.',
+    'A Empresa pode alterar ou terminar este programa, sem afetar os créditos já atribuídos.'
+  ]);
 
-  T += '<h4>7. Proteção de Dados Pessoais e Privacidade</h4>' + L([
+  T += '<h4>7. Entrega</h4><p>Os produtos são enviados para a morada indicada pelo cliente. O cliente deve verificar o estado da embalagem no momento da receção e comunicar qualquer dano à Empresa o mais rapidamente possível.</p>';
+
+  T += '<h4>8. Proteção de Dados Pessoais e Privacidade</h4>' + L([
     '<b>Responsável pelo tratamento:</b> a Empresa, identificada no ponto 1, em conformidade com o RGPD (Regulamento Geral sobre a Proteção de Dados) e a legislação portuguesa.',
-    '<b>Dados recolhidos:</b> nome, sobrenome, data de nascimento (para verificar a maioridade), género, email, telemóvel e dados de entrega.',
+    '<b>Dados recolhidos:</b> nome, sobrenome, data de nascimento (para verificar a maioridade), género, email, telemóvel, dados de entrega, histórico de pedidos e, se o indicar, o código de amigo.',
     '<b>Finalidades e fundamento:</b> gestão da conta, processamento de encomendas, faturação e cumprimento de obrigações legais (execução do contrato e obrigação legal); envio de comunicações promocionais apenas se o cliente o tiver autorizado (consentimento), que pode retirar a qualquer momento sem afetar a conta.',
     '<b>Conservação:</b> os dados são conservados enquanto a conta existir e, depois, apenas pelos prazos exigidos por lei (por exemplo, obrigações fiscais).',
     '<b>Partilha:</b> a Empresa não vende dados pessoais. Os dados podem ser tratados por prestadores de serviços necessários à operação da loja (alojamento e transportadoras), obrigados a confidencialidade.',
     '<b>Direitos do Cliente:</b> o cliente pode aceder, retificar, limitar, opor-se, pedir a portabilidade ou a eliminação dos seus dados diretamente na sua área de cliente ou através dos contactos da Empresa, e tem o direito de apresentar reclamação à Comissão Nacional de Proteção de Dados (www.cnpd.pt).'
   ]);
 
-  T += '<h4>8. Direito de Livre Resolução e Exceções (Devoluções)</h4>' + L([
+  T += '<h4>9. Direito de Livre Resolução e Exceções (Devoluções)</h4>' + L([
     '<b>Prazo Legal:</b> em conformidade com o Decreto-Lei n.º 24/2014, o consumidor dispõe de 14 dias seguidos (a contar da receção do bem) para rescindir o contrato sem necessidade de indicar o motivo, comunicando a sua decisão à Empresa de forma inequívoca através dos contactos acima.',
     '<b>Exceção Importante (Higiene e Perfumaria):</b> por motivos de proteção da saúde ou de higiene, não se aceitam devoluções de produtos de perfumaria ou higiene pessoal que tenham sido deslacrados, abertos ou utilizados após a entrega, nos termos do artigo 17.º do referido Decreto-Lei. Para serem devolvidos, os produtos devem estar totalmente intactos e na embalagem original selada.',
     '<b>Custos e reembolso:</b> os custos diretos de devolução são suportados pelo consumidor. O reembolso é feito no prazo máximo de 14 dias após a Empresa ser informada da decisão, podendo aguardar a receção dos bens devolvidos.'
   ]);
 
-  T += '<h4>9. Garantia Legal</h4><p>Aos produtos aplica-se a garantia legal de conformidade prevista no Decreto-Lei n.º 84/2021. Em caso de produto defeituoso ou não conforme, o cliente deve contactar a Empresa.</p>';
+  T += '<h4>10. Garantia Legal</h4><p>Aos produtos aplica-se a garantia legal de conformidade prevista no Decreto-Lei n.º 84/2021. Em caso de produto defeituoso ou não conforme, o cliente deve contactar a Empresa.</p>';
 
-  T += '<h4>10. Resolução Alternativa de Litígios (RAL)</h4><p>Em caso de litígio de consumo, o cliente pode recorrer a uma Entidade de Resolução Alternativa de Litígios de Consumo competente (lista em <a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">www.consumidor.gov.pt</a>). Para reclamações formais, a Empresa disponibiliza o acesso ao Livro de Reclamações Eletrónico através do portal oficial <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">www.livroreclamacoes.pt</a>.</p>';
+  T += '<h4>11. Resolução Alternativa de Litígios (RAL)</h4><p>Em caso de litígio de consumo, o cliente pode recorrer a uma Entidade de Resolução Alternativa de Litígios de Consumo competente (lista em <a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">www.consumidor.gov.pt</a>). Para reclamações formais, a Empresa disponibiliza o acesso ao Livro de Reclamações Eletrónico através do portal oficial <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">www.livroreclamacoes.pt</a>.</p>';
 
-  T += '<h4>11. Alterações aos Termos</h4><p>A Empresa pode alterar estes Termos e Condições. A versão em vigor é a publicada no site e aplica-se aos pedidos feitos após a alteração. A versão aceite por cada cliente no registo fica registada.</p>';
+  T += '<h4>12. Alterações aos Termos</h4><p>A Empresa pode alterar estes Termos e Condições. A versão em vigor é a publicada no site e aplica-se aos pedidos feitos após a alteração. A versão aceite por cada cliente no registo fica registada.</p>';
 
-  T += '<h4>12. Lei Aplicável</h4><p>Os presentes Termos e Condições regem-se pela lei portuguesa, sem prejuízo dos direitos imperativos do consumidor.</p>';
+  T += '<h4>13. Lei Aplicável</h4><p>Os presentes Termos e Condições regem-se pela lei portuguesa, sem prejuízo dos direitos imperativos do consumidor.</p>';
   return T;
 }
 function abrirTermos(){

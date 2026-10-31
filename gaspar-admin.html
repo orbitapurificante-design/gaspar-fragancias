@@ -102,6 +102,35 @@
     color:var(--ivory);font-size:13px;cursor:pointer}
   .bnItem .ac button.del{color:var(--r)}
 
+  .btnRow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .btnRow2 .btnPainel{margin-bottom:0}
+  .pmItem{display:flex;gap:10px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:10px;align-items:center}
+  .pmItem .pi{flex:0 0 74px;height:56px;border-radius:8px;background:var(--bg2) center/cover no-repeat;border:1px solid var(--line)}
+  .pmItem .pt{flex:1;min-width:0;font-size:12.5px}
+  .pmItem .pt b{display:block;font-size:13px}
+  .pmItem .pt span{color:var(--ivory-dim);font-size:11.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pmItem .pa{display:flex;flex-wrap:wrap;gap:4px;max-width:112px;justify-content:flex-end}
+  .pmItem .pa button{padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg2);cursor:pointer;font-size:13px}
+  .ordTabs{display:flex;gap:6px;overflow-x:auto;margin:12px 0 4px;padding-bottom:4px}
+  .ordTabs button{flex:0 0 auto;padding:7px 12px;border:1px solid var(--line);border-radius:18px;background:var(--bg2);
+    color:var(--ivory-dim);font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif}
+  .ordTabs button.on{background:var(--gold);border-color:var(--gold);color:#fff}
+  .ordCard{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;font-size:12.5px;line-height:1.55}
+  .ordTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .ordTop b{font-size:14px;letter-spacing:1px}
+  .ordEst{font-size:10px;letter-spacing:.7px;text-transform:uppercase;padding:3px 9px;border-radius:10px;background:var(--bg2);font-weight:700}
+  .ordEst.novo{background:#f1deb0;color:#6b5210}.ordEst.pago{background:#c9e3d2;color:#1f5a38}
+  .ordEst.enviado{background:#c8dcef;color:#1d4a75}.ordEst.cancelado{background:#e9c4bf;color:#7a2418}
+  .ordMeta{color:var(--ivory-dim);font-size:11.5px;margin:2px 0 6px}
+  .ordMeta a{color:var(--gold-soft)}
+  .ordTot{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--ivory-dim)}
+  .ordTot b{color:var(--ivory);font-size:14px}
+  .ordAcoes{display:flex;gap:8px;margin-top:10px}
+  .ordAcoes button{flex:1;padding:9px 0;border-radius:9px;border:1px solid var(--line);background:var(--bg2);cursor:pointer;
+    font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-family:'Jost',sans-serif;color:var(--ivory)}
+  .ordAcoes button.ok{background:var(--g);border-color:var(--g);color:#fff}
+  .ordAcoes button.no{color:var(--r)}
+
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0a0706;
     color:#f3ead9;padding:12px 20px;border-radius:12px;font-size:13px;z-index:999;opacity:0;
     transition:all .3s;border:1px solid var(--line);pointer-events:none;max-width:88vw;text-align:center}
@@ -141,6 +170,10 @@
       <button class="btnNovo" onclick="abrirNovo()">+ Novo Perfume</button>
     </div>
     <button class="btnPainel" onclick="abrirPainel()">🎞 Painel rolante (fotos e vídeos)</button>
+    <div class="btnRow2">
+      <button class="btnPainel" onclick="abrirPedidos()">🧾 Pedidos</button>
+      <button class="btnPainel" onclick="abrirPromocoes()">🎁 Promoções</button>
+    </div>
     <div class="grid" id="grid"></div>
     <div class="empty" id="empty" style="display:none">Ainda não adicionaste nenhum perfume.</div>
   </div>
@@ -223,6 +256,45 @@
 
     <button class="btnGold" style="margin-top:18px" onclick="guardarPerfume()">GUARDAR</button>
     <button class="btnGhost btnDanger" id="btnApagar" style="display:none" onclick="apagarPerfume()">APAGAR PERFUME</button>
+  </div>
+</div>
+
+<!-- MODAL PEDIDOS -->
+<div class="modal" id="mPedidos">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Pedidos</div>
+      <button class="closeX" onclick="fecharPedidos()">×</button>
+    </div>
+    <div id="pedPinBox">
+      <div class="count">Os pedidos só se abrem com o PIN de administrador definido no Supabase (no SQL "supabase-pedidos-creditos.sql"). Não é o PIN de entrada do painel.</div>
+      <input type="password" class="inp" id="pedPin" placeholder="PIN de administrador dos pedidos" style="margin-top:12px" onkeydown="if(event.key==='Enter')entrarPedidos()">
+      <button class="btnGold" onclick="entrarPedidos()">ABRIR PEDIDOS</button>
+    </div>
+    <div id="pedLista" style="display:none">
+      <div class="ordTabs" id="ordTabs"></div>
+      <div id="ordItens"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROMOÇÕES -->
+<div class="modal" id="mPromo">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Promoções do ecrã inicial</div>
+      <button class="closeX" onclick="fecharPromocoes()">×</button>
+    </div>
+    <div class="count">Cartões com foto e texto que rodam no início da loja (ex: "10% na tua primeira compra"). Sem nenhuma, a loja mostra as duas promoções padrão.</div>
+    <div class="fotoBox" style="margin-top:12px" onclick="document.getElementById('prFoto').click()" id="prPreview"><div class="fp">📷<br>Foto (opcional)</div></div>
+    <input type="file" id="prFoto" accept="image/*" hidden onchange="prevFotoPromo(event)">
+    <label class="lbl">Título</label>
+    <input type="text" class="inp" id="prTitulo" placeholder="Ex: 10% de desconto na tua primeira compra" maxlength="80">
+    <label class="lbl">Texto</label>
+    <textarea class="inp" id="prTexto" style="min-height:64px;resize:vertical" maxlength="200" placeholder="Ex: Cria a tua conta grátis e o desconto é aplicado automaticamente."></textarea>
+    <button class="btnGold" id="prGuardar" onclick="guardarPromocao()">ADICIONAR PROMOÇÃO</button>
+    <button class="btnGhost" id="prCancelar" style="display:none" onclick="limparFormPromo()">Cancelar edição</button>
+    <div id="prLista"></div>
   </div>
 </div>
 
@@ -482,6 +554,204 @@ async function apagarPerfume(){
   }catch(err){
     toast('❌ Erro de ligação');
   }
+}
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; });
+}
+
+// ── PEDIDOS (PIN verificado no servidor) ──
+var ADMIN_PIN = null, PED_FILTRO = null;
+var ESTADO_TXT = { novo: 'Novo', pago: 'Pago', enviado: 'Enviado', cancelado: 'Cancelado' };
+
+function abrirPedidos(){
+  document.getElementById('mPedidos').classList.add('a');
+  if(ADMIN_PIN){ mostrarPedidos(); } else {
+    document.getElementById('pedPinBox').style.display = 'block';
+    document.getElementById('pedLista').style.display = 'none';
+    setTimeout(function(){ document.getElementById('pedPin').focus(); }, 100);
+  }
+}
+function fecharPedidos(){ document.getElementById('mPedidos').classList.remove('a'); }
+
+async function entrarPedidos(){
+  var v = document.getElementById('pedPin').value;
+  if(!v) return toast('⚠️ Indique o PIN');
+  ADMIN_PIN = v;
+  var ok = await carregarPedidos();
+  if(ok){ document.getElementById('pedPin').value = ''; mostrarPedidos(); }
+  else { ADMIN_PIN = null; }
+}
+function mostrarPedidos(){
+  document.getElementById('pedPinBox').style.display = 'none';
+  document.getElementById('pedLista').style.display = 'block';
+  renderTabsPedidos();
+  carregarPedidos();
+}
+function renderTabsPedidos(){
+  var tabs = [[null,'Todos'],['novo','Novos'],['pago','Pagos'],['enviado','Enviados'],['cancelado','Cancelados']];
+  document.getElementById('ordTabs').innerHTML = tabs.map(function(t){
+    return '<button class="' + (PED_FILTRO === t[0] ? 'on' : '') + '" onclick="PED_FILTRO=' + (t[0] ? "'" + t[0] + "'" : 'null') + ';renderTabsPedidos();carregarPedidos()">' + t[1] + '</button>';
+  }).join('');
+}
+
+async function rpc(nome, corpo){
+  var r = await fetch(SB + '/rest/v1/rpc/' + nome, { method: 'POST', headers: hd(), body: JSON.stringify(corpo) });
+  var d = null; try{ d = await r.json(); }catch(e){}
+  return { ok: r.ok, status: r.status, d: d };
+}
+
+async function carregarPedidos(){
+  var box = document.getElementById('ordItens');
+  try{
+    var r = await rpc('admin_listar_pedidos', { p_pin: ADMIN_PIN, p_estado: PED_FILTRO });
+    if(!r.ok){
+      if(r.status === 404){ toast('⚠️ Falta correr o SQL "supabase-pedidos-creditos.sql" no Supabase'); }
+      else if(r.d && /PIN/i.test(r.d.message || '')){ toast('❌ PIN incorreto'); ADMIN_PIN = null;
+        document.getElementById('pedPinBox').style.display = 'block'; document.getElementById('pedLista').style.display = 'none'; }
+      else toast('❌ Erro ao carregar os pedidos');
+      return false;
+    }
+    var a = r.d || [];
+    box.innerHTML = a.length ? a.map(cartaoPedido).join('') : '<div class="count" style="text-align:center;padding:24px 0">Sem pedidos nesta lista.</div>';
+    return true;
+  }catch(e){ toast('❌ Erro de ligação'); return false; }
+}
+
+function cartaoPedido(p){
+  var d = new Date(p.criado_em);
+  var data = d.toLocaleDateString('pt-PT') + ' ' + d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+  var tel = String(p.telemovel || '').replace(/\D/g, ''); var telWa = tel.length === 9 ? '351' + tel : tel;
+  var itens = (p.itens || []).map(function(i){
+    return '• ' + i.qty + '× ' + esc(i.nome) + (i.volume ? ' (' + esc(i.volume) + ')' : '') + ' — ' + (Number(i.preco) * i.qty).toFixed(2) + '€';
+  }).join('<br>');
+  var tot = 'Produtos ' + Number(p.subtotal).toFixed(2) + '€';
+  if(Number(p.desconto_primeira) > 0) tot += ' · 1.ª compra −' + Number(p.desconto_primeira).toFixed(2) + '€';
+  if(Number(p.credito_usado) > 0) tot += ' · Crédito −' + Number(p.credito_usado).toFixed(2) + '€';
+  tot += ' · Portes ' + (Number(p.portes) > 0 ? Number(p.portes).toFixed(2) + '€' : 'grátis');
+  var acoes = '';
+  if(p.estado === 'novo') acoes = '<button class="ok" onclick="mudarEstado(\'' + p.numero + '\',\'pago\')">✔ Marcar pago</button><button class="no" onclick="mudarEstado(\'' + p.numero + '\',\'cancelado\')">Cancelar</button>';
+  else if(p.estado === 'pago') acoes = '<button class="ok" onclick="mudarEstado(\'' + p.numero + '\',\'enviado\')">📦 Marcar enviado</button><button class="no" onclick="mudarEstado(\'' + p.numero + '\',\'cancelado\')">Cancelar</button>';
+  else if(p.estado === 'enviado') acoes = '<button class="no" onclick="mudarEstado(\'' + p.numero + '\',\'cancelado\')">Cancelar pedido</button>';
+  return '<div class="ordCard"><div class="ordTop"><b>' + esc(p.numero) + '</b><span class="ordEst ' + esc(p.estado) + '">' + (ESTADO_TXT[p.estado] || esc(p.estado)) + '</span></div>' +
+    '<div class="ordMeta">' + data + ' · ' + esc(p.nome) + (tel ? ' · <a href="https://wa.me/' + telWa + '" target="_blank" rel="noopener">' + esc(p.telemovel) + '</a>' : '') +
+    ' · ' + (p.cliente_id ? 'cliente registado' : 'visitante') + '</div>' +
+    '<div>' + itens + '</div>' +
+    (p.notas ? '<div class="ordMeta" style="margin-top:6px">📝 ' + esc(p.notas) + '</div>' : '') +
+    '<div class="ordTot">' + tot + '<br><b>Total a pagar: ' + Number(p.total).toFixed(2) + '€</b>' +
+      (Number(p.credito_indicador) > 0 ? '<br>⭐ Crédito dado ao amigo que indicou: ' + Number(p.credito_indicador).toFixed(2) + '€' : '') + '</div>' +
+    (acoes ? '<div class="ordAcoes">' + acoes + '</div>' : '') + '</div>';
+}
+
+async function mudarEstado(numero, estado){
+  var msg = {
+    pago: 'Confirmar que recebeu o pagamento do pedido ' + numero + '?\n\nSe a pessoa tiver sido indicada por um amigo, o crédito do amigo é atribuído agora.',
+    enviado: 'Marcar o pedido ' + numero + ' como enviado?',
+    cancelado: 'Cancelar o pedido ' + numero + '?\n\nOs descontos e créditos usados voltam à cliente, e os créditos gerados por este pedido são anulados. Não pode ser reaberto.'
+  }[estado];
+  if(!confirm(msg)) return;
+  try{
+    var r = await rpc('admin_atualizar_pedido', { p_pin: ADMIN_PIN, p_numero: numero, p_estado: estado });
+    if(r.ok){ toast('✅ Pedido ' + (ESTADO_TXT[estado] || estado).toLowerCase()); carregarPedidos(); }
+    else toast('❌ ' + ((r.d && r.d.message) || 'Erro ao atualizar'));
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+
+// ── PROMOÇÕES ──
+var PM = [], pmEditId = null, pmFoto = null;
+
+async function abrirPromocoes(){
+  document.getElementById('mPromo').classList.add('a');
+  limparFormPromo();
+  await carregarPromocoes();
+}
+function fecharPromocoes(){ document.getElementById('mPromo').classList.remove('a'); }
+
+async function carregarPromocoes(){
+  try{
+    var r = await fetch(SB + '/rest/v1/promocoes?order=ordem.asc,id.asc', { headers: hd() });
+    PM = r.ok ? await r.json() : [];
+    if(!r.ok) toast('⚠️ Tabela "promocoes" não encontrada — corra o SQL no Supabase');
+  }catch(e){ PM = []; toast('⚠️ Erro ao ligar ao Supabase'); }
+  renderPromocoes();
+}
+function renderPromocoes(){
+  var el = document.getElementById('prLista');
+  if(!PM.length){ el.innerHTML = '<div class="count" style="text-align:center;padding:18px 0">Sem promoções — a loja mostra as duas padrão (10% 1.ª compra e amigos).</div>'; return; }
+  el.innerHTML = PM.map(function(p, i){
+    return '<div class="pmItem"><div class="pi" style="' + (p.imagem ? "background-image:url('" + String(p.imagem).replace(/'/g, '%27') + "')" : '') + '"></div>' +
+      '<div class="pt"><b>' + esc(p.titulo) + (p.ativo === false ? ' (oculta)' : '') + '</b><span>' + esc(p.texto || '') + '</span></div>' +
+      '<div class="pa"><button onclick="moverPromo(' + i + ',-1)">←</button><button onclick="moverPromo(' + i + ',1)">→</button>' +
+      '<button onclick="editarPromo(' + p.id + ')">✏️</button>' +
+      '<button onclick="alternarPromo(' + p.id + ',' + (p.ativo === false) + ')">' + (p.ativo === false ? '👁' : '🚫') + '</button>' +
+      '<button onclick="apagarPromo(' + p.id + ')" style="color:var(--r)">🗑</button></div></div>';
+  }).join('');
+}
+function limparFormPromo(){
+  pmEditId = null; pmFoto = null;
+  document.getElementById('prTitulo').value = ''; document.getElementById('prTexto').value = '';
+  document.getElementById('prPreview').innerHTML = '<div class="fp">📷<br>Foto (opcional)</div>';
+  document.getElementById('prGuardar').textContent = 'ADICIONAR PROMOÇÃO';
+  document.getElementById('prCancelar').style.display = 'none';
+}
+function editarPromo(id){
+  var p = PM.find(function(x){ return x.id === id; }); if(!p) return;
+  pmEditId = id; pmFoto = p.imagem || null;
+  document.getElementById('prTitulo').value = p.titulo || ''; document.getElementById('prTexto').value = p.texto || '';
+  document.getElementById('prPreview').innerHTML = p.imagem ? '<img src="' + p.imagem + '">' : '<div class="fp">📷<br>Foto (opcional)</div>';
+  document.getElementById('prGuardar').textContent = 'GUARDAR ALTERAÇÕES';
+  document.getElementById('prCancelar').style.display = 'block';
+  document.getElementById('mPromo').querySelector('.sheet').scrollTop = 0;
+}
+async function prevFotoPromo(e){
+  var f = e.target.files[0]; e.target.value = '';
+  if(!f) return;
+  document.getElementById('prPreview').innerHTML = '<div class="fp">A carregar...</div>';
+  var ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+  var path = 'promocoes/pr_' + Date.now() + '.' + ext;
+  try{
+    var up = await fetch(SB + '/storage/v1/object/' + BUCKET + '/' + path, { method: 'POST',
+      headers: { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'x-upsert': 'true', 'Content-Type': f.type || 'image/jpeg' }, body: f });
+    if(up.ok){
+      pmFoto = SB + '/storage/v1/object/public/' + BUCKET + '/' + path;
+      document.getElementById('prPreview').innerHTML = '<img src="' + pmFoto + '">';
+      toast('✅ Foto carregada');
+    } else { document.getElementById('prPreview').innerHTML = '<div class="fp">📷<br>Foto (opcional)</div>'; toast('❌ Erro ao carregar a foto'); }
+  }catch(err){ document.getElementById('prPreview').innerHTML = '<div class="fp">📷<br>Foto (opcional)</div>'; toast('❌ Erro de ligação'); }
+}
+async function guardarPromocao(){
+  var titulo = document.getElementById('prTitulo').value.trim();
+  if(!titulo) return toast('⚠️ Indique o título');
+  var corpo = { titulo: titulo, texto: document.getElementById('prTexto').value.trim(), imagem: pmFoto };
+  try{
+    var r;
+    if(pmEditId) r = await fetch(SB + '/rest/v1/promocoes?id=eq.' + pmEditId, { method: 'PATCH', headers: hd(), body: JSON.stringify(corpo) });
+    else {
+      corpo.ordem = PM.length ? Math.max.apply(null, PM.map(function(x){ return x.ordem || 0; })) + 1 : 0; corpo.ativo = true;
+      r = await fetch(SB + '/rest/v1/promocoes', { method: 'POST', headers: hd(), body: JSON.stringify(corpo) });
+    }
+    if(r.ok){ toast('✅ Promoção guardada'); limparFormPromo(); await carregarPromocoes(); }
+    else toast('❌ Erro ao guardar (tabela "promocoes" criada?)');
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+async function moverPromo(i, d){
+  var j = i + d; if(j < 0 || j >= PM.length) return;
+  try{
+    await Promise.all(PM.map(function(x, idx){
+      var novo = idx === i ? j : (idx === j ? i : idx);
+      return fetch(SB + '/rest/v1/promocoes?id=eq.' + x.id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ordem: novo }) });
+    }));
+  }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarPromocoes();
+}
+async function alternarPromo(id, ativar){
+  try{ await fetch(SB + '/rest/v1/promocoes?id=eq.' + id, { method: 'PATCH', headers: hd(), body: JSON.stringify({ ativo: ativar }) }); }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarPromocoes();
+}
+async function apagarPromo(id){
+  if(!confirm('Apagar esta promoção?')) return;
+  try{ var r = await fetch(SB + '/rest/v1/promocoes?id=eq.' + id, { method: 'DELETE', headers: hd() }); toast(r.ok ? '🗑️ Removida' : '❌ Erro ao apagar'); }catch(e){ toast('❌ Erro de ligação'); }
+  await carregarPromocoes();
 }
 
 // ── PAINEL ROLANTE ──

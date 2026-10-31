@@ -145,11 +145,17 @@
   .promoSub{font-size:12px;color:var(--ivory-dim);line-height:1.45}
   .promoCta{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);font-weight:700}
   .promoIn{display:flex;width:100%;transition:opacity .35s}
+  .promoIn.foto{flex-direction:column}
+  .promoMedia{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--bg3)}
+  .promoMedia::before{content:'';position:absolute;inset:-24px;background:var(--img) center/cover no-repeat;
+    filter:blur(22px) brightness(.9);transform:scale(1.1)}
+  .promoMedia img{position:relative;display:block;width:100%;height:100%;object-fit:contain}
+  .promoIn.foto .promoTxt{padding:10px 14px 24px}
   .promoIn.out{opacity:0}
   .promoDots{position:absolute;bottom:7px;right:12px;display:flex;gap:5px}
   .promoDots i{width:6px;height:6px;border-radius:50%;background:rgba(43,36,32,.25)}
   .promoDots i.on{background:var(--gold)}
-  @media(min-width:700px){ .promo{min-height:140px} .promoTit{font-size:22px} .promoSub{font-size:13px} .bItem b{font-size:12.5px} .bItem small{font-size:10.5px} }
+  @media(min-width:700px){ .promoMedia{aspect-ratio:21/9} .promo{min-height:140px} .promoTit{font-size:22px} .promoSub{font-size:13px} .bItem b{font-size:12.5px} .bItem small{font-size:10.5px} }
 
   /* PROGRAMA / PERFIL */
   .prog{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px}
@@ -1559,7 +1565,8 @@ function renderConta(modo, aviso){
     h += '<div class="fld sel"><select class="inp" id="rGenero"><option value="">Género *</option><option value="F">Feminino</option><option value="M">Masculino</option><option value="O">Outro</option><option value="N">Prefiro não dizer</option></select></div>';
     h += campo('rEmail', 'Endereço de e-mail *', 'email', 'autocomplete="email"');
     h += campo('rTel', 'Telemóvel (opcional)', 'tel', 'autocomplete="tel"');
-    h += campo('rRef', 'Código de amigo (opcional)', 'text', 'autocomplete="off" maxlength="12" style="text-transform:uppercase"');
+    h += '<a class="linkSm" id="rRefLink" style="margin:-2px 0 12px;text-align:left" onclick="this.style.display=\'none\';$(\'rRefBox\').style.display=\'block\';$(\'rRef\').focus()">Tenho um código de amigo</a>';
+    h += '<div id="rRefBox" style="display:none">' + campo('rRef', 'Código de amigo (opcional)', 'text', 'autocomplete="off" maxlength="12" style="text-transform:uppercase"') + '</div>';
     h += campoSenha('rSenha', 'Palavra-Passe * (mín. 8 caracteres)', 'new-password', 'oninput="atualizarForca()"');
     h += '<div class="strength">Nível de Segurança da palavra-passe: <span class="pill" id="forcaPill">Sem palavra-passe</span></div>';
     h += campoSenha('rSenha2', 'Confirmar Palavra-passe *', 'new-password');
@@ -1593,7 +1600,7 @@ function renderConta(modo, aviso){
   el.innerHTML = h;
 
   if(m === 'registar'){
-    try{ var rr = localStorage.getItem('gaspar_ref'); if(rr && $('rRef')) $('rRef').value = rr; }catch(e){}
+    try{ var rr = localStorage.getItem('gaspar_ref'); if(rr && $('rRef')){ $('rRef').value = rr; $('rRefBox').style.display = 'block'; $('rRefLink').style.display = 'none'; } }catch(e){}
   }
   if(m === 'perfil'){ carregarMeusPedidos(); }
   if(m === 'perfil' && PERFIL){
@@ -1654,7 +1661,7 @@ async function registar(){
     if(ref){
       if(!/^[A-Z0-9]{4,12}$/.test(ref)){ toast('⚠️ Código de amigo inválido'); btn.disabled = false; return; }
       var rv = await authPost('/rest/v1/rpc/codigo_valido', { p_cod: ref });
-      if(rv.ok && rv.d === false){ toast('⚠️ Esse código de amigo não existe. Confirme-o ou deixe o campo vazio.'); btn.disabled = false; return; }
+      if(rv.ok && rv.d === false){ toast('⚠️ Esse código de amigo não é válido. Confirme-o ou deixe o campo vazio.'); btn.disabled = false; return; }
     }
     var r = await authPost('/auth/v1/signup' + urlLoja(), { email: email, password: s1, data: {
       nome: nome, sobrenome: sobrenome, data_nascimento: nasc, genero: genero, telemovel: tel,
@@ -1749,7 +1756,8 @@ function numeroPedido(){
 function dadosPrograma(){
   var pr = PROG || {}, pf = PERFIL || {};
   return {
-    codigo: pr.codigo || pf.codigo_partilha || '',
+    ativo: pr.ativo === true,
+    codigo: pr.ativo === true ? (pr.codigo || '') : '',
     credito: Number(pr.credito != null ? pr.credito : pf.credito) || 0,
     indicados: Number(pr.indicados) || 0,
     minimo: Number(pr.minimo) || INDICACOES_MINIMAS,
@@ -1763,7 +1771,11 @@ function linkPartilha(cod){
 function progHTML(){
   var d = dadosPrograma(), h = '';
   if(!d.usouDesc) h += '<div class="authMsg">🎁 Tem <b>' + DESCONTO_PRIMEIRA_PCT + '% de desconto na 1.ª compra</b>, aplicado automaticamente no pedido.</div>';
-  if(!d.codigo) return h;
+  if(!d.ativo || !d.codigo){
+    // programa de amigos ainda não ativo para esta conta: só mostra o crédito, se existir
+    if(d.credito > 0) h += '<div class="prog"><div class="progRow"><span>Crédito disponível</span><b class="gold">' + d.credito.toFixed(2) + '€</b></div></div>';
+    return h;
+  }
   var pct = Math.min(100, Math.round(d.indicados / d.minimo * 100));
   var sub = d.indicados >= d.minimo
     ? '✅ Já tem ' + d.minimo + ' amigos! Ganha <b>' + CREDITO_INDICACAO_PCT + '%</b> em crédito de cada compra paga por eles.'
@@ -1811,17 +1823,19 @@ async function carregarMeusPedidos(){
 
 function abrirPrograma(){
   var d = dadosPrograma(), logado = !!(SESSAO && SESSAO.user);
-  var h =
-    '<div class="passo"><div class="n">1</div><div><b>' + DESCONTO_PRIMEIRA_PCT + '% na primeira compra</b><span>Crie a sua conta grátis e o desconto é aplicado automaticamente no seu primeiro pedido. Uma vez por conta.</span></div></div>' +
-    '<div class="passo"><div class="n">2</div><div><b>Partilhe e ganhe ' + CREDITO_INDICACAO_PCT + '%</b><span>Cada conta tem um código de amigo. Quem se registar com o seu código fica associado a si.</span></div></div>' +
-    '<div class="passo"><div class="n">3</div><div><b>A partir de ' + INDICACOES_MINIMAS + ' amigos</b><span>Quando tiver ' + INDICACOES_MINIMAS + ' contas confirmadas com o seu código, recebe ' + CREDITO_INDICACAO_PCT + '% do valor de cada compra paga por elas, em crédito para usar em produtos da loja.</span></div></div>' +
-    '<p style="font-size:11px;line-height:1.6;color:var(--ivory-dim);margin:0 0 14px">O crédito só pode ser usado na loja, não é convertível em dinheiro nem transmissível, e é atribuído depois de o pagamento da compra ser confirmado. Ver <a style="color:var(--gold);text-decoration:underline;cursor:pointer" onclick="abrirTermos()">Termos e Condições</a>.</p>';
-  if(logado){
-    h += progHTML();
-  } else {
+  var amigos = logado && d.ativo;
+  var h = '<div class="passo"><div class="n">1</div><div><b>' + DESCONTO_PRIMEIRA_PCT + '% na primeira compra</b><span>Crie a sua conta grátis e o desconto é aplicado automaticamente no seu primeiro pedido. Uma vez por conta.</span></div></div>';
+  if(amigos){
+    h += '<div class="passo"><div class="n">2</div><div><b>Partilhe e ganhe ' + CREDITO_INDICACAO_PCT + '%</b><span>O seu código de amigo associa a si quem se registar com ele.</span></div></div>' +
+      '<div class="passo"><div class="n">3</div><div><b>A partir de ' + INDICACOES_MINIMAS + ' amigos</b><span>Quando tiver ' + INDICACOES_MINIMAS + ' contas confirmadas com o seu código, recebe ' + CREDITO_INDICACAO_PCT + '% do valor de cada compra paga por elas, em crédito para usar em produtos da loja.</span></div></div>' +
+      '<p style="font-size:11px;line-height:1.6;color:var(--ivory-dim);margin:0 0 14px">O crédito só pode ser usado na loja, não é convertível em dinheiro nem transmissível, e é atribuído depois de o pagamento da compra ser confirmado. Ver <a style="color:var(--gold);text-decoration:underline;cursor:pointer" onclick="abrirTermos()">Termos e Condições</a>.</p>';
+  }
+  if(logado){ h += progHTML(); }
+  else {
     h += '<button class="btnGold" onclick="fecharModal(\'mPrograma\');abrirConta();renderConta(\'registar\')">Criar conta e ganhar ' + DESCONTO_PRIMEIRA_PCT + '%</button>' +
          '<button class="btnGhost" onclick="fecharModal(\'mPrograma\');abrirConta();renderConta(\'entrar\')">Já tenho conta</button>';
   }
+  $('programaBody').previousElementSibling.querySelector('.sheetTit').textContent = amigos ? 'Descontos e amigos' : 'Desconto de boas-vindas';
   $('programaBody').innerHTML = h;
   $('mPrograma').classList.add('a');
 }
@@ -1830,15 +1844,17 @@ function abrirPrograma(){
 var PROMOS = [], promoIdx = 0, promoTimer = null;
 function promosPorDefeito(){
   return [
-    { selo: '−' + DESCONTO_PRIMEIRA_PCT + '%', titulo: DESCONTO_PRIMEIRA_PCT + '% de desconto na tua primeira compra', texto: 'Cria a tua conta grátis e o desconto é aplicado automaticamente.' },
-    { selo: CREDITO_INDICACAO_PCT + '%', titulo: 'Partilha a GASPAR e ganha ' + CREDITO_INDICACAO_PCT + '%', texto: 'Convida amigos com o teu código. Com ' + INDICACOES_MINIMAS + ' amigos registados, ganhas ' + CREDITO_INDICACAO_PCT + '% em crédito das compras deles.' }
+    { selo: '−' + DESCONTO_PRIMEIRA_PCT + '%', titulo: DESCONTO_PRIMEIRA_PCT + '% de desconto na tua primeira compra', texto: 'Cria a tua conta grátis e o desconto é aplicado automaticamente.' }
   ];
 }
 function pintarPromo(i){
   var pr = PROMOS[i]; if(!pr) return;
-  var img = pr.imagem
-    ? '<div class="promoImg" style="background-image:url(\'' + String(pr.imagem).replace(/'/g, '%27') + '\')"></div>'
+  var comFoto = !!pr.imagem;
+  var u = String(pr.imagem || '').replace(/'/g, '%27').replace(/"/g, '%22');
+  var img = comFoto
+    ? '<div class="promoMedia" style="--img:url(\'' + u + '\')"><img src="' + u + '" alt=""></div>'
     : '<div class="promoImg deco">' + esc(pr.selo || '🎁') + '</div>';
+  $('promoIn').className = 'promoIn' + (comFoto ? ' foto' : '');
   $('promoIn').innerHTML = img + '<div class="promoTxt"><div class="promoTit">' + esc(pr.titulo) + '</div>' +
     (pr.texto ? '<div class="promoSub">' + esc(pr.texto) + '</div>' : '') + '<span class="promoCta">Saber mais ›</span></div>';
   $('promoDots').innerHTML = PROMOS.length > 1 ? PROMOS.map(function(_, k){ return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') : '';
@@ -1905,7 +1921,8 @@ function termosHTML(){
 
   T += '<h4>6. Descontos, Código de Amigo e Crédito</h4>' + L([
     '<b>Desconto de boas-vindas:</b> cada conta tem direito a ' + DESCONTO_PRIMEIRA_PCT + '% de desconto sobre o valor dos produtos da sua primeira compra, aplicado automaticamente, uma só vez por conta.',
-    '<b>Código de amigo:</b> cada conta tem um código pessoal. Uma nova conta que se registe indicando esse código e confirme o seu email fica associada ao titular do código.',
+    '<b>Participação:</b> o programa de amigos está disponível apenas para as contas a que a Empresa o ativar, podendo ser ativado ou desativado a qualquer momento.',
+    '<b>Código de amigo:</b> as contas com o programa ativo têm um código pessoal. Uma nova conta que se registe indicando esse código e confirme o seu email fica associada ao titular do código.',
     '<b>Crédito:</b> quando o titular do código tiver ' + INDICACOES_MINIMAS + ' ou mais contas confirmadas associadas, recebe ' + CREDITO_INDICACAO_PCT + '% do valor dos produtos (já com descontos) de cada compra dessas contas, a partir do momento em que o pagamento dessa compra seja confirmado. As compras pagas antes de atingir esse número não geram crédito.',
     '<b>Utilização do crédito:</b> o crédito só pode ser usado para pagar produtos da loja, não é convertível em dinheiro nem transmissível, e não pode ultrapassar o valor dos produtos do pedido.',
     '<b>Cancelamentos:</b> se um pedido for cancelado, os descontos e créditos usados nele são repostos e os créditos que tenha gerado são anulados.',

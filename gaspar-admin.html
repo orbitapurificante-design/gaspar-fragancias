@@ -103,6 +103,17 @@
   .bnItem .ac button.del{color:var(--r)}
 
   .btnRow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .btnRow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+  .btnRow3 .btnPainel{margin-bottom:0;padding:11px 0;font-size:11px;letter-spacing:.4px}
+  .cliCard{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-top:10px;font-size:12.5px}
+  .cliCard.on{border-color:var(--g);background:#e4efe8}
+  .cliTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .cliTop b{font-size:13.5px}
+  .cliMeta{color:var(--ivory-dim);font-size:11.5px;line-height:1.55;margin-top:2px;word-break:break-word}
+  .cliBtn{margin-top:9px;width:100%;padding:9px 0;border-radius:9px;border:1px solid var(--g);background:var(--g);color:#fff;
+    font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
+  .cliBtn.off{background:var(--bg2);color:var(--r);border-color:var(--line)}
+  .fotoBox.contain img{object-fit:contain;background:var(--bg2)}
   .btnRow2 .btnPainel{margin-bottom:0}
   .pmItem{display:flex;gap:10px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:10px;align-items:center}
   .pmItem .pi{flex:0 0 74px;height:56px;border-radius:8px;background:var(--bg2) center/cover no-repeat;border:1px solid var(--line)}
@@ -170,9 +181,10 @@
       <button class="btnNovo" onclick="abrirNovo()">+ Novo Perfume</button>
     </div>
     <button class="btnPainel" onclick="abrirPainel()">🎞 Painel rolante (fotos e vídeos)</button>
-    <div class="btnRow2">
+    <div class="btnRow3">
       <button class="btnPainel" onclick="abrirPedidos()">🧾 Pedidos</button>
       <button class="btnPainel" onclick="abrirPromocoes()">🎁 Promoções</button>
+      <button class="btnPainel" onclick="abrirAmigos()">⭐ Amigos</button>
     </div>
     <div class="grid" id="grid"></div>
     <div class="empty" id="empty" style="display:none">Ainda não adicionaste nenhum perfume.</div>
@@ -278,6 +290,25 @@
   </div>
 </div>
 
+<!-- MODAL AMIGOS -->
+<div class="modal" id="mAmigos">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTit">Programa de amigos</div>
+      <button class="closeX" onclick="fecharAmigos()">×</button>
+    </div>
+    <div class="count">O programa está <b>desligado para todos</b>. Procure a cliente e ative: só então ela passa a ver o código de amigo, a partilha e as promoções de amigos. Os restantes clientes só veem o desconto de 1.ª compra.</div>
+    <div id="amPinBox">
+      <input type="password" class="inp" id="amPin" placeholder="PIN de administrador dos pedidos" style="margin-top:12px" onkeydown="if(event.key==='Enter')entrarAmigos()">
+      <button class="btnGold" onclick="entrarAmigos()">ABRIR</button>
+    </div>
+    <div id="amLista" style="display:none">
+      <input type="text" class="inp" id="amBusca" placeholder="Procurar por nome, email, telemóvel ou nº de cliente" style="margin-top:12px" oninput="buscarAmigos()">
+      <div id="amItens"></div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PROMOÇÕES -->
 <div class="modal" id="mPromo">
   <div class="sheet">
@@ -286,7 +317,7 @@
       <button class="closeX" onclick="fecharPromocoes()">×</button>
     </div>
     <div class="count">Cartões com foto e texto que rodam no início da loja (ex: "10% na tua primeira compra"). Sem nenhuma, a loja mostra as duas promoções padrão.</div>
-    <div class="fotoBox" style="margin-top:12px" onclick="document.getElementById('prFoto').click()" id="prPreview"><div class="fp">📷<br>Foto (opcional)</div></div>
+    <div class="fotoBox contain" style="margin-top:12px" onclick="document.getElementById('prFoto').click()" id="prPreview"><div class="fp">📷<br>Foto (opcional)</div></div>
     <input type="file" id="prFoto" accept="image/*" hidden onchange="prevFotoPromo(event)">
     <label class="lbl">Título</label>
     <input type="text" class="inp" id="prTitulo" placeholder="Ex: 10% de desconto na tua primeira compra" maxlength="80">
@@ -654,6 +685,63 @@ async function mudarEstado(numero, estado){
     var r = await rpc('admin_atualizar_pedido', { p_pin: ADMIN_PIN, p_numero: numero, p_estado: estado });
     if(r.ok){ toast('✅ Pedido ' + (ESTADO_TXT[estado] || estado).toLowerCase()); carregarPedidos(); }
     else toast('❌ ' + ((r.d && r.d.message) || 'Erro ao atualizar'));
+  }catch(e){ toast('❌ Erro de ligação'); }
+}
+
+// ── PROGRAMA DE AMIGOS: ativar/desativar por cliente ──
+var amTimer = null;
+function abrirAmigos(){
+  document.getElementById('mAmigos').classList.add('a');
+  if(ADMIN_PIN){ mostrarAmigos(); } else {
+    document.getElementById('amPinBox').style.display = 'block';
+    document.getElementById('amLista').style.display = 'none';
+    setTimeout(function(){ document.getElementById('amPin').focus(); }, 100);
+  }
+}
+function fecharAmigos(){ document.getElementById('mAmigos').classList.remove('a'); }
+async function entrarAmigos(){
+  var v = document.getElementById('amPin').value;
+  if(!v) return toast('⚠️ Indique o PIN');
+  ADMIN_PIN = v;
+  var ok = await carregarClientes();
+  if(ok){ document.getElementById('amPin').value = ''; mostrarAmigos(); } else { ADMIN_PIN = null; }
+}
+function mostrarAmigos(){
+  document.getElementById('amPinBox').style.display = 'none';
+  document.getElementById('amLista').style.display = 'block';
+  carregarClientes();
+}
+function buscarAmigos(){ clearTimeout(amTimer); amTimer = setTimeout(carregarClientes, 350); }
+async function carregarClientes(){
+  var box = document.getElementById('amItens');
+  try{
+    var r = await rpc('admin_listar_clientes', { p_pin: ADMIN_PIN, p_busca: document.getElementById('amBusca').value || null });
+    if(!r.ok){
+      if(r.status === 404) toast('⚠️ Falta correr o SQL "supabase-amigos-ativacao.sql" no Supabase');
+      else if(r.d && /PIN/i.test(r.d.message || '')){ toast('❌ PIN incorreto'); ADMIN_PIN = null;
+        document.getElementById('amPinBox').style.display = 'block'; document.getElementById('amLista').style.display = 'none'; }
+      else toast('❌ Erro ao carregar os clientes');
+      return false;
+    }
+    var a = r.d || [];
+    box.innerHTML = a.length ? a.map(function(c){
+      return '<div class="cliCard ' + (c.programa_amigos ? 'on' : '') + '"><div class="cliTop"><b>' + esc((c.nome || '') + ' ' + (c.sobrenome || '')) + '</b>' +
+        (c.programa_amigos ? '<span class="ordEst pago">Amigos ativo</span>' : '') + '</div>' +
+        '<div class="cliMeta">' + esc(c.email || '') + (c.telemovel ? ' · ' + esc(c.telemovel) : '') + '<br>Nº cliente ' + esc(c.numero_cliente || '') +
+        (c.programa_amigos ? ' · código <b>' + esc(c.codigo_partilha || '') + '</b> · ' + c.indicados + ' amigos · crédito ' + Number(c.credito).toFixed(2) + '€' : (Number(c.credito) > 0 ? ' · crédito ' + Number(c.credito).toFixed(2) + '€' : '')) + '</div>' +
+        '<button class="cliBtn ' + (c.programa_amigos ? 'off' : '') + '" onclick="definirAmigos(\'' + c.id + '\',' + (!c.programa_amigos) + ')">' +
+        (c.programa_amigos ? 'Desativar programa de amigos' : 'Ativar programa de amigos') + '</button></div>';
+    }).join('') : '<div class="count" style="text-align:center;padding:24px 0">Sem clientes encontrados.</div>';
+    return true;
+  }catch(e){ toast('❌ Erro de ligação'); return false; }
+}
+async function definirAmigos(id, ativo){
+  if(!confirm(ativo ? 'Ativar o programa de amigos para esta cliente?\n\nPassa a ver o código de amigo, a partilha e as promoções de amigos, e a ganhar crédito (a partir de 20 amigos).'
+                    : 'Desativar o programa de amigos para esta cliente?\n\nDeixa de ver o código e de ganhar crédito novo. O crédito que já tem mantém-se.')) return;
+  try{
+    var r = await rpc('admin_definir_amigos', { p_pin: ADMIN_PIN, p_cliente: id, p_ativo: ativo });
+    if(r.ok){ toast(ativo ? '✅ Programa de amigos ativado' : 'Programa de amigos desativado'); carregarClientes(); }
+    else toast('❌ ' + ((r.d && r.d.message) || 'Erro'));
   }catch(e){ toast('❌ Erro de ligação'); }
 }
 

@@ -177,6 +177,7 @@
     .bnSlide::before{content:'';position:absolute;inset:-24px;background:var(--img) center/cover no-repeat;
       filter:blur(24px) brightness(.88);transform:scale(1.1)}
     .bnSlide img,.bnSlide video{position:relative;object-fit:contain}
+    .bnBox.fill .bnSlide img,.bnBox.fill .bnSlide video{object-fit:cover}
   }
 
   @media(min-width:1000px){
@@ -683,17 +684,45 @@ async function iniciar(){
 var BANNERS = [], bnIdx = 0, bnTimer = null, bnFullH = 0, bnVOpen = false, bnVIdx = 0;
 var BN_INNER = 112, BN_MARGIN = 8;
 
+var BN_ASP = 0; // proporção (largura/altura) do primeiro item do painel
+
 function calcAlturaBanner(){
-  var larg = window.innerWidth;
+  var larg = document.documentElement.clientWidth || window.innerWidth;
   if(larg >= 540){
-    BN_INNER = Math.round(Math.min(larg * 0.6, window.innerHeight * 0.45)); // proporção 10:6, limitada à altura do ecrã
+    // a altura acompanha a foto -> enche a largura toda sem cortar; limitada a 55% da altura do ecrã
+    var maxH = Math.round(window.innerHeight * 0.55);
+    var h = BN_ASP ? Math.round(larg / BN_ASP) : Math.round(larg * 0.6);
+    BN_INNER = Math.max(140, Math.min(h, maxH));
     BN_MARGIN = 6;
+    // se faltar pouco para a foto caber inteira (corte até ~20%), enche a largura toda; senão mostra inteira com fundo desfocado
+    document.getElementById('bnBox').classList.toggle('fill', !!BN_ASP && h <= BN_INNER * 1.25);
   } else {
     BN_INNER = 112; BN_MARGIN = 8;
+    document.getElementById('bnBox').classList.remove('fill');
   }
   bnFullH = BN_INNER + BN_MARGIN;
   document.getElementById('bnBox').style.height = BN_INNER + 'px';
   document.documentElement.style.setProperty('--bnFull', bnFullH + 'px');
+}
+
+function medirPrimeiroBanner(){
+  var b = BANNERS[0]; if(!b) return;
+  var pronto = function(w, h){
+    if(!w || !h) return;
+    BN_ASP = w / h;
+    calcAlturaBanner(); aoScrollBanner(); ajustarTopo();
+  };
+  if(b.tipo === 'video'){
+    var v = document.querySelector('#bnTrack video');
+    if(v){
+      if(v.videoWidth) pronto(v.videoWidth, v.videoHeight);
+      else v.addEventListener('loadedmetadata', function(){ pronto(v.videoWidth, v.videoHeight); }, { once: true });
+    }
+  } else {
+    var im = new Image();
+    im.onload = function(){ pronto(im.naturalWidth, im.naturalHeight); };
+    im.src = b.url;
+  }
 }
 
 // margem do conteúdo = altura da barra fixa sem o painel
@@ -722,6 +751,7 @@ async function iniciarBanners(){
     ? BANNERS.map(function(_, i){ return '<i class="'+(i===0?'on':'')+'"></i>'; }).join('') : '';
   wrap.style.display = 'block';
   calcAlturaBanner();
+  medirPrimeiroBanner();
   bnIdx = 0;
   aoScrollBanner();
   ajustarTopo();

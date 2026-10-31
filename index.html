@@ -164,6 +164,35 @@
   .termosTxt li{margin:3px 0}
   .termosTxt a{color:var(--gold)}
 
+  /* CABEÇALHO: telemóvel/tablet = logo ao centro, painel, pesquisa; PC = logo à esquerda, pesquisa ao centro, painel por baixo */
+  .tbHead{position:relative}
+  .tbBrandTxt{display:flex;flex-direction:column;align-items:center}
+  .tbBrandTxt .miniBrand{margin-bottom:3px}
+  .tbActs{display:contents}
+  .tbHead .menuBtn,.tbHead .cartBtn,.tbHead .acctBtn{top:17px}
+
+  /* tablet e PC: foto do painel inteira (contain) sobre fundo desfocado da própria foto */
+  @media(min-width:540px){
+    .bnSlide{overflow:hidden}
+    .bnSlide::before{content:'';position:absolute;inset:-24px;background:var(--img) center/cover no-repeat;
+      filter:blur(24px) brightness(.88);transform:scale(1.1)}
+    .bnSlide img,.bnSlide video{position:relative;object-fit:contain}
+  }
+
+  @media(min-width:1000px){
+    .topBar{display:grid;grid-template-columns:1fr minmax(380px,520px) 1fr;
+      grid-template-areas:"brand nav acts" "bn bn bn";column-gap:16px;align-items:center;padding:6px 20px 0}
+    .tbHead{display:contents}
+    .tbBrand{grid-area:brand;justify-self:start;display:flex;align-items:center;gap:12px;padding-bottom:6px}
+    .tbBrandTxt{align-items:flex-start}
+    .tbBrandTxt .miniBrand{margin-bottom:2px}
+    .tbBrandTxt .taglineRow{padding-bottom:0;text-align:left}
+    .tbActs{display:flex;grid-area:acts;justify-self:end;align-items:center;gap:8px;padding-bottom:6px}
+    .tbHead .menuBtn,.tbHead .cartBtn,.tbHead .acctBtn{position:static;transform:none;top:auto;right:auto;left:auto}
+    .tbNav{grid-area:nav}
+    .bnWrap{grid-area:bn;margin:0 -20px}
+  }
+
   /* TABS */
   .tabs{display:flex;justify-content:center;gap:4px;max-width:520px;margin:0 auto;position:relative}
   .tab{flex:1;text-align:center;padding:4px 6px 6px;font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;
@@ -317,28 +346,35 @@
 </div>
 
 <div class="topBar">
-  <div class="topBarRow">
-    <button class="menuBtn" onclick="abrirMenuMarca()">
+  <div class="tbHead">
+    <div class="tbBrand">
+      <button class="menuBtn" onclick="abrirMenuMarca()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div class="miniBrand">
+      <div class="tbBrandTxt">
+        <div class="miniBrand">
       <img src="icon-192_2.jpg" class="miniLogo" alt="GASPAR">
       <span class="miniBrandTxt">GASPAR</span>
     </div>
-    <div class="acctBtn" id="acctBtn" onclick="abrirConta()" title="Entrar / Registar"></div>
-    <div class="cartBtn" onclick="abrirCarrinho()">
+        <div class="taglineRow">Fragrâncias do Oriente</div>
+      </div>
+    </div>
+    <div class="tbActs">
+      <div class="acctBtn" id="acctBtn" onclick="abrirConta()" title="Entrar / Registar"></div>
+      <div class="cartBtn" onclick="abrirCarrinho()">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f6eee0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="fabBadge" id="fabBadge">0</span>
     </div>
+    </div>
   </div>
-  <div class="taglineRow">Fragrâncias do Oriente</div>
   <div class="bnWrap" id="bnWrap" style="display:none">
     <div class="bnBox" id="bnBox" onclick="abrirBannerViewer(bnIdx)">
       <div class="bnTrack" id="bnTrack"></div>
       <div class="bnDots" id="bnDots"></div>
     </div>
   </div>
-  <div class="searchRow">
+  <div class="tbNav">
+    <div class="searchRow">
     <div class="searchBox">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="pesquisaInput" placeholder="Pesquisar por nome..." oninput="pesquisar(this.value)">
@@ -350,12 +386,13 @@
       </select>
     </div>
   </div>
-  <div class="tabs" id="tabs">
+    <div class="tabs" id="tabs">
     <div class="tab on" data-g="todos">Todos</div>
     <div class="tab" data-g="M">Masculino</div>
     <div class="tab" data-g="F">Feminino</div>
     <div class="tab" data-g="U">Unissexo</div>
     <div class="tabIndicator" id="tabInd"></div>
+  </div>
   </div>
 </div>
 
@@ -677,7 +714,7 @@ async function iniciarBanners(){
     return;
   }
   document.getElementById('bnTrack').innerHTML = BANNERS.map(function(b){
-    return '<div class="bnSlide">' + (b.tipo === 'video'
+    return '<div class="bnSlide"' + (b.tipo === 'video' ? '' : ' style="--img:url(\'' + b.url + '\')"') + '>' + (b.tipo === 'video'
       ? '<video src="'+b.url+'#t=0.1" muted playsinline preload="auto" onerror="this.dataset.erro=1"></video><span class="bnPlay">▶ VÍDEO</span>'
       : '<img src="'+b.url+'" alt="">') + '</div>';
   }).join('');

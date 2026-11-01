@@ -285,6 +285,10 @@
   .cardHint .mao{font-size:24px;line-height:1.1;display:inline-block;animation:bnMao .9s ease-in-out infinite}
   .cardHint.soMao{bottom:auto;top:50%;transform:translate(-50%,-50%);width:50px;height:50px;padding:0;border-radius:50%;justify-content:center;background:rgba(20,15,13,.6)}
   .cardHint.pisca{animation:bnPisca 3.9s ease forwards}
+  .cardHint.soMao .mao{font-size:28px;animation:bnToque 1.1s ease-in-out infinite}
+  .cardHint.soMao::after{content:'';position:absolute;left:50%;top:22%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid rgba(255,255,255,.9);opacity:0;animation:bnOnda 1.1s ease-out infinite}
+  @keyframes bnToque{0%{transform:translate(14px,16px) scale(1)}35%{transform:translate(0,0) scale(1)}50%{transform:translate(0,3px) scale(.82)}65%{transform:translate(0,0) scale(1)}100%{transform:translate(14px,16px) scale(1)}}
+  @keyframes bnOnda{0%,40%{opacity:0;transform:scale(.5)}50%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(3)}}
   @keyframes bnPisca{0%{opacity:0}8%{opacity:1}22%{opacity:.15}36%{opacity:1}50%{opacity:.15}64%{opacity:1}80%{opacity:1}100%{opacity:0}}
   @keyframes bnMao{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   .stockBadge{position:absolute;top:6px;left:6px;z-index:2;background:var(--oxblood);color:#fff;
@@ -803,7 +807,7 @@ async function iniciar(){
   PERFUMES = await api('perfumes?ativo=eq.true&order=id.desc');
   renderGrid();
   iniciarBanners();
-  setTimeout(mostrarDicaProduto, 2000);
+  agendarDica(2000);
 }
 
 // ── PAINEL ROLANTE (fotos / vídeos curtos geridos no admin) ──
@@ -1094,43 +1098,40 @@ function navegarBanner(d){
   });
 })();
 
-// ── DICA NOS PRODUTOS: mãozinha a apontar para a foto ──
-// Quem nunca abriu um produto: mãozinha + "Clica na foto para mais detalhes", 1 vez por visita.
-// Quem já abriu: só a mãozinha a piscar numa foto, de vez em quando (no máximo de 3 em 3 dias).
-var DICA_PROD_FEITA = false, dicaProdTimer = null;
-function decidirDicaProduto(){
-  try{
-    if(sessionStorage.getItem('gaspar_dica_prod') === '1') return null;
-    var c = parseInt(localStorage.getItem('gaspar_prod_cliques') || '0', 10) || 0;
-    var u = parseInt(localStorage.getItem('gaspar_prod_dica') || '0', 10) || 0;
-    if(c === 0) return 'texto';
-    return (Date.now() - u > 3 * 86400000) ? 'mao' : null;
-  }catch(e){ return 'texto'; }
-}
+// ── DICA NOS PRODUTOS: mãozinha que toca nas fotos, de tempos a tempos ──
+// 1ª vez (nunca abriu um produto): mãozinha + texto; depois só a mãozinha a "tocar" em fotos diferentes, de ~12 em ~12 s.
+// Quem já abriu produtos: mãozinha mais espaçada (~35 s, até 3 vezes por visita).
+// Assim que o cliente abre um produto nesta visita, as dicas param.
+var dicaN = 0, dicaTimer = null, dicaUltimo = null;
+function lerNum(k){ try{ return parseInt(localStorage.getItem(k) || '0', 10) || 0; }catch(e){ return 0; } }
+function clicouNestaVisita(){ try{ return sessionStorage.getItem('gaspar_dica_clicou') === '1'; }catch(e){ return false; } }
+function agendarDica(ms){ clearTimeout(dicaTimer); dicaTimer = setTimeout(mostrarDicaProduto, ms); }
 function mostrarDicaProduto(){
-  if(DICA_PROD_FEITA) return;
-  var modo = decidirDicaProduto();
-  if(!modo){ DICA_PROD_FEITA = true; return; }
+  if(clicouNestaVisita()) return;
+  var jaAbriu = lerNum('gaspar_prod_cliques') > 0;
+  if(dicaN >= (jaAbriu ? 3 : 8)) return;
+  var proximo = jaAbriu ? 30000 + Math.random() * 15000 : 10000 + Math.random() * 5000;
+  var modalAberto = document.querySelector('.modal.a, .overlay.a, .bnViewer.a');
+  if(document.hidden || modalAberto){ agendarDica(4000); return; }
   var barra = document.querySelector('.topBar'), topo = barra ? barra.getBoundingClientRect().bottom : 0;
   var vis = Array.prototype.filter.call(document.querySelectorAll('#grid .cardImg'), function(el){
     var r = el.getBoundingClientRect();
     return r.width > 0 && r.top >= topo + 4 && r.bottom <= window.innerHeight - 4;
   });
-  if(!vis.length) return;                       // ainda não há fotos visíveis: tenta de novo quando o cliente fizer scroll
-  var alvo = modo === 'texto' ? vis[0] : vis[Math.floor(Math.random() * vis.length)];
-  DICA_PROD_FEITA = true;
-  try{ sessionStorage.setItem('gaspar_dica_prod', '1'); localStorage.setItem('gaspar_prod_dica', String(Date.now())); }catch(e){}
+  if(!vis.length){ agendarDica(3000); return; }
+  var opc = vis.filter(function(el){ return el !== dicaUltimo; }); if(!opc.length) opc = vis;
+  var texto = !jaAbriu && dicaN === 0;
+  var alvo = texto ? vis[0] : opc[Math.floor(Math.random() * opc.length)];
+  dicaUltimo = alvo; dicaN++;
+  document.querySelectorAll('.cardHint').forEach(function(h){ h.remove(); });
   var el = document.createElement('div');
-  el.className = 'cardHint' + (modo === 'mao' ? ' soMao' : '');
-  el.innerHTML = '<span class="mao">👆</span>' + (modo === 'texto' ? '<span>Clica na foto para mais detalhes</span>' : '');
+  el.className = 'cardHint' + (texto ? '' : ' soMao');
+  el.innerHTML = '<span class="mao">👆</span>' + (texto ? '<span>Clica na foto para mais detalhes</span>' : '');
   alvo.appendChild(el);
   void el.offsetWidth; el.classList.add('pisca');
   setTimeout(function(){ if(el.parentNode) el.remove(); }, 4200);
+  agendarDica(proximo);
 }
-window.addEventListener('scroll', function(){
-  if(DICA_PROD_FEITA) return;
-  clearTimeout(dicaProdTimer); dicaProdTimer = setTimeout(mostrarDicaProduto, 600);
-}, { passive: true });
 
 // ── CONTADOR DE VISITAS (1 por visitante por dia) ──
 async function registarVisita(){
@@ -1321,6 +1322,7 @@ var detalheAtualId = null;
 function abrirDetalhe(id){
   var p = PERFUMES.find(x => String(x.id) === String(id));
   if(!p) return;
+  try{ sessionStorage.setItem('gaspar_dica_clicou','1'); }catch(e){}
   try{ localStorage.setItem('gaspar_prod_cliques', String((parseInt(localStorage.getItem('gaspar_prod_cliques') || '0', 10) || 0) + 1)); }catch(e){}
   document.querySelectorAll('.cardHint').forEach(function(h){ h.remove(); });
   detalheAtualId = p.id;

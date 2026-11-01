@@ -107,13 +107,6 @@
   .bnDots{position:absolute;bottom:6px;left:0;right:0;display:flex;justify-content:center;gap:5px;pointer-events:none}
   .bnDots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5)}
   .bnDots i.on{background:#fff}
-  .bnHint{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:7px;
-    background:rgba(20,15,13,.82);color:#fff;font-size:12px;font-weight:600;letter-spacing:.2px;padding:7px 14px;border-radius:20px;
-    white-space:nowrap;opacity:0;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-  .bnHint .mao{font-size:16px;display:inline-block;animation:bnMao .9s ease-in-out infinite}
-  .bnHint.pisca{animation:bnPisca 3.9s ease forwards}
-  @keyframes bnPisca{0%{opacity:0}8%{opacity:1}22%{opacity:.15}36%{opacity:1}50%{opacity:.15}64%{opacity:1}80%{opacity:1}100%{opacity:0}}
-  @keyframes bnMao{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   .bnPlay{position:absolute;top:6px;right:8px;background:rgba(20,15,13,.65);color:#fff;font-size:9px;
     padding:2px 7px;border-radius:12px;letter-spacing:.5px}
 
@@ -286,6 +279,14 @@
     overflow:hidden;position:relative;cursor:pointer}
   .cardImg img{width:100%;height:100%;object-fit:cover}
   .cardImg .ph{font-size:34px;opacity:.35}
+  .cardHint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:1px;
+    width:max-content;max-width:92%;background:rgba(20,15,13,.86);color:#fff;font-size:11px;font-weight:600;line-height:1.3;text-align:center;
+    padding:6px 12px 8px;border-radius:14px;opacity:0;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .cardHint .mao{font-size:24px;line-height:1.1;display:inline-block;animation:bnMao .9s ease-in-out infinite}
+  .cardHint.soMao{bottom:auto;top:50%;transform:translate(-50%,-50%);width:50px;height:50px;padding:0;border-radius:50%;justify-content:center;background:rgba(20,15,13,.6)}
+  .cardHint.pisca{animation:bnPisca 3.9s ease forwards}
+  @keyframes bnPisca{0%{opacity:0}8%{opacity:1}22%{opacity:.15}36%{opacity:1}50%{opacity:.15}64%{opacity:1}80%{opacity:1}100%{opacity:0}}
+  @keyframes bnMao{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   .stockBadge{position:absolute;top:6px;left:6px;z-index:2;background:var(--oxblood);color:#fff;
     font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
   .card.esgotado .cardImg img{opacity:.55}
@@ -445,7 +446,6 @@
     <div class="bnBox" id="bnBox" onclick="abrirBannerViewer(bnIdx)">
       <div class="bnTrack" id="bnTrack"></div>
       <div class="bnDots" id="bnDots"></div>
-      <div class="bnHint" id="bnHint"><span class="mao">👆</span><span>Clica na foto para mais detalhes</span></div>
     </div>
   </div>
   <div class="tbNav">
@@ -803,6 +803,7 @@ async function iniciar(){
   PERFUMES = await api('perfumes?ativo=eq.true&order=id.desc');
   renderGrid();
   iniciarBanners();
+  setTimeout(mostrarDicaProduto, 2000);
 }
 
 // ── PAINEL ROLANTE (fotos / vídeos curtos geridos no admin) ──
@@ -888,7 +889,6 @@ async function iniciarBanners(){
   wrap.style.display = 'block';
   calcAlturaBanner();
   medirPrimeiroBanner();
-  setTimeout(mostrarDicaBanner, 1800);
   bnIdx = 0;
   aoScrollBanner();
   ajustarTopo();
@@ -991,7 +991,6 @@ function abrirBannerViewer(i){
   if(!BANNERS.length) return;
   bnVOpen = true; clearTimeout(bnTimer);
   bnVIdx = i || 0;
-  registarCliqueBanner();
   renderBannerViewer();
   document.getElementById('bnViewer').classList.add('a');
 }
@@ -1095,31 +1094,43 @@ function navegarBanner(d){
   });
 })();
 
-// ── DICA "Clica na foto para mais detalhes" ──
-// Quem nunca clicou: aparece em cada visita. Quem já clicou: no máximo 1 vez de 14 em 14 dias.
-function registarCliqueBanner(){
-  esconderDicaBanner();
-  try{ localStorage.setItem('gaspar_bn_cliques', String((parseInt(localStorage.getItem('gaspar_bn_cliques') || '0', 10) || 0) + 1)); }catch(e){}
-}
-function esconderDicaBanner(){
-  var el = document.getElementById('bnHint');
-  if(el){ el.classList.remove('pisca'); el.style.opacity = '0'; }
-}
-function mostrarDicaBanner(){
-  if(!BANNERS.length) return;
+// ── DICA NOS PRODUTOS: mãozinha a apontar para a foto ──
+// Quem nunca abriu um produto: mãozinha + "Clica na foto para mais detalhes", 1 vez por visita.
+// Quem já abriu: só a mãozinha a piscar numa foto, de vez em quando (no máximo de 3 em 3 dias).
+var DICA_PROD_FEITA = false, dicaProdTimer = null;
+function decidirDicaProduto(){
   try{
-    if(sessionStorage.getItem('gaspar_dica_vista') === '1') return;       // uma vez por visita
-    var cliques = parseInt(localStorage.getItem('gaspar_bn_cliques') || '0', 10) || 0;
-    var ult = parseInt(localStorage.getItem('gaspar_bn_dica') || '0', 10) || 0;
-    if(cliques > 0 && Date.now() - ult < 14 * 86400000) return;           // já sabe usar: não repetir
-    sessionStorage.setItem('gaspar_dica_vista', '1');
-    localStorage.setItem('gaspar_bn_dica', String(Date.now()));
-  }catch(e){}
-  var el = document.getElementById('bnHint'); if(!el) return;
-  el.style.opacity = ''; el.classList.remove('pisca'); void el.offsetWidth; el.classList.add('pisca');
-  setTimeout(function(){ el.classList.remove('pisca'); el.style.opacity = '0'; }, 4100);
+    if(sessionStorage.getItem('gaspar_dica_prod') === '1') return null;
+    var c = parseInt(localStorage.getItem('gaspar_prod_cliques') || '0', 10) || 0;
+    var u = parseInt(localStorage.getItem('gaspar_prod_dica') || '0', 10) || 0;
+    if(c === 0) return 'texto';
+    return (Date.now() - u > 3 * 86400000) ? 'mao' : null;
+  }catch(e){ return 'texto'; }
 }
-window.addEventListener('scroll', function(){ if((window.scrollY || 0) > 40) esconderDicaBanner(); }, { passive: true });
+function mostrarDicaProduto(){
+  if(DICA_PROD_FEITA) return;
+  var modo = decidirDicaProduto();
+  if(!modo){ DICA_PROD_FEITA = true; return; }
+  var barra = document.querySelector('.topBar'), topo = barra ? barra.getBoundingClientRect().bottom : 0;
+  var vis = Array.prototype.filter.call(document.querySelectorAll('#grid .cardImg'), function(el){
+    var r = el.getBoundingClientRect();
+    return r.width > 0 && r.top >= topo + 4 && r.bottom <= window.innerHeight - 4;
+  });
+  if(!vis.length) return;                       // ainda não há fotos visíveis: tenta de novo quando o cliente fizer scroll
+  var alvo = modo === 'texto' ? vis[0] : vis[Math.floor(Math.random() * vis.length)];
+  DICA_PROD_FEITA = true;
+  try{ sessionStorage.setItem('gaspar_dica_prod', '1'); localStorage.setItem('gaspar_prod_dica', String(Date.now())); }catch(e){}
+  var el = document.createElement('div');
+  el.className = 'cardHint' + (modo === 'mao' ? ' soMao' : '');
+  el.innerHTML = '<span class="mao">👆</span>' + (modo === 'texto' ? '<span>Clica na foto para mais detalhes</span>' : '');
+  alvo.appendChild(el);
+  void el.offsetWidth; el.classList.add('pisca');
+  setTimeout(function(){ if(el.parentNode) el.remove(); }, 4200);
+}
+window.addEventListener('scroll', function(){
+  if(DICA_PROD_FEITA) return;
+  clearTimeout(dicaProdTimer); dicaProdTimer = setTimeout(mostrarDicaProduto, 600);
+}, { passive: true });
 
 // ── CONTADOR DE VISITAS (1 por visitante por dia) ──
 async function registarVisita(){
@@ -1310,6 +1321,8 @@ var detalheAtualId = null;
 function abrirDetalhe(id){
   var p = PERFUMES.find(x => String(x.id) === String(id));
   if(!p) return;
+  try{ localStorage.setItem('gaspar_prod_cliques', String((parseInt(localStorage.getItem('gaspar_prod_cliques') || '0', 10) || 0) + 1)); }catch(e){}
+  document.querySelectorAll('.cardHint').forEach(function(h){ h.remove(); });
   detalheAtualId = p.id;
   if(window._resetDetalheZoom) window._resetDetalheZoom();
 

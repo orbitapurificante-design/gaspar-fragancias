@@ -502,7 +502,7 @@
       <b>Pagamento seguro</b><small>Só paga depois de receber a fatura</small>
     </div>
   </div>
-  <div class="promo" id="promo" style="display:none" onclick="abrirPrograma()">
+  <div class="promo" id="promo" style="display:none" onclick="abrirPromoAtual()">
     <div class="promoIn" id="promoIn"></div>
     <div class="promoDots" id="promoDots"></div>
   </div>
@@ -2042,6 +2042,22 @@ function abrirPrograma(){
   $('mPrograma').classList.add('a');
 }
 
+// Detalhe da promoção clicada: mostra a foto e o texto dessa promoção (a padrão de 10% abre o ecrã dos descontos)
+function abrirPromoAtual(){ abrirPromo(PROMOS[promoIdx]); }
+function abrirPromo(pr){
+  if(!pr || pr.id == null){ abrirPrograma(); return; }
+  var logado = !!(SESSAO && SESSAO.user);
+  var u = String(pr.imagem || '').replace(/'/g, '%27').replace(/"/g, '%22');
+  $('programaBody').previousElementSibling.querySelector('.sheetTit').textContent = pr.titulo || 'Promoção';
+  $('programaBody').innerHTML =
+    (pr.imagem ? '<div style="background:#14100e;border-radius:12px;overflow:hidden;margin-bottom:14px"><img src="' + u + '" alt="" style="display:block;width:100%;max-height:60vh;object-fit:contain"></div>' : '') +
+    (pr.texto ? '<p style="font-size:14px;line-height:1.6;margin:0 0 16px;white-space:pre-line">' + esc(pr.texto) + '</p>' : '') +
+    (logado ? '<button class="btnGold" onclick="fecharModal(\'mPrograma\')">Continuar a comprar</button>'
+            : '<button class="btnGold" onclick="fecharModal(\'mPrograma\');abrirConta();renderConta(\'registar\')">Criar conta grátis</button>' +
+              '<button class="btnGhost" onclick="fecharModal(\'mPrograma\')">Fechar</button>');
+  $('mPrograma').classList.add('a');
+}
+
 // ── PROMOÇÕES NO ECRÃ INICIAL (geridas no admin; sem nenhuma, mostra as duas por defeito) ──
 var PROMOS = [], promoIdx = 0, promoTimer = null;
 function promosPorDefeito(){
@@ -2104,7 +2120,7 @@ function tentarJanela(){
   $('janPromo').classList.add('a');
 }
 function fecharJanelaPromo(){ $('janPromo').classList.remove('a'); }
-function abrirDaJanela(){ fecharJanelaPromo(); abrirPrograma(); }
+function abrirDaJanela(){ fecharJanelaPromo(); abrirPromo(janPromo); }
 
 // ── CÓDIGO DE AMIGO NO LINK (?ref=CODIGO) ──
 (function(){

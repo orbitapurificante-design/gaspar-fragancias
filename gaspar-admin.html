@@ -323,6 +323,8 @@
     <input type="text" class="inp" id="prTitulo" placeholder="Ex: 10% de desconto na tua primeira compra" maxlength="80">
     <label class="lbl">Texto</label>
     <textarea class="inp" id="prTexto" style="min-height:64px;resize:vertical" maxlength="200" placeholder="Ex: Cria a tua conta grátis e o desconto é aplicado automaticamente."></textarea>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;cursor:pointer"><input type="checkbox" id="prJanela" onchange="document.getElementById('prJanSeg').disabled=!this.checked"> Mostrar também como janela sobreposta</label>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px">ao fim de <input type="number" class="inp" id="prJanSeg" min="3" max="120" value="10" disabled style="width:72px;margin:0;text-align:center"> segundos (só para quem não tem conta; fecha no X)</div>
     <button class="btnGold" id="prGuardar" onclick="guardarPromocao()">ADICIONAR PROMOÇÃO</button>
     <button class="btnGhost" id="prCancelar" style="display:none" onclick="limparFormPromo()">Cancelar edição</button>
     <div id="prLista"></div>
@@ -367,6 +369,7 @@ function toast(msg){
 function fazerLogin(){
   var pin = document.getElementById('pinInput').value;
   if(pin === PIN_ADMIN){
+    try{ localStorage.setItem('gaspar_dono', '1'); }catch(e){}   // este navegador passa a ser reconhecido como o do dono
     sessionStorage.setItem('gaspar_logado', '1');
     entrarApp();
   } else {
@@ -400,15 +403,24 @@ async function sincronizar(){
 }
 
 // ── CONTADOR DE VISITAS ──
+async function contarVisitas(filtro){
+  var r = await fetch(SB + '/rest/v1/visitas?select=id' + filtro, {
+    headers: Object.assign({}, hd(), { 'Prefer': 'count=exact', 'Range': '0-0' })
+  });
+  if(!r.ok) return NaN;
+  var cr = r.headers.get('content-range'); // formato "0-0/123"
+  return cr ? parseInt(cr.split('/')[1], 10) : NaN;
+}
 async function carregarVisitas(){
   var el = document.getElementById('contagemVisitas');
   try{
-    var r = await fetch(SB + '/rest/v1/visitas?select=id', {
-      headers: Object.assign({}, hd(), { 'Prefer': 'count=exact', 'Range': '0-0' })
-    });
-    var cr = r.headers.get('content-range'); // formato "0-0/123"
-    var total = cr ? parseInt(cr.split('/')[1], 10) : NaN;
-    el.textContent = '👁 ' + (isNaN(total) ? '—' : total) + ' visita' + (total === 1 ? '' : 's') + ' à loja';
+    var c = await contarVisitas('&dono=eq.false'), d = await contarVisitas('&dono=eq.true');
+    if(isNaN(c)){                                   // coluna "dono" ainda não criada: mostra o total
+      var t = await contarVisitas('');
+      el.textContent = '👁 ' + (isNaN(t) ? '—' : t) + ' visitas à loja (corra o SQL para separar as do admin)';
+      return;
+    }
+    el.textContent = '👁 ' + c + ' visita' + (c === 1 ? '' : 's') + ' à loja · 🔑 ' + (isNaN(d) ? 0 : d) + ' do admin';
   }catch(e){
     el.textContent = '👁 — visitas à loja';
   }
@@ -768,7 +780,7 @@ function renderPromocoes(){
   if(!PM.length){ el.innerHTML = '<div class="count" style="text-align:center;padding:18px 0">Sem promoções — a loja mostra as duas padrão (10% 1.ª compra e amigos).</div>'; return; }
   el.innerHTML = PM.map(function(p, i){
     return '<div class="pmItem"><div class="pi" style="' + (p.imagem ? "background-image:url('" + String(p.imagem).replace(/'/g, '%27') + "')" : '') + '"></div>' +
-      '<div class="pt"><b>' + esc(p.titulo) + (p.ativo === false ? ' (oculta)' : '') + '</b><span>' + esc(p.texto || '') + '</span></div>' +
+      '<div class="pt"><b>' + esc(p.titulo) + (p.ativo === false ? ' (oculta)' : '') + (p.janela ? ' 🪟 ' + (p.janela_segundos || 10) + 's' : '') + '</b><span>' + esc(p.texto || '') + '</span></div>' +
       '<div class="pa"><button onclick="moverPromo(' + i + ',-1)">←</button><button onclick="moverPromo(' + i + ',1)">→</button>' +
       '<button onclick="editarPromo(' + p.id + ')">✏️</button>' +
       '<button onclick="alternarPromo(' + p.id + ',' + (p.ativo === false) + ')">' + (p.ativo === false ? '👁' : '🚫') + '</button>' +
@@ -778,6 +790,7 @@ function renderPromocoes(){
 function limparFormPromo(){
   pmEditId = null; pmFoto = null;
   document.getElementById('prTitulo').value = ''; document.getElementById('prTexto').value = '';
+  document.getElementById('prJanela').checked = false; document.getElementById('prJanSeg').value = 10; document.getElementById('prJanSeg').disabled = true;
   document.getElementById('prPreview').innerHTML = '<div class="fp">📷<br>Foto (opcional)</div>';
   document.getElementById('prGuardar').textContent = 'ADICIONAR PROMOÇÃO';
   document.getElementById('prCancelar').style.display = 'none';
@@ -786,6 +799,7 @@ function editarPromo(id){
   var p = PM.find(function(x){ return x.id === id; }); if(!p) return;
   pmEditId = id; pmFoto = p.imagem || null;
   document.getElementById('prTitulo').value = p.titulo || ''; document.getElementById('prTexto').value = p.texto || '';
+  document.getElementById('prJanela').checked = p.janela === true; document.getElementById('prJanSeg').value = p.janela_segundos || 10; document.getElementById('prJanSeg').disabled = p.janela !== true;
   document.getElementById('prPreview').innerHTML = p.imagem ? '<img src="' + p.imagem + '">' : '<div class="fp">📷<br>Foto (opcional)</div>';
   document.getElementById('prGuardar').textContent = 'GUARDAR ALTERAÇÕES';
   document.getElementById('prCancelar').style.display = 'block';
@@ -810,7 +824,9 @@ async function prevFotoPromo(e){
 async function guardarPromocao(){
   var titulo = document.getElementById('prTitulo').value.trim();
   if(!titulo) return toast('⚠️ Indique o título');
-  var corpo = { titulo: titulo, texto: document.getElementById('prTexto').value.trim(), imagem: pmFoto };
+  var jan = document.getElementById('prJanela').checked;
+  var corpo = { titulo: titulo, texto: document.getElementById('prTexto').value.trim(), imagem: pmFoto,
+                janela: jan, janela_segundos: Math.min(120, Math.max(3, parseInt(document.getElementById('prJanSeg').value, 10) || 10)) };
   try{
     var r;
     if(pmEditId) r = await fetch(SB + '/rest/v1/promocoes?id=eq.' + pmEditId, { method: 'PATCH', headers: hd(), body: JSON.stringify(corpo) });

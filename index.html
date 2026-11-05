@@ -378,6 +378,18 @@
     color:var(--ivory-dim);white-space:nowrap}
 
   /* MODAL / SHEET */
+  .jan{display:none;position:fixed;inset:0;z-index:260;align-items:center;justify-content:center;padding:18px;background:rgba(10,7,6,.72);backdrop-filter:blur(3px)}
+  .jan.a{display:flex;animation:janIn .3s ease}
+  @keyframes janIn{from{opacity:0}to{opacity:1}}
+  .janBox{position:relative;width:100%;max-width:380px;max-height:92vh;overflow:auto;background:var(--bg2);border:1px solid var(--gold);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);cursor:pointer;animation:janUp .35s ease}
+  @keyframes janUp{from{transform:translateY(14px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  .janX{position:absolute;top:8px;right:8px;z-index:2;width:34px;height:34px;border-radius:50%;border:none;background:rgba(20,15,13,.8);color:#fff;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .janImg{background:#14100e;display:flex;align-items:center;justify-content:center}
+  .janImg img{display:block;width:100%;max-height:55vh;object-fit:contain}
+  .janImg.deco{padding:34px 10px;font-family:'Playfair Display',serif;font-size:56px;color:var(--gold)}
+  .janTxt{padding:16px 18px 18px;text-align:center}
+  .janTit{font-family:'Playfair Display',serif;font-size:20px;line-height:1.25;margin-bottom:6px}
+  .janSub{font-size:13px;line-height:1.5;color:var(--ivory-dim);margin-bottom:14px}
   .modal{display:none;position:fixed;inset:0;z-index:200;align-items:flex-end;background:rgba(10,7,6,.6);backdrop-filter:blur(2px)}
   .modal.a{display:flex}
   .sheet{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:600px;margin:0 auto;padding:20px;
@@ -630,6 +642,10 @@
 </div>
 
 <!-- CARRINHO -->
+<div class="jan" id="janPromo" onclick="if(event.target===this)fecharJanelaPromo()">
+  <div class="janBox" id="janBox" onclick="abrirDaJanela()"></div>
+</div>
+
 <div class="modal" id="mCart">
   <div class="sheet">
     <div class="sheetTop">
@@ -1136,10 +1152,14 @@ function mostrarDicaProduto(){
 // ── CONTADOR DE VISITAS (1 por visitante por dia) ──
 async function registarVisita(){
   try{
-    var hoje = new Date().toISOString().slice(0,10);
-    if(localStorage.getItem('gaspar_ultima_visita') === hoje) return;
-    localStorage.setItem('gaspar_ultima_visita', hoje);
-    await fetch(SB + '/rest/v1/visitas', { method: 'POST', headers: hd(), body: JSON.stringify({}) });
+    var dono = localStorage.getItem('gaspar_dono') === '1';
+    if(!dono){
+      var hoje = new Date().toISOString().slice(0,10);
+      if(localStorage.getItem('gaspar_ultima_visita') === hoje) return;
+      localStorage.setItem('gaspar_ultima_visita', hoje);
+    }
+    // dono: conta sempre, mas à parte (coluna dono). Cliente: corpo vazio (dono=false por defeito)
+    await fetch(SB + '/rest/v1/visitas', { method: 'POST', headers: hd(), body: JSON.stringify(dono ? { dono: true } : {}) });
   }catch(e){ /* falha silenciosa — não deve afetar a navegação do cliente */ }
 }
 
@@ -2052,10 +2072,39 @@ function rodarPromo(){
 async function iniciarPromocoes(){
   var a = await api('promocoes?ativo=eq.true&order=ordem.asc,id.asc');
   PROMOS = (a && a.length) ? a : promosPorDefeito();
+  agendarJanela((a && a.length) ? a : [Object.assign({ janela: true, janela_segundos: 10 }, promosPorDefeito()[0])]);
   promoIdx = 0; pintarPromo(0);
   $('promo').style.display = 'flex';
   rodarPromo();
 }
+
+// ── JANELA SOBREPOSTA (promoção escolhida no admin): aparece ao fim de N segundos a quem não tem conta ──
+var janTimer = null, janPromo = null;
+function agendarJanela(lista){
+  clearTimeout(janTimer);
+  try{ if(sessionStorage.getItem('gaspar_jan') === '1') return; }catch(e){}
+  var c = (lista || []).filter(function(x){ return x.janela === true; })[0];
+  if(!c) return;
+  janPromo = c;
+  var seg = Math.max(3, parseInt(c.janela_segundos, 10) || 10);
+  janTimer = setTimeout(tentarJanela, seg * 1000);
+}
+function tentarJanela(){
+  if(SESSAO && SESSAO.user) return;                       // quem já tem conta não vê
+  try{ if(sessionStorage.getItem('gaspar_jan') === '1') return; }catch(e){}
+  if(document.hidden || document.querySelector('.modal.a, .bnViewer.a, .jan.a')){ janTimer = setTimeout(tentarJanela, 3000); return; }
+  var pr = janPromo; if(!pr) return;
+  try{ sessionStorage.setItem('gaspar_jan', '1'); }catch(e){}
+  var u = String(pr.imagem || '').replace(/'/g, '%27').replace(/"/g, '%22');
+  $('janBox').innerHTML = '<button class="janX" onclick="event.stopPropagation();fecharJanelaPromo()" aria-label="Fechar">×</button>' +
+    (pr.imagem ? '<div class="janImg"><img src="' + u + '" alt=""></div>' : '<div class="janImg deco">' + esc(pr.selo || '🎁') + '</div>') +
+    '<div class="janTxt"><div class="janTit">' + esc(pr.titulo) + '</div>' +
+    (pr.texto ? '<div class="janSub">' + esc(pr.texto) + '</div>' : '') +
+    '<button class="btnGold" type="button">Saber mais ›</button></div>';
+  $('janPromo').classList.add('a');
+}
+function fecharJanelaPromo(){ $('janPromo').classList.remove('a'); }
+function abrirDaJanela(){ fecharJanelaPromo(); abrirPrograma(); }
 
 // ── CÓDIGO DE AMIGO NO LINK (?ref=CODIGO) ──
 (function(){
